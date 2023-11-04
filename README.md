@@ -1,3 +1,3 @@
 # Parallel BFS
 
-Test bench to test paralellization techniques of Best First Search.
+Simple framework to test C++ parallelization techniques applied to Best First Search problems.
