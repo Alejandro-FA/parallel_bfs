@@ -25,7 +25,7 @@ public:
         // Create empty graph and add each possible state as a key of the map.
         std::unordered_map<State, std::unordered_set<State>> g;
         g.reserve(_num_states);
-        for (int i = _num_states - 1; i >= 0; --i) g.emplace(i, std::unordered_set<State>());
+        for (long i = _num_states - 1; i >= 0; --i) g.emplace(i, std::unordered_set<State>());
 
         // For each state, create up to [_num_actions] children states (graph edges)
         for (state_space_size_t i = 0; i < _num_states; ++i) {
