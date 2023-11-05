@@ -6,7 +6,6 @@
 #define PARALLEL_BFS_UTILS_H
 
 #include <chrono>
-#include <iostream>
 #include <stack>
 #include <iomanip>
 #include <sstream>
@@ -43,6 +42,14 @@ std::string seconds_elapsed(const std::chrono::time_point<std::chrono::high_reso
     std::stringstream sstr;
     sstr << std::fixed << std::setprecision(3) << (double) duration / 1000.0;
     return "["+ sstr.str()+"s]";
+}
+
+std::string ms_elapsed(const std::chrono::time_point<std::chrono::high_resolution_clock> &start_time,
+                            const std::chrono::time_point<std::chrono::high_resolution_clock> &end_time){
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time-start_time).count();
+    std::stringstream sstr;
+    sstr << std::fixed << std::setprecision(2) << (double) duration / 1000.0;
+    return "["+ sstr.str()+"ms]";
 }
 
 #endif //PARALLEL_BFS_UTILS_H

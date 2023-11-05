@@ -11,7 +11,7 @@
 
 class Node {
 public:
-    explicit Node(State state, std::shared_ptr<Node> parent=nullptr, int path_cost=0)
+    explicit Node(State state, std::shared_ptr<Node> parent = nullptr, int path_cost = 0)
             : _state{state}, _parent{std::move(parent)}, _path_cost{path_cost} {}
 
     [[nodiscard]] State state() const { return _state; }

@@ -4,22 +4,22 @@
 #include "bfs.h"
 #include "utils.h"
 
-using namespace std::chrono;
-
 int main() {
-    // Create random problems
-    auto start = high_resolution_clock::now();
-    // Problem p{10000, 34535234};
-    Problem p{10};
-    auto stop = high_resolution_clock::now();
-    std::cout << "[INFO] Problem created. " << seconds_elapsed(start, stop) << std::endl;
-    std::cout << p << std::endl;
+    // Create random problem
+    std::cout << "[INFO] Creating random problem..." << std::endl;
+    auto start = std::chrono::high_resolution_clock::now();
+    // Problem problem{1000000, 4, 242342};
+    Problem problem{1000000, 4};
+    auto stop = std::chrono::high_resolution_clock::now();
+    std::cout << "[INFO] Problem created. " << seconds_elapsed(start, stop) << "\n";
+    problem.print(false);
 
-    // Solve random problem
-    start = high_resolution_clock::now();
-    auto node = breadth_first_search(p);
-    stop = high_resolution_clock::now();
-    std::cout << "[INFO] Search finished. " << seconds_elapsed(start, stop) << std::endl;
+    // Solve created problem
+    std::cout << "[INFO] Searching solution..." << std::endl;
+    start = std::chrono::high_resolution_clock::now();
+    auto node = breadth_first_search(problem);
+    stop = std::chrono::high_resolution_clock::now();
+    std::cout << "[INFO] Search finished. " << ms_elapsed(start, stop) << "\n";
     print_solution(node.get());
 
     return 0;

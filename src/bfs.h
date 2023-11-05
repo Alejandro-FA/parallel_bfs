@@ -5,7 +5,6 @@
 #ifndef PARALLEL_BFS_BFS_H
 #define PARALLEL_BFS_BFS_H
 
-#include <memory>
 #include <queue>
 #include <unordered_set>
 #include "node.h"
