@@ -8,8 +8,8 @@ int main() {
     // Create random problem
     std::cout << "[INFO] Creating random problem..." << std::endl;
     auto start = std::chrono::high_resolution_clock::now();
-    // Problem problem{1000000, 4, 242342};
-    Problem problem{1000000, 4};
+    // Problem problem{1'000'000, 4, 242342};
+    Problem problem{1'000'000, 4};
     auto stop = std::chrono::high_resolution_clock::now();
     std::cout << "[INFO] Problem created. " << seconds_elapsed(start, stop) << "\n";
     problem.print(false);
