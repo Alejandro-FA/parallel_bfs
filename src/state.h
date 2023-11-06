@@ -11,7 +11,7 @@ class State {
 public:
     explicit State(state_space_size_t value) : _value{value} {}
 
-    bool operator==(const State &rhs) const { return _value == rhs._value; }
+    friend bool operator==(const State &lhs, const State &rhs);
 
     friend std::ostream &operator<<(std::ostream &, const State &);
 
@@ -20,6 +20,8 @@ public:
 private:
     const state_space_size_t _value;
 };
+
+bool operator==(const State &lhs, const State &rhs) { return lhs._value == rhs._value; }
 
 std::ostream &operator<<(std::ostream &os, const State &s) { return os << s._value; }
 
