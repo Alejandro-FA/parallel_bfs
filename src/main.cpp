@@ -1,8 +1,9 @@
 #include <iostream>
 #include <chrono>
 #include "problem.h"
-#include "bfs.h"
 #include "utils.h"
+#include "bfs/bfs.h"
+
 
 int main() {
     // Create random problem
@@ -14,13 +15,13 @@ int main() {
     std::cout << "[INFO] Problem created. " << seconds_elapsed(start, stop) << "\n";
     problem.print(false);
 
-    // Solve created problem
-    std::cout << "[INFO] Searching solution..." << std::endl;
-    start = std::chrono::high_resolution_clock::now();
-    auto node = breadth_first_search(problem);
-    stop = std::chrono::high_resolution_clock::now();
-    std::cout << "[INFO] Search finished. " << ms_elapsed(start, stop) << "\n";
-    print_solution(node.get());
+    // Solve created problem with method 1
+    SyncBFS sync_bfs;
+    measure(problem, sync_bfs);
+
+    // Solve created problem with method 2
+    ParallelBFS par_bfs;
+    measure(problem, par_bfs);
 
     return 0;
 }

@@ -44,7 +44,6 @@ public:
 
     void print(bool include_graph) {
         std::cout << "\nInitial state: " << initial() << "\nGoal state: " << goal();
-
         if (include_graph) {
             std::cout << "\nAdjacency list:";
             for (const auto &[state, state_neighbours]: _graph) {
@@ -52,7 +51,7 @@ public:
                 for (const auto &neighbour: state_neighbours) std::cout << neighbour << " ";
             }
         }
-        std::cout << "\n" << std::endl;
+        std::cout << std::endl;
     }
 
 private:

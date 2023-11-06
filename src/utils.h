@@ -11,6 +11,7 @@
 #include <sstream>
 #include "node.h"
 #include "state.h"
+#include "bfs/base_bfs.h"
 
 void print_solution(const Node* node) {
     // Check if there is a solution first
@@ -50,6 +51,15 @@ std::string ms_elapsed(const std::chrono::time_point<std::chrono::high_resolutio
     std::stringstream sstr;
     sstr << std::fixed << std::setprecision(2) << (double) duration / 1000.0;
     return "["+ sstr.str()+"ms]";
+}
+
+void measure(const Problem &problem, const BFS &bfs) {
+    std::cout << "\n[INFO] Searching solution with " << bfs.get_name() << "..."  << std::endl;
+    auto start = std::chrono::high_resolution_clock::now();
+    auto node = bfs(problem);
+    auto stop = std::chrono::high_resolution_clock::now();
+    std::cout << "[INFO] " << bfs.get_name() << " finished. " << ms_elapsed(start, stop) << "\n";
+    print_solution(node.get());
 }
 
 #endif //PARALLEL_BFS_UTILS_H
