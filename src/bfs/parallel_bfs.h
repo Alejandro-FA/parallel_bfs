@@ -25,7 +25,8 @@ public:
             frontier.pop();
             if (problem.is_goal(node->state())) return node; // We do not use early-goal optimization to mimic general Best First Search
             auto children = problem.expand(node);
-            std::for_each(children.cbegin(), children.cend(), [&frontier, &reached](auto node) { _reach_node(node, frontier, reached); });
+            std::for_each(children.cbegin(), children.cend(),
+                          [&frontier, &reached](auto node) { _reach_node(node, frontier, reached); });
         }
         return nullptr;
     }
