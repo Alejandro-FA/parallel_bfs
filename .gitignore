@@ -1,6 +1,3 @@
 cmake-*
-.idea/*
-!.idea/cmake.xml
-.vscode
 *.out
 *.dSYM
