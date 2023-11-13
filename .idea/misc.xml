@@ -4,6 +4,9 @@
   <component name="CidrRootsConfiguration">
     <excludeRoots>
       <file path="$PROJECT_DIR$/.idea" />
+      <file path="$PROJECT_DIR$/cmake-build-asan-tests" />
+      <file path="$PROJECT_DIR$/cmake-build-tests" />
+      <file path="$PROJECT_DIR$/cmake-build-tsan-tests" />
     </excludeRoots>
   </component>
 </project>

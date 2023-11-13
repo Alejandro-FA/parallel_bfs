@@ -1,16 +1,13 @@
 #include <iostream>
-#include <chrono>
 #include "problem.h"
 #include "utils.h"
 #include "bfs/bfs.h"
-
 
 int main() {
     // Create random problem
     std::cout << "[INFO] Creating random problem..." << std::endl;
     auto start = std::chrono::high_resolution_clock::now();
-    // Problem problem{1'000'000, 4, 242342};
-    Problem problem{1'000'000, 4};
+    Problem problem{1'000'000, 4, 34};
     auto stop = std::chrono::high_resolution_clock::now();
     std::cout << "[INFO] Problem created. " << seconds_elapsed(start, stop) << "\n";
     problem.print(false);
@@ -23,5 +20,5 @@ int main() {
     ParallelBFS par_bfs;
     measure(problem, par_bfs);
 
-    return 0;
+    return 0x7fffffff + 1;
 }

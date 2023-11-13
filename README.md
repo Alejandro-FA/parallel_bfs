@@ -5,47 +5,73 @@ The end goal is to port the results to [BFGP++](https://github.com/jsego/bfgp-pp
 
 ## Usage
 
-To compile the program, simply execute the following command:
+### Compilation
+
+The easiest way to compile the project is using CMake. You can install `cmake` using a package manager (like `apt` in
+Ubuntu and [`macports`](https://www.macports.org/) or [`homebrew`](https://brew.sh/) in macOS). You can also install it
+directly from the [official site](https://cmake.org/). If you have never used `cmake`, you can check the official
+[getting started tutorial](https://cmake.org/cmake/help/book/mastering-cmake/chapter/Getting%20Started.html).
+
+The first time that you open the project you will need to **configure** it. To do so you only need to follow these steps
+in a terminal:
+
+1. In the root directory of the project, create a folder where all your binaries and build files will be placed.
+Then change directory to this folder.
+
+    ```bash
+    mkdir cmake-build
+    cd cmake-build
+    ```
+2. Then use `cmake` to configure the project. At this point you can use certain flags to specify how do you want the
+project to be built, like the *compiler* to use or the *build type*. To use the default values, simply execute this
+(the two dots `..` are important):
+
+    ```bash
+    cmake .. -DCMAKE_BUILD_TYPE=Release
+    ```
+
+    > If you want to specify which compiler to use, you can use the `CMAKE_CXX_COMPILER` flag. For example, if you
+    have installed `clang` with `macports`:
+   > ```bash
+   > cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=/opt/local/bin/clang++-mp-17
+   > ```
+After this one-step, everytime that you want to recompile the project you simply need to execute this:
 
 ```bash
-./scripts/compile.sh
+cmake --build .
 ```
 
-Then you can run it as follows:
+> If you are no longer inside the build folder, you can change the command to `cmake --build <path-to-build-folder>`
+
+### Run the program
+
+When compiling with `cmake`, the executable will be placed inside the build folder that you created in the first step.
+You can simply execute it as follows:
 
 ```bash
-./main.out
+./parallel_bfs
 ```
 
-The program itself will display benchmarks about the execution time. Alternatively, **you can also compile with CMake**
-if you prefer. Several profiles are provided in `.idea/cmake.xml`.
+### Test for bugs using Google Sanitizers
 
-### Use Google Sanitizers to check for multiple errors
-
-You can compile the program with sanitizers to check for harder to detect bugs. For example, if you want to check for
-memory errors ([AddressSanitizer](https://github.com/google/sanitizers/wiki/AddressSanitizer)), compile and run the
-program as follows:
+This project comes with some built-in tests to check for memory errors, undefined behaviour errors and data races. To
+check if the program has any bugs, you can simply run the following command:
 
 ```bash
-./scripts/compile.sh --asan
-./main.out
+ctest --output-on-failure
 ```
 
-There are equivalent options for the [ThreadSanitizer](https://github.com/google/sanitizers/wiki/ThreadSanitizerCppManual)
-(`--tsan`), which allows to check for race conditions, and the
-[UndefinedBehaviourSanitizer](https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html) (`--ubsan`), that looks for
-code with undefined behaviour.
+For more information on how sanitizers work, you can check the [Google documentation](https://github.com/google/sanitizers/wiki),
+the [`clang` documentation](https://clang.llvm.org/docs/UsersManual.html#controlling-code-generation) or the
+[`gcc` documentation](https://gcc.gnu.org/onlinedocs/gcc/Instrumentation-Options.html#index-fsanitize_003daddress).
 
-> **NOTE**: You may also need to install the `libasan`, `libasan` and `libubsan` libraries. In a RedHat-based
+> **NOTE**: In some platforms you may need to install the `libasan`, `libtsan` and `libubsan` libraries. In a RedHat-based
 > distribution, you can do so with:
 > ```bash
-> sudo dnf install libtsan libasan libubsan
+> sudo dnf install libasan libtsan libubsan
 > ```
 > I guess that in a Debian-based distribution you can use `apt` to install these libraries in a similar way (untested).
 
-
-For more information you can check the [Google documentation](https://github.com/google/sanitizers/wiki),
-the [`clang` documentation](https://clang.llvm.org/docs/UsersManual.html#controlling-code-generation) or the
-[`gcc` documentation](https://gcc.gnu.org/onlinedocs/gcc/Instrumentation-Options.html#index-fsanitize_003daddress). If
-you use CLion, it is also useful to check [their documentation](https://www.jetbrains.com/help/clion/google-sanitizers.html)
-for more information about how to integrate this tools with the IDE.
+> **NOTE 2**: Apple Clang (the compiler that comes with XCode by default in macOS) does not support memory leak
+> detection with the AddressSanitizer. If you want to use this test in macOS, I recommend to install another compiler
+> separately. For example, you can [install the `clang` with `macports`](https://ports.macports.org/search/?q=clang&name=on).
