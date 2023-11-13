@@ -1,4 +1,6 @@
 cmake-*
-.idea
+.idea/*
+!.idea/cmake.xml
 .vscode
-*.bin
+*.out
+*.dSYM

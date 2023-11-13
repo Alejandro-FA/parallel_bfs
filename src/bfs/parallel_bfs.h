@@ -34,7 +34,7 @@ public:
     [[nodiscard]] std::string get_name() const override { return _name; }
 
 private:
-    inline static const std::string _name{"Synchronous BFS"};
+    inline static const std::string _name{"Parallel BFS"};
 
     void static _reach_node(const std::shared_ptr<Node> &node, std::queue<std::shared_ptr<Node>> &frontier, std::unordered_set<State> &reached) {
         State s = node->state();

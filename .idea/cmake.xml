@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeSharedSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Release" ENABLED="true" CONFIG_NAME="Release" />
+      <configuration PROFILE_NAME="AddressSanitizer" ENABLED="true" GENERATION_OPTIONS="-DCMAKE_CXX_FLAGS=&quot;-Wall -Wextra -fsanitize=address -fno-omit-frame-pointer -g -Og&quot;" />
+      <configuration PROFILE_NAME="ThreadSanitizer" ENABLED="true" GENERATION_OPTIONS="-DCMAKE_CXX_FLAGS=&quot;-Wall -Wextra -fsanitize=thread -g -O2&quot;" />
+      <configuration PROFILE_NAME="UndefinedBehaviourSanitizer" ENABLED="true" GENERATION_OPTIONS="-DCMAKE_CXX_FLAGS=&quot;-Wall -Wextra -fsanitize=undefined -g -Og&quot;" />
+    </configurations>
+  </component>
+</project>
