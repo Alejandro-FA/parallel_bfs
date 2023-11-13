@@ -1,9 +1,7 @@
 #include <iostream>
-#include <chrono>
 #include "problem.h"
 #include "utils.h"
 #include "bfs/bfs.h"
-
 
 int main() {
     // Create random problem

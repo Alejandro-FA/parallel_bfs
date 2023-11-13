@@ -5,16 +5,10 @@ The end goal is to port the results to [BFGP++](https://github.com/jsego/bfgp-pp
 
 ## Usage
 
-To compile the program, simply execute the following command:
+To compile and run the program, simply execute the following command:
 
 ```bash
-./scripts/compile.sh
-```
-
-Then you can run it as follows:
-
-```bash
-./main.out
+./scripts/run.sh
 ```
 
 The program itself will display benchmarks about the execution time. Alternatively, **you can also compile with CMake**
@@ -27,8 +21,7 @@ memory errors ([AddressSanitizer](https://github.com/google/sanitizers/wiki/Addr
 program as follows:
 
 ```bash
-./scripts/compile.sh --asan
-./main.out
+./scripts/run.sh --asan
 ```
 
 There are equivalent options for the [ThreadSanitizer](https://github.com/google/sanitizers/wiki/ThreadSanitizerCppManual)
@@ -42,7 +35,6 @@ code with undefined behaviour.
 > sudo dnf install libtsan libasan libubsan
 > ```
 > I guess that in a Debian-based distribution you can use `apt` to install these libraries in a similar way (untested).
-
 
 For more information you can check the [Google documentation](https://github.com/google/sanitizers/wiki),
 the [`clang` documentation](https://clang.llvm.org/docs/UsersManual.html#controlling-code-generation) or the
