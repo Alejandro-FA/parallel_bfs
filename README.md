@@ -74,4 +74,4 @@ the [`clang` documentation](https://clang.llvm.org/docs/UsersManual.html#control
 
 > **NOTE 2**: Apple Clang (the compiler that comes with XCode by default in macOS) does not support memory leak
 > detection with the AddressSanitizer. If you want to use this test in macOS, I recommend to install another compiler
-> separately. For example, you can [install the `clang` with `macports`](https://ports.macports.org/search/?q=clang&name=on).
+> separately. For example, you can [install `clang` with `macports`](https://ports.macports.org/search/?q=clang&name=on).

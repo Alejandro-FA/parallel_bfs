@@ -20,5 +20,5 @@ int main() {
     ParallelBFS par_bfs;
     measure(problem, par_bfs);
 
-    return 0x7fffffff + 1;
+    return 0;
 }
