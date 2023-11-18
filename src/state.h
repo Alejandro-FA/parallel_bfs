@@ -5,6 +5,8 @@
 #ifndef PARALLEL_BFS_STATE_H
 #define PARALLEL_BFS_STATE_H
 
+#include <cstdint>
+
 typedef uint32_t state_space_size_t;
 
 class State {

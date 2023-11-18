@@ -11,7 +11,7 @@
 #include <sstream>
 #include "node.h"
 #include "state.h"
-#include "bfs/base_bfs.h"
+#include "bfs/bfs.h"
 
 void print_solution(const Node* node) {
     // Check if there is a solution first

@@ -4,19 +4,20 @@ project(parallel_bfs)
 set(CMAKE_CXX_STANDARD 23)
 
 add_executable(parallel_bfs src/main.cpp
-        src/problem.h
-        src/problem_generator.h
+        src/utils.h
+        src/state.h
         src/node.h
         src/bfs/bfs.h
-        src/state.h
-        src/utils.h
         src/bfs/sync_bfs.h
         src/bfs/parallel_bfs.h
-        src/bfs/base_bfs.h
+        src/problem/problem.h
+        src/problem/random_graph.h
+        src/problem_factory/problem_factory.h
+        src/problem_factory/random_graph_factory.h
 )
 
 set(is_clang "$<CXX_COMPILER_ID:Clang,AppleClang>")
-add_compile_options("-Wall -Wextra $<${is_clang}:-Wthread-safety>")
+add_compile_options("-Wall -Wextra -Wpedantic $<${is_clang}:-Wthread-safety>")
 
 ####################### Testing #########################
 enable_testing()

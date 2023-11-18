@@ -9,9 +9,9 @@
 #include <unordered_set>
 #include <algorithm>
 #include "../node.h"
-#include "../problem.h"
+#include "../problem/problem.h"
 #include "../state.h"
-#include "base_bfs.h"
+#include "bfs.h"
 
 class ParallelBFS final : public BFS {
 public:
