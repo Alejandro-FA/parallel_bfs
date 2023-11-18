@@ -7,6 +7,7 @@
 
 #include <unordered_map>
 #include <unordered_set>
+#include <optional>
 #include "problem_generator.h"
 #include "state.h"
 #include "node.h"
