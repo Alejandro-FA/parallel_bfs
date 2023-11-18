@@ -23,8 +23,8 @@ Then change directory to this folder.
     cd cmake-build
     ```
 2. Then use `cmake` to configure the project. At this point you can use certain flags to specify how do you want the
-project to be built, like the *compiler* to use or the *build type*. To use the default values, simply execute this
-(the two dots `..` are important):
+project to be built, like the *compiler* to use or the *build type*. To use the default values and compile in `Release`
+mode, simply execute the following command (the two dots `..` are important):
 
     ```bash
     cmake .. -DCMAKE_BUILD_TYPE=Release
@@ -35,7 +35,7 @@ project to be built, like the *compiler* to use or the *build type*. To use the 
    > ```bash
    > cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=/opt/local/bin/clang++-mp-17
    > ```
-After this one-step, everytime that you want to recompile the project you simply need to execute this:
+After this one-time step, everytime that you want to recompile the project you simply need to execute this:
 
 ```bash
 cmake --build .
@@ -72,6 +72,7 @@ the [`clang` documentation](https://clang.llvm.org/docs/UsersManual.html#control
 > ```
 > I guess that in a Debian-based distribution you can use `apt` to install these libraries in a similar way (untested).
 
-> **NOTE 2**: Apple Clang (the compiler that comes with XCode by default in macOS) does not support memory leak
-> detection with the AddressSanitizer. If you want to use this test in macOS, I recommend to install another compiler
+> **NOTE 2**: Apple Clang (the compiler that comes with XCode by default in macOS) does not currently support memory leak
+> detection with the `AddressSanitizer`. If you want to use the first test in macOS, I recommend to install another compiler
 > separately. For example, you can [install `clang` with `macports`](https://ports.macports.org/search/?q=clang&name=on).
+> You can also disable leak detection by changing `ASAN_OPTIONS=detect_leaks` to `0`.
