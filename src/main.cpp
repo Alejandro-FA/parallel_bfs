@@ -15,7 +15,7 @@ int main() {
     std::unique_ptr<Problem> problem{factory.make_problem()};
     auto stop = std::chrono::high_resolution_clock::now();
     std::cout << "[INFO] RandomGraph created. " << seconds_elapsed(start, stop) << "\n";
-    std::cout << *problem;
+    std::cout << "\n" << *problem << "\n";
 
     // Solve created problem with method 1
     SyncBFS sync_bfs;

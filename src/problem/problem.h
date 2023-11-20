@@ -42,7 +42,7 @@ protected:
 };
 
 std::ostream &operator<<(std::ostream &os, const Problem &p) {
-    return os << "\nInitial state: " << *p.initial() << "\nGoal state: " << *p.goal() << "\n";
+    return os << "Initial state: " << *p.initial() << "\nGoal state: " << *p.goal();
 }
 
 #endif //PARALLEL_BFS_PROBLEM_H
