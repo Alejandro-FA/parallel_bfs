@@ -1,5 +1,6 @@
 #include <iostream>
 #include "utils.h"
+#include "problem/problem.h"
 #include "problem_factory/random_graph_factory.h"
 #include "bfs/sync_bfs.h"
 #include "bfs/parallel_bfs.h"
@@ -14,7 +15,7 @@ int main() {
     std::unique_ptr<Problem> problem{factory.make_problem()};
     auto stop = std::chrono::high_resolution_clock::now();
     std::cout << "[INFO] RandomGraph created. " << seconds_elapsed(start, stop) << "\n";
-    problem->print();
+    std::cout << *problem;
 
     // Solve created problem with method 1
     SyncBFS sync_bfs;
