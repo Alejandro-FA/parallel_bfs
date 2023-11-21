@@ -5,6 +5,7 @@
 #ifndef PARALLEL_BFS_UTILS_H
 #define PARALLEL_BFS_UTILS_H
 
+#include <chrono>
 #include <stack>
 #include <iomanip>
 #include <sstream>
