@@ -63,12 +63,21 @@ void measure(const Problem &problem, const BFS &bfs) {
     print_solution(node.get());
 }
 
+/// Declaration of the concept "Hashable", which is satisfied by any type 'T'
+/// such that for values 'a' of type 'T', the expression std::hash<T>{}(a)
+/// compiles and its result is convertible to std::size_t
+/// Copied from https://en.cppreference.com/w/cpp/language/constraints
+template<typename T>
+concept Hashable = requires(T a) {
+    { std::hash<T>{}(a) } -> std::convertible_to<std::size_t>;
+};
+
 /// When hashing a shared_ptr with SharedPtrHash, the hash does not depend on the address
 /// of the pointer, but on the underlying instance. Only works for pointers of objects
 /// that are hashable.
 struct SharedPtrHash {
-    template <typename T>
-    std::size_t operator()(const std::shared_ptr<T>& ptr) const {
+    template<Hashable T>
+    std::size_t operator()(const std::shared_ptr<T> &ptr) const {
         if (ptr == nullptr) return 0; // ToDo: Search if this should be handled differently
         return std::hash<T>()(*ptr); // Use the hash of the underlying object
     }
@@ -78,18 +87,18 @@ struct SharedPtrHash {
 /// address of the pointer, but on the underlying instance. Only works for pointers of
 /// objects that are comparable.
 struct SharedPtrEqual {
-    template <typename T>
-    std::size_t operator()(const std::shared_ptr<T>& lhs, const std::shared_ptr<T>& rhs) const {
+    template<Hashable T>
+    std::size_t operator()(const std::shared_ptr<T> &lhs, const std::shared_ptr<T> &rhs) const {
         if (lhs == nullptr && rhs == nullptr) return true;
         if (lhs == nullptr || rhs == nullptr) return false;
         return *lhs == *rhs;
     }
 };
 
-template <typename T>
+template<Hashable T>
 using unordered_set_ptr = std::unordered_set<std::shared_ptr<T>, SharedPtrHash, SharedPtrEqual>;
 
-template <typename K, typename V>
+template<Hashable K, typename V>
 using unordered_map_ptr = std::unordered_map<std::shared_ptr<K>, V, SharedPtrHash, SharedPtrEqual>;
 
 #endif //PARALLEL_BFS_UTILS_H

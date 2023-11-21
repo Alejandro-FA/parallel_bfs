@@ -24,11 +24,19 @@ protected:
 std::ostream &operator<<(std::ostream &os, const State &s) { return s.print(os); }
 
 bool operator==(const State &lhs, const State &rhs) {
-    return lhs.is_equal(rhs);
+    return typeid(lhs) == typeid(rhs) && lhs.is_equal(rhs);
 }
 
-template<> struct std::hash<State> {
+bool operator!=(const State &lhs, const State &rhs) { return !(lhs == rhs); }
+
+template<>
+struct std::hash<State> {
     std::size_t operator()(const State &s) const noexcept { return s.hash(); }
+};
+
+template<std::derived_from<State> T>
+struct std::hash<T> {
+    std::size_t operator()(const T &s) const noexcept { return std::hash<State>{}(s); }
 };
 
 #endif //PARALLEL_BFS_STATE_H
