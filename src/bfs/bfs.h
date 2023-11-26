@@ -6,7 +6,6 @@
 #define PARALLEL_BFS_BFS_H
 
 #include "../problem/problem.h"
-#include "../node.h"
 
 class BFS {
 public:

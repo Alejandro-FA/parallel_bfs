@@ -6,27 +6,27 @@
 #define PARALLEL_BFS_PARALLEL_BFS_H
 
 #include <queue>
-#include <unordered_set>
-#include <algorithm>
-#include "../node.h"
-#include "../problem/problem.h"
-#include "../state.h"
-#include "bfs.h"
 
 class ParallelBFS final : public BFS {
 public:
     [[nodiscard]] std::shared_ptr<Node> operator()(const Problem &problem) const override {
         std::shared_ptr<Node> init_node = std::make_shared<Node>(problem.initial());
         std::queue<std::shared_ptr<Node>> frontier({init_node});
-        std::unordered_set<State> reached({init_node->state()}); // We use a set instead of a map because all actions have the same cost.
+        unordered_set_ptr<State> reached({init_node->state()}); // We use a set instead of a map because all actions have the same cost.
 
         while (!frontier.empty()) {
             auto node = frontier.front();
             frontier.pop();
-            if (problem.is_goal(node->state())) return node; // We do not use early-goal optimization to mimic general Best First Search
+            if (problem.is_goal(*node->state())) return node; // We do not use early-goal optimization to mimic general Best First Search
             auto children = problem.expand(node);
-            std::for_each(children.cbegin(), children.cend(),
-                          [&frontier, &reached](auto node) { _reach_node(node, frontier, reached); });
+            for (const auto &child : children) {
+                std::shared_ptr<State> s = child->state();
+                if (problem.is_goal(*s)) return child;
+                if (!reached.contains(s)) {
+                    reached.insert(s);
+                    frontier.push(child);
+                }
+            }
         }
         return nullptr;
     }
@@ -35,14 +35,6 @@ public:
 
 private:
     inline static const std::string _name{"Parallel BFS"};
-
-    void static _reach_node(const std::shared_ptr<Node> &node, std::queue<std::shared_ptr<Node>> &frontier, std::unordered_set<State> &reached) {
-        State s = node->state();
-        if (!reached.contains(s)) {
-            reached.insert(s);
-            frontier.push(node);
-        }
-    }
 };
 
 #endif //PARALLEL_BFS_PARALLEL_BFS_H
