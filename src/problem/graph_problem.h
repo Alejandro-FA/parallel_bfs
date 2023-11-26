@@ -13,7 +13,7 @@ typedef unordered_map_ptr<State, unordered_set_ptr<State>> graph_t;
 class GraphProblem : public Problem {
 public:
     GraphProblem(std::shared_ptr<State> initial, std::shared_ptr<State> goal, graph_t &&graph)
-            : Problem{std::move(initial), std::move(goal)}, _graph{std::move(graph)} {}
+            : Problem{std::move(initial), std::move(goal)}, _graph{graph} {}
 
     [[nodiscard]] std::vector<std::shared_ptr<State>> next_states_from(const std::shared_ptr<State> &state) const override {
         auto states = _graph.at(state);
@@ -21,7 +21,7 @@ public:
     }
 
 private:
-    graph_t _graph;
+    const graph_t _graph;
 };
 
 #endif //PARALLEL_BFS_GRAPH_PROBLEM_H

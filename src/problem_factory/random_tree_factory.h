@@ -34,19 +34,18 @@ public:
 
         // Create an empty graph
         graph_t g;
-        auto max_states = static_cast<std::size_t>(pow(_max_actions, _max_depth));
-        g.reserve(max_states);
+        auto max_size = static_cast<std::size_t>(pow(_max_actions, _max_depth));
+        g.reserve(max_size);
 
         // Fill the graph using Breadth-First-Search
         std::queue<std::shared_ptr<TreeState>> frontier({initial});
+        g.insert({initial, unordered_set_ptr<State>()});
 
         while (!frontier.empty()) {
             auto state = frontier.front();
             frontier.pop();
-            // With Breadth-First-Search, once we reach max_depth all remaining states also have max_depth
-            if (state->depth() == _max_depth) break;
-            auto random_actions{get_rand_actions()};
-            for (auto action : random_actions) {
+            if (state->depth() == _max_depth) break; // Stop once we reach max_depth
+            for (auto action : get_rand_actions()) {
                 std::shared_ptr<TreeState> child = std::make_shared<TreeState>(*state, action);
                 g.insert({child, unordered_set_ptr<State>()});
                 frontier.push(child);
