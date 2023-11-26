@@ -15,6 +15,13 @@ class TreeState final : public State {
 public:
     TreeState(std::initializer_list<value_t> init_values = {}) : _vec{init_values} {}
 
+    explicit TreeState(std::vector<value_t> init_values) : _vec{std::move(init_values)} {}
+
+    explicit TreeState(const TreeState &prev_state, value_t new_element) :
+            _vec{add_element(prev_state._vec, new_element)} {}
+
+    [[nodiscard]] std::size_t depth() const { return _vec.size(); }
+
 protected:
     const std::vector<value_t> _vec;
 
@@ -30,21 +37,26 @@ protected:
     }
 
     [[nodiscard]] bool is_equal(const State &rhs) const override {
-        if (const auto* p = dynamic_cast<const TreeState*>(&rhs)) return _vec == p->_vec;
+        if (const auto *p = dynamic_cast<const TreeState *>(&rhs)) return _vec == p->_vec;
         return false;
     }
 
     /// Algorithm taken from https://stackoverflow.com/a/72073933
-    /// In theory it is not needed for this project, but it has been added for completeness.
     [[nodiscard]] std::size_t hash() const override {
         std::size_t seed = _vec.size();
-        for(uint32_t x : _vec) { // Perhaps it does not work for other types
+        for (uint32_t x: _vec) { // Perhaps it does not work for other types
             x = ((x >> 16) ^ x) * 0x45d9f3b;
             x = ((x >> 16) ^ x) * 0x45d9f3b;
             x = (x >> 16) ^ x;
             seed ^= x + 0x9e3779b9 + (seed << 6) + (seed >> 2);
         }
         return seed;
+    }
+
+    static std::vector<value_t> add_element(const std::vector<value_t> &old_vector, value_t new_element) {
+        std::vector<value_t> result{old_vector.begin(), old_vector.end()};
+        result.push_back(new_element);
+        return result;
     }
 };
 

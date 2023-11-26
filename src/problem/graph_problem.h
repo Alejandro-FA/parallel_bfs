@@ -5,8 +5,11 @@
 #ifndef PARALLEL_BFS_GRAPH_PROBLEM_H
 #define PARALLEL_BFS_GRAPH_PROBLEM_H
 
+#include "problem.h"
+
 typedef unordered_map_ptr<State, unordered_set_ptr<State>> graph_t;
 
+/// Class to store Problems that can be represented as graphs.
 class GraphProblem : public Problem {
 public:
     GraphProblem(std::shared_ptr<State> initial, std::shared_ptr<State> goal, graph_t &&graph)

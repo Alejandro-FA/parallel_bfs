@@ -1,13 +1,15 @@
 #include <iostream>
 #include "utils.h"
 #include "problem/problem.h"
+#include "problem_factory/random_tree_factory.h"
 #include "problem_factory/random_graph_factory.h"
 #include "bfs/sync_bfs.h"
 #include "bfs/parallel_bfs.h"
 
 int main() {
     // Choose which type of problem to create
-    RandomGraphFactory factory{1'000'000, 4, 34};
+//    RandomGraphFactory factory{1'000'000, 4, 34};
+    RandomTreeFactory factory{3, 3, 2.0, 34};
 
     // Create random problem
     std::cout << "[INFO] Creating random problem..." << std::endl;

@@ -17,6 +17,7 @@ add_executable(parallel_bfs src/main.cpp
         src/bfs/bfs.h
         src/bfs/sync_bfs.h
         src/bfs/parallel_bfs.h
+        src/problem_factory/random_tree_factory.h
 )
 
 set(is_clang "$<CXX_COMPILER_ID:Clang,AppleClang>")

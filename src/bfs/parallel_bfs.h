@@ -17,7 +17,6 @@ public:
         while (!frontier.empty()) {
             auto node = frontier.front();
             frontier.pop();
-            if (problem.is_goal(*node->state())) return node; // We do not use early-goal optimization to mimic general Best First Search
             auto children = problem.expand(node);
             for (const auto &child : children) {
                 std::shared_ptr<State> s = child->state();

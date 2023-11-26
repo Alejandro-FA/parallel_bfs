@@ -68,7 +68,7 @@ void measure(const Problem &problem, const BFS &bfs) {
 /// compiles and its result is convertible to std::size_t
 /// Copied from https://en.cppreference.com/w/cpp/language/constraints
 template<typename T>
-concept Hashable = requires(T a) {
+concept Hashable = std::equality_comparable<T> && requires(const T &a) {
     { std::hash<T>{}(a) } -> std::convertible_to<std::size_t>;
 };
 
