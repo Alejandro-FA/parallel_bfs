@@ -7,33 +7,29 @@
 
 #include <queue>
 
-class ParallelBFS final : public BFS {
+class ParallelBFS {
 public:
-    [[nodiscard]] std::shared_ptr<Node> operator()(const Problem &problem) const override {
-        std::shared_ptr<Node> init_node = std::make_shared<Node>(problem.initial());
-        std::queue<std::shared_ptr<Node>> frontier({init_node});
-        unordered_set_ptr<State> reached({init_node->state()}); // We use a set instead of a map because all actions have the same cost.
+    template<typename T>
+    [[nodiscard]] std::shared_ptr<Node<T>> operator()(const Problem<T> &problem) const {
+        auto init_node = std::make_shared<Node<T>>(problem.initial());
+        std::queue<std::shared_ptr<Node<T>>> frontier({init_node});
+        std::unordered_set<T> reached({init_node->state()}); // We use a set instead of a map because all actions have the same cost.
 
         while (!frontier.empty()) {
             auto node = frontier.front();
             frontier.pop();
             auto children = problem.expand(node);
             for (const auto &child : children) {
-                std::shared_ptr<State> s = child->state();
-                if (problem.is_goal(*s)) return child;
-                if (!reached.contains(s)) {
-                    reached.insert(s);
+                T child_state = child->state();
+                if (problem.is_goal(child_state)) return child;
+                if (!reached.contains(child_state)) {
+                    reached.insert(child_state);
                     frontier.push(child);
                 }
             }
         }
         return nullptr;
     }
-
-    [[nodiscard]] std::string get_name() const override { return _name; }
-
-private:
-    inline static const std::string _name{"Parallel BFS"};
 };
 
 #endif //PARALLEL_BFS_PARALLEL_BFS_H

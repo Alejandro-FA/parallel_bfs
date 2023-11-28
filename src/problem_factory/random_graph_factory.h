@@ -6,46 +6,44 @@
 #define PARALLEL_BFS_RANDOM_GRAPH_FACTORY_H
 
 #include <optional>
+#include <unordered_set>
 #include "random_problem_factory.h"
 #include "../problem/graph_problem.h"
-#include "../state/graph_state.h"
 
-class RandomGraphFactory : public RandomProblemFactory {
+using state_t = uint32_t;
+
+class RandomGraphFactory : public RandomProblemFactory<state_t> {
 public:
-    explicit RandomGraphFactory(value_t num_states, value_t num_actions, std::optional<unsigned int> seed = std::nullopt)
+    explicit RandomGraphFactory(state_t num_states, state_t num_actions, std::optional<unsigned int> seed = std::nullopt)
             : RandomProblemFactory(seed), _num_states{num_states}, _num_actions{num_actions}, _udist(0, num_states - 1) {}
 
     /// Builds an Adjacency List representation of a graph. Might not return a connected graph.
-    [[nodiscard]] std::unique_ptr<Problem> make_problem() override {
-        auto initial = std::make_shared<GraphState>(_udist(_prng_engine));
-        auto goal = std::make_shared<GraphState>(_udist(_prng_engine));
+    [[nodiscard]] std::unique_ptr<Problem<state_t>> make_problem() override {
+        state_t initial = _udist(_prng_engine);
+        state_t goal = _udist(_prng_engine);
 
         // Create empty graph and add each possible state as a key of the map.
-        std::vector<std::shared_ptr<State>> all_states;
-        graph_t g;
-        all_states.reserve(_num_states);
+        GraphProblem<state_t>::graph_t g;
         g.reserve(_num_states);
-        for (value_t i = 0; i < _num_states; ++i) {
-            auto s= std::make_shared<GraphState>(i);
-            all_states.push_back(s);
-            g.insert({s, unordered_set_ptr<State>()});
+        for (state_t i = 0; i < _num_states; ++i) {
+            g.insert({i, std::unordered_set<state_t>()});
         }
 
         // For each state, create up to [_max_actions] children states (graph edges)
-        for (value_t i = 0; i < _num_states; ++i) {
-            for (value_t j = 0; j < _num_actions; ++j) {
-                value_t rand_node{_udist(_prng_engine)};
-                g[all_states[i]].insert(all_states[rand_node]);
+        for (state_t i = 0; i < _num_states; ++i) {
+            for (state_t j = 0; j < _num_actions; ++j) {
+                state_t rand_node{_udist(_prng_engine)};
+                g[i].insert(rand_node);
             }
         }
 
-        return std::make_unique<GraphProblem>(initial, goal, std::move(g));
+        return std::make_unique<GraphProblem<state_t>>(initial, goal, std::move(g));
     }
 
 private:
-    const value_t _num_states;
-    const value_t _num_actions;
-    std::uniform_int_distribution<value_t> _udist;
+    const state_t _num_states;
+    const state_t _num_actions;
+    std::uniform_int_distribution<state_t> _udist;
 };
 
 #endif //PARALLEL_BFS_RANDOM_GRAPH_FACTORY_H

@@ -7,65 +7,66 @@
 
 #include <optional>
 #include <queue>
+#include <unordered_set>
 #include <algorithm>
 #include "random_problem_factory.h"
-#include "../problem/graph_problem.h"
 #include "../state/tree_state.h"
+#include "../problem/graph_problem.h"
 
-class RandomTreeFactory : public RandomProblemFactory {
+class RandomTreeFactory : public RandomProblemFactory<TreeState> {
 public:
     /// Creates a random tree with max_depth and a maximum branching factor of max_actions. The average branching
     /// factor is specified by avg_actions, which should be a value between 0 and max_actions
-    explicit RandomTreeFactory(value_t max_depth, value_t max_actions, double avg_actions, std::optional<unsigned int> seed = std::nullopt)
+    explicit RandomTreeFactory(state_t max_depth, state_t max_actions, double avg_actions, std::optional<unsigned int> seed = std::nullopt)
             : RandomProblemFactory(seed), _max_depth{max_depth}, _max_actions{max_actions}, _possible_actions(_max_actions),
             _bino_dist{max_actions, avg_actions / max_actions}, _udist{0, max_actions - 1} {
         std::iota(_possible_actions.begin(), _possible_actions.end(), 0);
     }
 
     /// Builds an Adjacency List representation of a tree.
-    [[nodiscard]] std::unique_ptr<Problem> make_problem() override {
+    [[nodiscard]] std::unique_ptr<Problem<TreeState>> make_problem() override {
         // Create initial state
-        std::shared_ptr<TreeState> initial = std::make_shared<TreeState>();
+        TreeState initial{};
 
         // Create goal state
-        std::vector<value_t> goal_vector(_max_actions);
+        std::vector<state_t> goal_vector(_max_actions);
         for (auto &elem : goal_vector) elem = _udist(_prng_engine);
-        std::shared_ptr<TreeState> goal = std::make_shared<TreeState>(std::move(goal_vector));
+        TreeState goal{std::move(goal_vector)};
 
         // Create an empty graph
-        graph_t g;
+        GraphProblem<TreeState>::graph_t g;
         auto max_size = static_cast<std::size_t>(pow(_max_actions, _max_depth));
         g.reserve(max_size);
 
         // Fill the graph using Breadth-First-Search
-        std::queue<std::shared_ptr<TreeState>> frontier({initial});
-        g.insert({initial, unordered_set_ptr<State>()});
+        std::queue<TreeState> frontier({TreeState{}});
+        g.insert({TreeState{}, std::unordered_set<TreeState>()});
 
         while (!frontier.empty()) {
-            auto state = frontier.front();
+            TreeState state{frontier.front()};
             frontier.pop();
-            if (state->depth() == _max_depth) break; // Stop once we reach max_depth
+            if (state.depth() == _max_depth) break; // Stop once we reach max_depth
             for (auto action : get_rand_actions()) {
-                std::shared_ptr<TreeState> child = std::make_shared<TreeState>(*state, action);
-                g.insert({child, unordered_set_ptr<State>()});
+                TreeState child{state, action};
+                g.insert({child, std::unordered_set<TreeState>()});
                 frontier.push(child);
                 g[state].insert(child);
             }
         }
 
-        return std::make_unique<GraphProblem>(initial, goal, std::move(g));
+        return std::make_unique<GraphProblem<TreeState>>(std::move(initial), std::move(goal), std::move(g));
     }
 
 private:
-    const value_t _max_depth;
-    const value_t _max_actions;
-    std::uniform_int_distribution<value_t> _udist;
-    std::binomial_distribution<value_t> _bino_dist;
-    std::vector<value_t> _possible_actions;
+    const state_t _max_depth;
+    const state_t _max_actions;
+    std::uniform_int_distribution<state_t> _udist;
+    std::binomial_distribution<state_t> _bino_dist;
+    std::vector<state_t> _possible_actions;
 
-    [[nodiscard]] std::vector<value_t> get_rand_actions() {
+    [[nodiscard]] std::vector<state_t> get_rand_actions() {
         // Decide how many elements to generate
-        value_t n{_bino_dist(_prng_engine)};
+        state_t n{_bino_dist(_prng_engine)};
 
         // Return n distinct random actions
         std::ranges::shuffle(_possible_actions, _prng_engine);

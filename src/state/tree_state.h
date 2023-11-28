@@ -7,44 +7,50 @@
 
 #include <iostream>
 #include <vector>
-#include "state.h"
 
-typedef uint32_t value_t;
+using state_t = uint32_t;
 
-class TreeState final : public State {
-public:
-    TreeState(std::initializer_list<value_t> init_values = {}) : _vec{init_values} {}
+struct TreeState {
+    std::vector<state_t> vec;
 
-    explicit TreeState(std::vector<value_t> init_values) : _vec{std::move(init_values)} {}
+    TreeState(std::initializer_list<state_t> init_values = {}) : vec{init_values} {}
 
-    explicit TreeState(const TreeState &prev_state, value_t new_element) :
-            _vec{add_element(prev_state._vec, new_element)} {}
+    explicit TreeState(std::vector<state_t> &&init_values) : vec{std::move(init_values)} {}
 
-    [[nodiscard]] std::size_t depth() const { return _vec.size(); }
+    explicit TreeState(const TreeState &prev_state, state_t new_element) :
+            vec{add_element(prev_state.vec, new_element)} {}
 
-protected:
-    const std::vector<value_t> _vec;
+    [[nodiscard]] std::size_t depth() const { return vec.size(); }
 
-    [[nodiscard]] std::ostream &print(std::ostream &os) const override {
-        os << "[";
-        bool first = true;
-        for (const auto &action: _vec) {
-            if (!first) os << ", ";
-            else first = false;
-            os << action;
-        }
-        return os << "]";
+    static std::vector<state_t> add_element(const std::vector<state_t> &old_vector, state_t new_element) {
+        std::vector<state_t> result{old_vector.begin(), old_vector.end()};
+        result.push_back(new_element);
+        return result;
     }
+};
 
-    [[nodiscard]] bool is_equal(const State &rhs) const override {
-        if (const auto *p = dynamic_cast<const TreeState *>(&rhs)) return _vec == p->_vec;
-        return false;
+std::ostream &operator<<(std::ostream &os, const TreeState &s) {
+    os << "[";
+    bool first = true;
+    for (const auto &action: s.vec) {
+        if (!first) os << ", ";
+        else first = false;
+        os << action;
     }
+    return os << "]";
+}
 
-    /// Algorithm taken from https://stackoverflow.com/a/72073933
-    [[nodiscard]] std::size_t hash() const override {
-        std::size_t seed = _vec.size();
-        for (uint32_t x: _vec) { // Perhaps it does not work for other types
+bool operator==(const TreeState &lhs, const TreeState &rhs) {
+    return lhs.vec == rhs.vec;
+}
+
+bool operator!=(const TreeState &lhs, const TreeState &rhs) { return !(lhs == rhs); }
+
+template<>
+struct std::hash<TreeState> {
+    std::size_t operator()(const TreeState &s) const noexcept {
+        std::size_t seed = s.vec.size();
+        for (uint32_t x: s.vec) { // Perhaps it does not work for other types
             x = ((x >> 16) ^ x) * 0x45d9f3b;
             x = ((x >> 16) ^ x) * 0x45d9f3b;
             x = (x >> 16) ^ x;
@@ -52,12 +58,7 @@ protected:
         }
         return seed;
     }
-
-    static std::vector<value_t> add_element(const std::vector<value_t> &old_vector, value_t new_element) {
-        std::vector<value_t> result{old_vector.begin(), old_vector.end()};
-        result.push_back(new_element);
-        return result;
-    }
 };
+
 
 #endif //PARALLEL_BFS_TREE_STATE_H

@@ -8,24 +8,24 @@
 
 int main() {
     // Choose which type of problem to create
-    // RandomGraphFactory factory{1'000'000, 4, 34};
-    RandomTreeFactory factory{3, 3, 2.0};
+    RandomGraphFactory factory{1'000'000, 4, 34};
+    // RandomTreeFactory factory{8, 6, 4.0};
 
     // Create random problem
     std::cout << "[INFO] Creating random problem..." << std::endl;
     auto start = std::chrono::high_resolution_clock::now();
-    std::unique_ptr<Problem> problem{factory.make_problem()};
+    auto problem{factory.make_problem()};
     auto stop = std::chrono::high_resolution_clock::now();
     std::cout << "[INFO] Problem created. " << seconds_elapsed(start, stop) << "\n";
     std::cout << "\n" << *problem << "\n";
 
     // Solve created problem with method 1
     SyncBFS sync_bfs;
-    measure(*problem, sync_bfs);
+    measure(*problem, sync_bfs, "Synchronous BFS");
 
     // Solve created problem with method 2
     ParallelBFS par_bfs;
-    measure(*problem, par_bfs);
+    measure(*problem, par_bfs, "ParallelBFS");
 
     return 0;
 }

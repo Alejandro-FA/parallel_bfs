@@ -8,20 +8,21 @@
 #include <memory>
 #include "state/state.h"
 
+template<Searchable State>
 class Node {
 public:
-    explicit Node(std::shared_ptr<State> state, std::shared_ptr<Node> parent = nullptr, int path_cost = 0)
+    explicit Node(State &&state, std::shared_ptr<Node<State>> parent = nullptr, int path_cost = 0)
             : _state{std::move(state)}, _parent{std::move(parent)}, _path_cost{path_cost} {}
 
-    [[nodiscard]] std::shared_ptr<State> state() const { return _state; }
+    [[nodiscard]] State state() const { return _state; }
 
-    [[nodiscard]] std::shared_ptr<Node> parent() const { return _parent; }
+    [[nodiscard]] std::shared_ptr<Node<State>> parent() const { return _parent; }
 
     [[nodiscard]] int path_cost() const { return _path_cost; }
 
 private:
-    const std::shared_ptr<State> _state;
-    const std::shared_ptr<Node> _parent;
+    const State _state;
+    const std::shared_ptr<Node<State>> _parent;
     const int _path_cost;
 };
 

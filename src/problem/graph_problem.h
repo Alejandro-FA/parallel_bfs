@@ -5,21 +5,28 @@
 #ifndef PARALLEL_BFS_GRAPH_PROBLEM_H
 #define PARALLEL_BFS_GRAPH_PROBLEM_H
 
+#include <unordered_map>
+#include <unordered_set>
 #include "problem.h"
 
-typedef unordered_map_ptr<State, unordered_set_ptr<State>> graph_t;
+template<typename T>
+concept Hashable = requires(const T &a) {
+    { std::hash<T>{}(a) } -> std::convertible_to<std::size_t>;
+};
 
 /// Class to store Problems that can be represented as graphs.
-class GraphProblem : public Problem {
+template<Hashable T>
+class GraphProblem : public Problem<T> {
 public:
-    GraphProblem(std::shared_ptr<State> initial, std::shared_ptr<State> goal, graph_t &&graph)
-            : Problem{std::move(initial), std::move(goal)}, _graph{graph} {}
+    using graph_t = std::unordered_map<T, std::unordered_set<T>>;
 
-    [[nodiscard]] std::vector<std::shared_ptr<State>> next_states_from(const std::shared_ptr<State> &state) const override {
+    explicit GraphProblem(T initial, T goal, graph_t &&graph)
+            : Problem<T>{std::move(initial), std::move(goal)}, _graph{std::move(graph)} {}
+
+    [[nodiscard]] std::vector<T> next_states_from(const T &state) const override {
         auto states = _graph.at(state);
         return {states.cbegin(), states.cend()};
     }
-
 private:
     const graph_t _graph;
 };

@@ -8,7 +8,8 @@
 #include <random>
 #include "problem_factory.h"
 
-class RandomProblemFactory : public ProblemFactory {
+template<typename T>
+class RandomProblemFactory : public ProblemFactory<T> {
 protected:
     explicit RandomProblemFactory(std::optional<unsigned int> seed) : _prng_engine{get_prng_engine(seed)} {}
 
