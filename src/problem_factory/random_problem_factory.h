@@ -6,6 +6,7 @@
 #define PARALLEL_BFS_RANDOM_PROBLEM_FACTORY_H
 
 #include <random>
+#include <optional>
 #include "problem_factory.h"
 
 template<typename T>

@@ -1,6 +1,5 @@
 #include <iostream>
 #include "utils.h"
-#include "problem/problem.h"
 #include "problem_factory/random_tree_factory.h"
 #include "problem_factory/random_graph_factory.h"
 #include "bfs/sync_bfs.h"
@@ -8,8 +7,8 @@
 
 int main() {
     // Choose which type of problem to create
-    RandomGraphFactory factory{1'000'000, 4, 34};
-    // RandomTreeFactory factory{8, 6, 4.0};
+    // RandomGraphFactory factory{1'000'000, 4, 34};
+    RandomTreeFactory factory{8, 6, 4.0, 48};
 
     // Create random problem
     std::cout << "[INFO] Creating random problem..." << std::endl;

@@ -5,8 +5,6 @@
 #ifndef PARALLEL_BFS_RANDOM_GRAPH_FACTORY_H
 #define PARALLEL_BFS_RANDOM_GRAPH_FACTORY_H
 
-#include <optional>
-#include <unordered_set>
 #include "random_problem_factory.h"
 #include "../problem/graph_problem.h"
 

@@ -9,11 +9,8 @@
 #include <stack>
 #include <iomanip>
 #include <sstream>
-#include <unordered_set>
-#include <unordered_map>
 #include "problem/problem.h"
 #include "node.h"
-#include "state/state.h"
 
 template<Printable T>
 void print_solution(const Node<T> *node) {

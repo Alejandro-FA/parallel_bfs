@@ -5,13 +5,11 @@
 #ifndef PARALLEL_BFS_RANDOM_TREE_FACTORY_H
 #define PARALLEL_BFS_RANDOM_TREE_FACTORY_H
 
-#include <optional>
 #include <queue>
-#include <unordered_set>
 #include <algorithm>
 #include "random_problem_factory.h"
-#include "../state/tree_state.h"
 #include "../problem/graph_problem.h"
+#include "../state/tree_state.h"
 
 class RandomTreeFactory : public RandomProblemFactory<TreeState> {
 public:
