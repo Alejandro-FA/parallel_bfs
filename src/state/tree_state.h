@@ -51,6 +51,7 @@ bool operator!=(const TreeState &lhs, const TreeState &rhs) { return !(lhs == rh
 
 template<>
 struct std::hash<TreeState> {
+    /// Algorithm to compute the hash of a vector taken from https://stackoverflow.com/a/72073933
     std::size_t operator()(const TreeState &s) const noexcept {
         std::size_t seed = s._vec.size();
         for (uint32_t x: s._vec) { // Perhaps it does not work for other types

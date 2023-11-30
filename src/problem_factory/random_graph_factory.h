@@ -13,7 +13,8 @@ using state_t = uint32_t;
 class RandomGraphFactory : public RandomProblemFactory<state_t> {
 public:
     explicit RandomGraphFactory(state_t num_states, state_t num_actions, std::optional<unsigned int> seed = std::nullopt)
-            : RandomProblemFactory(seed), _num_states{num_states}, _num_actions{num_actions}, _udist(0, num_states - 1) {}
+            : RandomProblemFactory(seed), _num_states{num_states}, _num_actions{num_actions},
+              _udist(0, num_states - 1) {}
 
     /// Builds an Adjacency List representation of a graph. Might not return a connected graph.
     [[nodiscard]] std::unique_ptr<Problem<state_t>> make_problem() override {

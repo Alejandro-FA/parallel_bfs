@@ -19,7 +19,7 @@ public:
 
     [[nodiscard]] bool is_goal(const T &state) const { return state == goal(); }
 
-    // TODO: Change this to a coroutine when std::generator (C++23) is implemented in g++
+    // TODO: perhaps change this to a coroutine when std::generator (C++23) is implemented in g++
     [[nodiscard]] std::vector<std::shared_ptr<Node<T>>> expand(const std::shared_ptr<Node<T>> &node) const {
         auto next_states = next_states_from(node->state());
         std::vector<std::shared_ptr<Node<T>>> expanded_nodes;

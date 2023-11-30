@@ -5,18 +5,20 @@ set(CMAKE_CXX_STANDARD 23)
 
 add_executable(parallel_bfs src/main.cpp
         src/utils.h
+        src/bfs/sync_bfs.h
+        src/bfs/parallel_bfs.h
         src/node.h
         src/state/state.h
         src/state/tree_state.h
+        src/problem/problem.h
+        src/problem/graph_problem.h
+        src/problem/procedural_problem.h
         src/problem_factory/problem_factory.h
         src/problem_factory/random_problem_factory.h
         src/problem_factory/random_graph_factory.h
-        src/problem/problem.h
-        src/problem/graph_problem.h
-        src/bfs/sync_bfs.h
-        src/bfs/parallel_bfs.h
         src/problem_factory/random_tree_factory.h
-        src/problem/procedural_problem.h
+        src/problem_factory/procedural_tree_factory.h
+        src/problem_factory/state_generators/tree_state_generator.h
 )
 
 set(is_clang "$<CXX_COMPILER_ID:Clang,AppleClang>")

@@ -27,6 +27,7 @@ public:
         auto states = _graph.at(state);
         return {states.cbegin(), states.cend()};
     }
+
 private:
     const graph_t _graph;
 };
