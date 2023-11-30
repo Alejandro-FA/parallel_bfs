@@ -9,18 +9,16 @@
 #include <unordered_set>
 #include "problem.h"
 
-template<typename T>
-concept Hashable = requires(const T &a) {
-    { std::hash<T>{}(a) } -> std::convertible_to<std::size_t>;
-};
-
 /// Class to store Problems that can be represented as graphs.
-template<Hashable T>
+template<typename T>
 class GraphProblem : public Problem<T> {
 public:
     using graph_t = std::unordered_map<T, std::unordered_set<T>>;
 
     explicit GraphProblem(T initial, T goal, graph_t &&graph)
+            : Problem<T>{std::move(initial), std::move(goal)}, _graph{std::move(graph)} {}
+
+    explicit GraphProblem(T initial, std::unordered_set<T> &&goal, graph_t &&graph)
             : Problem<T>{std::move(initial), std::move(goal)}, _graph{std::move(graph)} {}
 
     [[nodiscard]] std::vector<T> next_states_from(const T &state) const override {

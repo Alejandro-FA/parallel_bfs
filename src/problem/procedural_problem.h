@@ -18,6 +18,9 @@ public:
     ProceduralProblem(T initial, T goal, std::unique_ptr<Generator> gen)
             : Problem<T>{std::move(initial), std::move(goal)}, _gen{std::move(gen)} {}
 
+    ProceduralProblem(T initial, std::unordered_set<T> &&goal, std::unique_ptr<Generator> gen)
+            : Problem<T>{std::move(initial), std::move(goal)}, _gen{std::move(gen)} {}
+
     [[nodiscard]] std::vector<T> next_states_from(const T &state) const override {
         return (*_gen)(state);
     }

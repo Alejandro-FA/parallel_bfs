@@ -15,16 +15,24 @@ class RandomTreeFactory : public RandomProblemFactory<TreeState> {
 public:
     /// Creates a random tree with max_depth and a maximum branching factor of max_actions. The average branching
     /// factor is specified by avg_actions, which should be a value between 0 and max_actions
-    explicit RandomTreeFactory(state_t max_depth, state_t max_actions, double avg_actions,
-                               std::optional<unsigned int> seed = std::nullopt)
-            : RandomProblemFactory(seed), _max_depth{max_depth}, _max_actions{max_actions},
+    explicit RandomTreeFactory(unsigned int max_depth, state_t max_actions, double avg_actions,
+                               unsigned int num_goals, std::optional<unsigned int> seed = std::nullopt)
+            : RandomProblemFactory(seed), _max_depth{max_depth}, _max_actions{max_actions}, _num_goals{num_goals},
               _generator{max_depth, max_actions, avg_actions, _prng_engine} {}
 
     /// Builds an Adjacency List representation of a tree.
     [[nodiscard]] std::unique_ptr<Problem<TreeState>> make_problem() override {
         TreeState initial{}; // initial state
-        TreeState goal{}; // goal state
-        while (goal.depth() < _max_depth) goal = _generator(goal)[0];
+
+        // Generate a bunch of goal states. Not all goal states have the same depth.
+        std::unordered_set<TreeState> goals(_num_goals);
+        while (goals.size() < _num_goals) {
+            TreeState goal{};
+            unsigned int goal_depth = _bino_dist(_prng_engine);
+            for (auto v = _generator(goal); goal.depth() < goal_depth; v = _generator(v[0]))
+                if (!v.empty()) goal = v[0];
+            goals.insert(std::move(goal));
+        }
 
         // Create an empty graph
         GraphProblem<TreeState>::graph_t g;
@@ -46,13 +54,15 @@ public:
             }
         }
 
-        return std::make_unique<GraphProblem<TreeState>>(std::move(initial), std::move(goal), std::move(g));
+        return std::make_unique<GraphProblem<TreeState>>(std::move(initial), std::move(goals), std::move(g));
     }
 
 private:
-    const state_t _max_depth;
+    const unsigned int _max_depth;
     const state_t _max_actions;
+    const unsigned int _num_goals;
     TreeStateGenerator _generator;
+    std::binomial_distribution<unsigned int> _bino_dist{_max_depth, 0.9};
 };
 
 #endif //PARALLEL_BFS_RANDOM_TREE_FACTORY_H

@@ -9,8 +9,8 @@
 int main() {
     // Choose which type of problem to create
     // RandomGraphFactory factory{1'000'000, 4, 34};
-    // RandomTreeFactory factory{8, 6, 4.0, 60};
-    ProceduralTreeFactory factory{8, 6, 4.0, 35};
+    // RandomTreeFactory factory{8, 6, 4.0, 3, 60};
+    ProceduralTreeFactory factory{9, 7, 5.0, 5, 73};
 
     // Create random problem
     std::cout << "[INFO] Creating random problem..." << std::endl;

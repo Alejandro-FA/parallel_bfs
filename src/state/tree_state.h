@@ -5,6 +5,7 @@
 #ifndef PARALLEL_BFS_TREE_STATE_H
 #define PARALLEL_BFS_TREE_STATE_H
 
+#include <cstdint>
 #include <iostream>
 #include <vector>
 

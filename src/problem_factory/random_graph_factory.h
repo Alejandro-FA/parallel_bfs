@@ -5,6 +5,7 @@
 #ifndef PARALLEL_BFS_RANDOM_GRAPH_FACTORY_H
 #define PARALLEL_BFS_RANDOM_GRAPH_FACTORY_H
 
+#include <cstdint>
 #include "random_problem_factory.h"
 #include "../problem/graph_problem.h"
 
