@@ -7,24 +7,31 @@
 
 #include <queue>
 
-// TODO: Think about whether it is worth it or not to use a Compile-Time if
+enum class SearchType { graph [[maybe_unused]], tree_like [[maybe_unused]], };
+
+template<SearchType type>
 class SyncBFS {
 public:
     template<typename T>
     [[nodiscard]] std::shared_ptr<Node<T>> operator()(const Problem<T> &problem) const {
         auto init_node = std::make_shared<Node<T>>(problem.initial());
         std::queue<std::shared_ptr<Node<T>>> frontier({init_node});
-        std::unordered_set<T> reached({init_node->state()}); // We use a set instead of a map because all actions have the same cost.
+        std::unordered_set<T> reached({init_node->state()}); // Keep track of reached states in graph-search type
 
         while (!frontier.empty()) {
             auto node = frontier.front();
             frontier.pop();
             auto children = problem.expand(node);
-            for (const auto &child : children) {
+            for (const auto &child: children) {
                 T child_state = child->state();
                 if (problem.is_goal(child_state)) return child;
-                if (!reached.contains(child_state)) {
-                    reached.insert(child_state);
+
+                if constexpr (type == SearchType::graph) { // Graph search
+                    if (!reached.contains(child_state)) {
+                        reached.insert(child_state);
+                        frontier.push(child);
+                    }
+                } else { // Tree-like search
                     frontier.push(child);
                 }
             }

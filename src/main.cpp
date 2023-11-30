@@ -21,7 +21,7 @@ int main() {
     std::cout << "\n" << *problem << "\n";
 
     // Solve created problem with method 1
-    SyncBFS sync_bfs;
+    SyncBFS<SearchType::tree_like> sync_bfs;
     measure(*problem, sync_bfs, "Synchronous BFS");
 
     // Solve created problem with method 2
