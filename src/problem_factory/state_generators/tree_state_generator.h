@@ -11,7 +11,7 @@
 
 class TreeStateGenerator {
 public:
-    explicit TreeStateGenerator(state_t max_depth, state_t max_actions, double avg_actions,
+    explicit TreeStateGenerator(unsigned int max_depth, state_t max_actions, double avg_actions,
                                 std::default_random_engine rand_engine)
             : _max_depth{max_depth}, _possible_actions(max_actions), _prng_engine{rand_engine},
               _bino_dist{max_actions, avg_actions / max_actions} {
@@ -41,7 +41,7 @@ private:
     }
 
 private:
-    const state_t _max_depth;
+    const unsigned int _max_depth;
     std::vector<state_t> _possible_actions;
     std::default_random_engine _prng_engine;
     std::binomial_distribution<state_t> _bino_dist;
