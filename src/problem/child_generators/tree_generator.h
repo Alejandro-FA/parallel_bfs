@@ -2,24 +2,25 @@
 // Created by Alejandro Fernández on 30/11/2023.
 //
 
-#ifndef PARALLEL_BFS_TREE_STATE_GENERATOR_H
-#define PARALLEL_BFS_TREE_STATE_GENERATOR_H
+#ifndef PARALLEL_BFS_TREE_GENERATOR_H
+#define PARALLEL_BFS_TREE_GENERATOR_H
 
 #include <algorithm>
 #include <random>
 #include "../../state/tree_state.h"
+#include "../child_generator.h"
 
-class TreeStateGenerator {
+class TreeGenerator : public ChildGenerator<TreeState> {
 public:
-    explicit TreeStateGenerator(unsigned int max_depth, state_t max_actions, double avg_actions,
-                                std::default_random_engine rand_engine)
+    explicit TreeGenerator(unsigned int max_depth, state_t max_actions, double avg_actions,
+                           std::default_random_engine rand_engine)
             : _max_depth{max_depth}, _possible_actions(max_actions), _prng_engine{rand_engine},
               _bino_dist{max_actions, avg_actions / max_actions} {
         std::iota(_possible_actions.begin(), _possible_actions.end(), 0);
     }
 
     /// Generates a vector of new valid states from "state".
-    [[nodiscard]] std::vector<TreeState> operator()(const TreeState &state) {
+    [[nodiscard]] std::vector<TreeState> operator()(const TreeState &state) override {
         // If we have already reached max_depth return an empty vector
         if (state.depth() >= _max_depth) return {};
 
@@ -47,4 +48,4 @@ private:
     std::binomial_distribution<state_t> _bino_dist;
 };
 
-#endif //PARALLEL_BFS_TREE_STATE_GENERATOR_H
+#endif //PARALLEL_BFS_TREE_GENERATOR_H

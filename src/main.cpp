@@ -1,8 +1,8 @@
 #include <iostream>
 #include "utils.h"
-#include "problem_factory/random_graph_factory.h"
-#include "problem_factory/random_tree_factory.h"
-#include "problem_factory/procedural_tree_factory.h"
+#include "problem_factory/factories/random_graph_factory.h"
+#include "problem_factory/factories/random_tree_factory.h"
+#include "problem_factory/factories/procedural_tree_factory.h"
 #include "bfs/sync_bfs.h"
 #include "bfs/parallel_bfs.h"
 

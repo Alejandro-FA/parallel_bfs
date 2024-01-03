@@ -11,14 +11,14 @@ add_executable(parallel_bfs src/main.cpp
         src/state/state.h
         src/state/tree_state.h
         src/problem/problem.h
-        src/problem/graph_problem.h
-        src/problem/procedural_problem.h
+        src/problem/child_generator.h
+        src/problem/child_generators/graph_reader.h
+        src/problem/child_generators/tree_generator.h
         src/problem_factory/problem_factory.h
         src/problem_factory/random_problem_factory.h
-        src/problem_factory/random_graph_factory.h
-        src/problem_factory/random_tree_factory.h
-        src/problem_factory/procedural_tree_factory.h
-        src/problem_factory/state_generators/tree_state_generator.h
+        src/problem_factory/factories/random_graph_factory.h
+        src/problem_factory/factories/random_tree_factory.h
+        src/problem_factory/factories/procedural_tree_factory.h
 )
 
 set(is_clang "$<CXX_COMPILER_ID:Clang,AppleClang>")

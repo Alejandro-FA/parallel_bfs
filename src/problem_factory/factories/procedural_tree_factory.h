@@ -5,9 +5,8 @@
 #ifndef PARALLEL_BFS_PROCEDURAL_TREE_FACTORY_H
 #define PARALLEL_BFS_PROCEDURAL_TREE_FACTORY_H
 
-#include "random_problem_factory.h"
-#include "../problem/procedural_problem.h"
-#include "state_generators/tree_state_generator.h"
+#include "../random_problem_factory.h"
+#include "../../problem/child_generators/tree_generator.h"
 
 class ProceduralTreeFactory : public RandomProblemFactory<TreeState> {
 public:
@@ -18,10 +17,10 @@ public:
             : RandomProblemFactory(seed), _max_depth{max_depth}, _num_goals{num_goals},
             _generator{max_depth, max_actions, avg_actions, _prng_engine} {}
 
-    /// Creates a ProceduralProblem with randomly generated TreeStates
-    [[nodiscard]] std::unique_ptr<Problem<TreeState>> make_problem() override {
-        TreeState initial{};
 
+    [[nodiscard]] TreeState make_initial() override { return TreeState{}; }
+
+    [[nodiscard]] std::unordered_set<TreeState> make_goal() override {
         // Generate a bunch of goal states. Not all goal states have the same depth.
         std::unordered_set<TreeState> goals(_num_goals);
         while (goals.size() < _num_goals) {
@@ -32,18 +31,18 @@ public:
             goals.insert(std::move(goal));
         }
 
-        auto gen = std::make_unique<TreeStateGenerator>(_generator);
-        return std::make_unique<ProceduralProblem<TreeState, TreeStateGenerator>>(
-                std::move(initial),
-                std::move(goals),
-                std::move(gen)
-        );
+        return goals;
+    }
+
+    /// Creates a ProceduralProblem with randomly generated TreeStates
+    [[nodiscard]] std::unique_ptr<ChildGenerator<TreeState>> make_child_generator() override {
+        return std::make_unique<TreeGenerator>(_generator);
     }
 
 private:
     const unsigned int _max_depth;
     const unsigned int _num_goals;
-    TreeStateGenerator _generator;
+    TreeGenerator _generator;
     std::binomial_distribution<unsigned int> _bino_dist{_max_depth, 0.9};
 };
 

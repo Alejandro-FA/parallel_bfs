@@ -6,8 +6,8 @@
 #define PARALLEL_BFS_RANDOM_GRAPH_FACTORY_H
 
 #include <cstdint>
-#include "random_problem_factory.h"
-#include "../problem/graph_problem.h"
+#include "../random_problem_factory.h"
+#include "../../problem/child_generators/graph_reader.h"
 
 using state_t = uint32_t;
 
@@ -17,13 +17,14 @@ public:
             : RandomProblemFactory(seed), _num_states{num_states}, _num_actions{num_actions},
               _udist(0, num_states - 1) {}
 
-    /// Builds an Adjacency List representation of a graph. Might not return a connected graph.
-    [[nodiscard]] std::unique_ptr<Problem<state_t>> make_problem() override {
-        state_t initial = _udist(_prng_engine);
-        state_t goal = _udist(_prng_engine);
+    [[nodiscard]] state_t make_initial() override { return _udist(_prng_engine); }
 
+    [[nodiscard]] std::unordered_set<state_t> make_goal() override { return {_udist(_prng_engine)}; }
+
+    /// Builds an Adjacency List representation of a graph. Might not return a connected graph.
+    [[nodiscard]] std::unique_ptr<ChildGenerator<state_t>> make_child_generator() override {
         // Create empty graph and add each possible state as a key of the map.
-        GraphProblem<state_t>::graph_t g;
+        GraphReader<state_t>::graph_t g;
         g.reserve(_num_states);
         for (state_t i = 0; i < _num_states; ++i) {
             g.insert({i, std::unordered_set<state_t>()});
@@ -37,7 +38,7 @@ public:
             }
         }
 
-        return std::make_unique<GraphProblem<state_t>>(initial, goal, std::move(g));
+        return std::make_unique<GraphReader<state_t>>(std::move(g));
     }
 
 private:
