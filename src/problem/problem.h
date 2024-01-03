@@ -9,8 +9,6 @@
 #include <unordered_set>
 #include "child_generator.h"
 #include "../node.h"
-#include "../state/state.h"
-
 
 template<Searchable T>
 class Problem {

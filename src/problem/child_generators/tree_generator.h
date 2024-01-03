@@ -7,14 +7,11 @@
 
 #include <algorithm>
 #include <random>
-#include "../../state/tree_state.h"
-#include "../child_generator.h"
 
 class TreeGenerator : public ChildGenerator<TreeState> {
 public:
-    explicit TreeGenerator(unsigned int max_depth, state_t max_actions, double avg_actions,
-                           std::default_random_engine rand_engine)
-            : _max_depth{max_depth}, _possible_actions(max_actions), _prng_engine{rand_engine},
+    explicit TreeGenerator(unsigned int max_depth, state_t max_actions, double avg_actions, std::default_random_engine re)
+            : _max_depth{max_depth}, _possible_actions(max_actions), _prng_engine{re},
               _bino_dist{max_actions, avg_actions / max_actions} {
         std::iota(_possible_actions.begin(), _possible_actions.end(), 0);
     }

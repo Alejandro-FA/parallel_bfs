@@ -5,9 +5,6 @@
 #ifndef PARALLEL_BFS_PROCEDURAL_TREE_FACTORY_H
 #define PARALLEL_BFS_PROCEDURAL_TREE_FACTORY_H
 
-#include "../random_problem_factory.h"
-#include "../../problem/child_generators/tree_generator.h"
-
 class ProceduralTreeFactory : public RandomProblemFactory<TreeState> {
 public:
     /// Creates a random tree with max_depth and a maximum branching factor of max_actions. The average branching

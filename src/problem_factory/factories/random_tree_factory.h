@@ -6,8 +6,6 @@
 #define PARALLEL_BFS_RANDOM_TREE_FACTORY_H
 
 #include <queue>
-#include "../random_problem_factory.h"
-#include "../../problem/child_generators/graph_reader.h"
 #include "../../state/tree_state.h"
 #include "../../problem/child_generators/tree_generator.h"
 

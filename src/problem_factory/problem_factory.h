@@ -5,8 +5,6 @@
 #ifndef PARALLEL_BFS_PROBLEM_FACTORY_H
 #define PARALLEL_BFS_PROBLEM_FACTORY_H
 
-#include "../problem/problem.h"
-
 template<typename T>
 class ProblemFactory {
 public:

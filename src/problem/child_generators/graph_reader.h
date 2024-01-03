@@ -7,7 +7,6 @@
 
 #include <unordered_map>
 #include <unordered_set>
-#include "../child_generator.h"
 
 template<typename T>
 class GraphReader : public ChildGenerator<T> {
