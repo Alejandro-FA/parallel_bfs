@@ -2,17 +2,17 @@
 // Created by Alejandro Fernández on 19/11/2023.
 //
 
-#ifndef PARALLEL_BFS_RANDOM_PROBLEM_FACTORY_H
-#define PARALLEL_BFS_RANDOM_PROBLEM_FACTORY_H
+#ifndef PARALLEL_BFS_RANDOM_BUILDER_H
+#define PARALLEL_BFS_RANDOM_BUILDER_H
 
 #include <random>
 #include <optional>
-#include "problem_factory.h"
+#include "../problem_factory.h"
 
 template<typename T>
-class RandomProblemFactory : public ProblemFactory<T> {
+class RandomBuilder : public ProblemFactory<T> {
 protected:
-    explicit RandomProblemFactory(std::optional<unsigned int> seed) : _prng_engine{get_prng_engine(seed)} {}
+    explicit RandomBuilder(std::optional<unsigned int> seed) : _prng_engine{get_prng_engine(seed)} {}
 
     std::default_random_engine _prng_engine;
 
@@ -25,4 +25,4 @@ private:
     }
 };
 
-#endif //PARALLEL_BFS_RANDOM_PROBLEM_FACTORY_H
+#endif //PARALLEL_BFS_RANDOM_BUILDER_H

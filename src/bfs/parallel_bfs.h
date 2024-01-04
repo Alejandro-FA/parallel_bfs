@@ -10,17 +10,17 @@
 /// In order to avoid data races, ParallelBFS only works with tree-like search.
 class ParallelBFS {
 public:
-    template<typename T>
-    [[nodiscard]] std::shared_ptr<Node<T>> operator()(const Problem<T> &problem) const {
-        auto init_node = std::make_shared<Node<T>>(problem.initial());
-        std::queue<std::shared_ptr<Node<T>>> frontier({init_node});
+    template<typename State>
+    [[nodiscard]] std::shared_ptr<Node<State>> operator()(const Problem<State> &problem) const {
+        auto init_node = std::make_shared<Node<State>>(problem.initial());
+        std::queue<std::shared_ptr<Node<State>>> frontier({init_node});
 
         while (!frontier.empty()) {
             auto node = frontier.front();
             frontier.pop();
             auto children = problem.expand(node);
             for (const auto &child: children) {
-                T child_state = child->state();
+                State child_state = child->state();
                 if (problem.is_goal(child_state)) return child;
                 frontier.push(child);
             }

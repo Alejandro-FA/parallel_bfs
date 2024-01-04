@@ -3,23 +3,35 @@ project(parallel_bfs)
 
 set(CMAKE_CXX_STANDARD 23)
 
+# If you only include this third party in PRIVATE source files, you do not need to install it
+# when your main project gets installed.
+set(JSON_Install OFF CACHE INTERNAL "")
+
+add_subdirectory(nlohmann_json)
+
 add_executable(parallel_bfs src/main.cpp
         src/utils.h
         src/bfs/sync_bfs.h
         src/bfs/parallel_bfs.h
+        src/problem/problem.h
+        src/problem/transition_model.h
+        src/problem/transition_models/basic_graph.h
+        src/problem/transition_models/basic_tree.h
         src/node.h
         src/state/state.h
         src/state/tree_state.h
-        src/problem/problem.h
-        src/problem/child_generator.h
-        src/problem/child_generators/graph_reader.h
-        src/problem/child_generators/tree_generator.h
         src/problem_factory/problem_factory.h
-        src/problem_factory/random_problem_factory.h
-        src/problem_factory/factories/random_graph_factory.h
-        src/problem_factory/factories/random_tree_factory.h
-        src/problem_factory/factories/procedural_tree_factory.h
+        src/problem_factory/builders/random_builder.h
+        src/problem_factory/builders/basic_graph_builder.h
+        src/problem_factory/builders/basic_tree_builder.h
+        src/problem_factory/readers/problem_reader.h
+        src/problem_writer/problem_writer.h
+        src/problem_writer/writers/json_writer.h
+        src/problem_parser/problem_parser.h
+        src/problem_parser/parsers/json_parser.h
 )
+
+target_link_libraries(parallel_bfs PRIVATE nlohmann_json::nlohmann_json)
 
 set(is_clang "$<CXX_COMPILER_ID:Clang,AppleClang>")
 add_compile_options("-Wall -Wextra -Wpedantic $<${is_clang}:-Wthread-safety>")
