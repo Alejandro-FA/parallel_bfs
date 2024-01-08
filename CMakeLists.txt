@@ -3,12 +3,12 @@ project(parallel_bfs)
 
 set(CMAKE_CXX_STANDARD 23)
 
-# If you only include this third party in PRIVATE source files, you do not need to install it
-# when your main project gets installed.
-set(JSON_Install OFF CACHE INTERNAL "")
+####################### External libraries #########################
+include(FetchContent)
+FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz)
+FetchContent_MakeAvailable(json)
 
-add_subdirectory(nlohmann_json)
-
+####################### Testing #########################
 add_executable(parallel_bfs src/main.cpp
         src/utils.h
         src/bfs/sync_bfs.h
