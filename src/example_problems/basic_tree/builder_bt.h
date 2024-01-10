@@ -2,15 +2,16 @@
 // Created by Alejandro Fernández on 29/11/2023.
 //
 
-#ifndef PARALLEL_BFS_BASIC_TREE_BUILDER_H
-#define PARALLEL_BFS_BASIC_TREE_BUILDER_H
+#ifndef PARALLEL_BFS_BUILDER_BT_H
+#define PARALLEL_BFS_BUILDER_BT_H
 
 #include <queue>
 #include <algorithm>
-#include "../../state/tree_state.h"
-#include "../../problem/transition_models/basic_tree.h"
+#include <parallel_bfs/search.h>
+#include "tree_state.h"
+#include "transition_model_bt.h"
 
-class BasicTreeBuilder : public RandomBuilder<TreeState> {
+class BasicTreeBuilder : public parallel_bfs::RandomBuilder<TreeState> {
 public:
     /// Creates a random tree with max_depth and a maximum branching factor of max_actions. The average branching
     /// factor is specified by avg_actions, which should be a value between 0 and max_actions
@@ -36,7 +37,7 @@ public:
     }
 
     /// Builds an Adjacency List representation of a tree.
-    [[nodiscard]] std::unique_ptr<BaseTransitionModel<TreeState>> get_transition_model() override {
+    [[nodiscard]] std::unique_ptr<parallel_bfs::BaseTransitionModel<TreeState>> get_transition_model() override {
         // Create an empty tree
         BasicTree::tree_t tree;
         auto max_size = static_cast<std::size_t>(pow(_max_actions, _max_depth));
@@ -85,4 +86,4 @@ private:
     }
 };
 
-#endif //PARALLEL_BFS_BASIC_TREE_BUILDER_H
+#endif //PARALLEL_BFS_BUILDER_BT_H

@@ -2,13 +2,13 @@
 // Created by alejandro on 18/11/23.
 //
 
-#ifndef PARALLEL_BFS_BASIC_GRAPH_BUILDER_H
-#define PARALLEL_BFS_BASIC_GRAPH_BUILDER_H
+#ifndef PARALLEL_BFS_BUILDER_BG_H
+#define PARALLEL_BFS_BUILDER_BG_H
 
-#include "random_builder.h"
-#include "../../problem/transition_models/basic_graph.h"
+#include <parallel_bfs/problem_utils.h>
+#include "transition_model_bg.h"
 
-class BasicGraphBuilder : public RandomBuilder<uint32_t> {
+class BasicGraphBuilder : public parallel_bfs::RandomBuilder<uint32_t> {
 public:
     explicit BasicGraphBuilder(uint32_t num_states, uint32_t num_actions, std::optional<unsigned int> seed = std::nullopt)
             : RandomBuilder(seed), _num_states{num_states}, _num_actions{num_actions} {}
@@ -18,7 +18,7 @@ public:
     [[nodiscard]] std::unordered_set<uint32_t> get_goal() override { return {_udist(_prng_engine)}; }
 
     /// Builds an Adjacency List representation of a graph. Might not return a connected graph.
-    [[nodiscard]] std::unique_ptr<BaseTransitionModel<uint32_t>> get_transition_model() override {
+    [[nodiscard]] std::unique_ptr<parallel_bfs::BaseTransitionModel<uint32_t>> get_transition_model() override {
         // Create empty graph and add each possible state as a key of the map.
         BasicGraph::graph_t graph;
         graph.reserve(_num_states);
@@ -43,4 +43,4 @@ private:
     std::uniform_int_distribution<uint32_t> _udist{0, _num_states - 1};
 };
 
-#endif //PARALLEL_BFS_BASIC_GRAPH_BUILDER_H
+#endif //PARALLEL_BFS_BUILDER_BG_H

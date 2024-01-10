@@ -1,9 +1,8 @@
 #include <iostream>
+#include <parallel_bfs/search.h>
 #include "utils.h"
-#include "problem_factory/builders/basic_graph_builder.h"
-#include "problem_factory/builders/basic_tree_builder.h"
-#include "bfs/sync_bfs.h"
-#include "bfs/parallel_bfs.h"
+#include "example_problems/basic_graph/builder_bg.h"
+#include "example_problems/basic_tree/builder_bt.h"
 
 int main() {
     // Choose which type of problem to create
@@ -19,11 +18,11 @@ int main() {
     std::cout << "\n" << *problem << "\n";
 
     // Solve created problem with method 1
-    SyncBFS<SearchType::tree_like> sync_bfs;
+    parallel_bfs::SyncBFS<parallel_bfs::SearchType::tree_like> sync_bfs;
     measure(*problem, sync_bfs, "Synchronous BFS");
 
     // Solve created problem with method 2
-    ParallelBFS par_bfs;
+    parallel_bfs::ParallelBFS par_bfs;
     measure(*problem, par_bfs, "ParallelBFS");
 
     return 0;

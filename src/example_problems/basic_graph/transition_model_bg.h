@@ -2,14 +2,15 @@
 // Created by Alejandro Fernández on 19/11/2023.
 //
 
-#ifndef PARALLEL_BFS_BASIC_GRAPH_H
-#define PARALLEL_BFS_BASIC_GRAPH_H
+#ifndef PARALLEL_BFS_TRANSITION_MODEL_BG_H
+#define PARALLEL_BFS_TRANSITION_MODEL_BG_H
 
 #include <cstdint>
 #include <unordered_map>
 #include <unordered_set>
+#include <parallel_bfs/search.h>
 
-class BasicGraph : public TransitionModel<uint32_t, uint32_t> {
+class BasicGraph : public parallel_bfs::TransitionModel<uint32_t, uint32_t> {
 public:
     using graph_t = std::unordered_map<uint32_t, std::unordered_set<uint32_t>>;
 
@@ -33,4 +34,4 @@ private:
     const graph_t _graph;
 };
 
-#endif //PARALLEL_BFS_BASIC_GRAPH_H
+#endif //PARALLEL_BFS_TRANSITION_MODEL_BG_H

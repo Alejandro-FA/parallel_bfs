@@ -2,14 +2,16 @@
 // Created by alejandro on 04/01/24.
 //
 
-#ifndef PARALLEL_BFS_BASIC_TREE_H
-#define PARALLEL_BFS_BASIC_TREE_H
+#ifndef PARALLEL_BFS_TRANSITION_MODEL_BT_H
+#define PARALLEL_BFS_TRANSITION_MODEL_BT_H
 
 #include <cstdint>
 #include <unordered_map>
 #include <unordered_set>
+#include <parallel_bfs/search.h>
+#include "tree_state.h"
 
-class BasicTree : public TransitionModel<TreeState, uint32_t> {
+class BasicTree : public parallel_bfs::TransitionModel<TreeState, uint32_t> {
 public:
     using tree_t = std::unordered_map<TreeState, std::unordered_set<uint32_t>>;
 
@@ -33,4 +35,4 @@ private:
     const tree_t _tree;
 };
 
-#endif //PARALLEL_BFS_BASIC_TREE_H
+#endif //PARALLEL_BFS_TRANSITION_MODEL_BT_H

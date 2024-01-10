@@ -3,35 +3,21 @@ project(parallel_bfs)
 
 set(CMAKE_CXX_STANDARD 23)
 
-####################### External libraries #########################
-include(FetchContent)
-FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz)
-FetchContent_MakeAvailable(json)
+# Add the directories so that cmake can find the subdirectory CMakeLists.txt files.
+add_subdirectory(lib)
 
-####################### Testing #########################
-add_executable(parallel_bfs src/main.cpp
+##################### Executables #######################
+add_executable(main
+        src/main.cpp
         src/utils.h
-        src/bfs/sync_bfs.h
-        src/bfs/parallel_bfs.h
-        src/problem/problem.h
-        src/problem/transition_model.h
-        src/problem/transition_models/basic_graph.h
-        src/problem/transition_models/basic_tree.h
-        src/node.h
-        src/state/state.h
-        src/state/tree_state.h
-        src/problem_factory/problem_factory.h
-        src/problem_factory/builders/random_builder.h
-        src/problem_factory/builders/basic_graph_builder.h
-        src/problem_factory/builders/basic_tree_builder.h
-        src/problem_factory/readers/problem_reader.h
-        src/problem_writer/problem_writer.h
-        src/problem_writer/writers/json_writer.h
-        src/problem_parser/problem_parser.h
-        src/problem_parser/parsers/json_parser.h
+        src/example_problems/basic_graph/transition_model_bg.h
+        src/example_problems/basic_graph/builder_bg.h
+        src/example_problems/basic_tree/transition_model_bt.h
+        src/example_problems/basic_tree/tree_state.h
+        src/example_problems/basic_tree/builder_bt.h
 )
 
-target_link_libraries(parallel_bfs PRIVATE nlohmann_json::nlohmann_json)
+target_link_libraries(main PRIVATE parallel_bfs)
 
 set(is_clang "$<CXX_COMPILER_ID:Clang,AppleClang>")
 add_compile_options("-Wall -Wextra -Wpedantic $<${is_clang}:-Wthread-safety>")
@@ -53,7 +39,7 @@ add_test(asan_lsan_ubsan ${CMAKE_CTEST_COMMAND}
         --build-makeprogram ${CMAKE_MAKE_PROGRAM}
         --build-project "parallel_bfs"
         --build-options -DCMAKE_CXX_FLAGS=${asan_flags} ${common_build_opts}
-        --test-command "parallel_bfs"
+        --test-command "main"
 )
 
 set(tsan_flags "-fsanitize=thread -fno-omit-frame-pointer -O2")
@@ -63,7 +49,7 @@ add_test(tsan ${CMAKE_CTEST_COMMAND}
         --build-makeprogram ${CMAKE_MAKE_PROGRAM}
         --build-project "parallel_bfs"
         --build-options -DCMAKE_CXX_FLAGS=${tsan_flags} ${common_build_opts}
-        --test-command "parallel_bfs"
+        --test-command "main"
 )
 
 set(sanitizers_env_options

@@ -9,8 +9,9 @@
 #include <stack>
 #include <iomanip>
 #include <sstream>
-#include "problem/problem.h"
-#include "node.h"
+#include <parallel_bfs/search.h>
+
+using namespace parallel_bfs;
 
 template<Printable T>
 void print_solution(const Node<T> *node) {
