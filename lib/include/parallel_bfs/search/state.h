@@ -5,17 +5,19 @@
 #ifndef PARALLEL_BFS_STATE_H
 #define PARALLEL_BFS_STATE_H
 
-namespace parallel_bfs {
+namespace {
+    template<typename T>
+    concept Printable = requires(const T &a) { std::cout << a; };
+
     template<typename T>
     concept Hashable = requires(const T &a) {
+        requires std::regular<T>; // Also includes std::equality_comparable<T>
         { std::hash<T>{}(a) } -> std::convertible_to<std::size_t>;
     };
+}
 
-    template<typename T>
-    concept Searchable = std::regular<T> && Hashable<T>;
-
-    template<typename T>
-    concept Printable = requires(T t) { std::cout << t; };
+namespace parallel_bfs {
+    template<typename T> concept State = Hashable<T> && Printable<T>;
 }
 
 #endif //PARALLEL_BFS_STATE_H

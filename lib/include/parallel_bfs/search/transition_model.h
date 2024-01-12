@@ -9,7 +9,7 @@
 #include "state.h"
 
 namespace parallel_bfs {
-    template<Searchable State>
+    template<State State>
     class BaseTransitionModel {
     public:
         virtual ~BaseTransitionModel() = default;
@@ -19,7 +19,7 @@ namespace parallel_bfs {
     };
 
 
-    template<Searchable State, std::regular Action>
+    template<State State, std::regular Action>
     class TransitionModel : public BaseTransitionModel<State> {
     public:
         // TODO: perhaps change this to a coroutine when std::generator (C++23) is implemented in gcc/clang

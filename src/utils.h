@@ -13,8 +13,8 @@
 
 using namespace parallel_bfs;
 
-template<Printable T>
-void print_solution(const Node<T> *node) {
+template<State State>
+void print_solution(const Node<State> *node) {
     // Check if there is a solution first
     if (!node) {
         std::cout << "No solution found!" << std::endl;
@@ -22,7 +22,7 @@ void print_solution(const Node<T> *node) {
     }
 
     // If there is a solution, recreate the solution path
-    std::stack<T> solution;
+    std::stack<State> solution;
     while (node) {
         solution.push(node->state());
         node = node->parent().get();

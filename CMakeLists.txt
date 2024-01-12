@@ -10,11 +10,11 @@ add_subdirectory(lib)
 add_executable(main
         src/main.cpp
         src/utils.h
-        src/example_problems/basic_graph/transition_model_bg.h
-        src/example_problems/basic_graph/builder_bg.h
-        src/example_problems/basic_tree/transition_model_bt.h
+        src/example_problems/basic_graph/basic_graph.h
+        src/example_problems/basic_graph/basic_graph_generator.h
+        src/example_problems/basic_tree/basic_tree.h
+        src/example_problems/basic_tree/basic_tree_generator.h
         src/example_problems/basic_tree/tree_state.h
-        src/example_problems/basic_tree/builder_bt.h
 )
 
 target_link_libraries(main PRIVATE parallel_bfs)

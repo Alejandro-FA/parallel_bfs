@@ -2,8 +2,8 @@
 // Created by alejandro on 04/01/24.
 //
 
-#ifndef PARALLEL_BFS_TRANSITION_MODEL_BT_H
-#define PARALLEL_BFS_TRANSITION_MODEL_BT_H
+#ifndef PARALLEL_BFS_BASIC_TREE_H
+#define PARALLEL_BFS_BASIC_TREE_H
 
 #include <cstdint>
 #include <unordered_map>
@@ -35,4 +35,4 @@ private:
     const tree_t _tree;
 };
 
-#endif //PARALLEL_BFS_TRANSITION_MODEL_BT_H
+#endif //PARALLEL_BFS_BASIC_TREE_H

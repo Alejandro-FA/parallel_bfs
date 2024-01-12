@@ -2,22 +2,22 @@
 // Created by Alejandro Fernández on 29/11/2023.
 //
 
-#ifndef PARALLEL_BFS_BUILDER_BT_H
-#define PARALLEL_BFS_BUILDER_BT_H
+#ifndef PARALLEL_BFS_BASIC_TREE_GENERATOR_H
+#define PARALLEL_BFS_BASIC_TREE_GENERATOR_H
 
 #include <queue>
 #include <algorithm>
 #include <parallel_bfs/search.h>
 #include "tree_state.h"
-#include "transition_model_bt.h"
+#include "basic_tree.h"
 
-class BasicTreeBuilder : public parallel_bfs::RandomBuilder<TreeState> {
+class BasicTreeGenerator : public parallel_bfs::RandomFactory<TreeState> {
 public:
     /// Creates a random tree with max_depth and a maximum branching factor of max_actions. The average branching
     /// factor is specified by avg_actions, which should be a value between 0 and max_actions
-    explicit BasicTreeBuilder(unsigned int max_depth, unsigned int num_goals, unsigned int max_actions,
-                              double avg_actions, std::optional<unsigned int> seed = std::nullopt)
-            : RandomBuilder(seed), _max_depth{max_depth}, _num_goals{num_goals}, _max_actions{max_actions},
+    explicit BasicTreeGenerator(unsigned int max_depth, unsigned int num_goals, unsigned int max_actions,
+                                double avg_actions, std::optional<unsigned int> seed = std::nullopt)
+            : RandomFactory(seed), _max_depth{max_depth}, _num_goals{num_goals}, _max_actions{max_actions},
               _avg_actions{avg_actions} {
         _possible_actions.resize(_max_actions);
         std::iota(_possible_actions.begin(), _possible_actions.end(), 0);
@@ -86,4 +86,9 @@ private:
     }
 };
 
-#endif //PARALLEL_BFS_BUILDER_BT_H
+
+class BasicTreeReader : public parallel_bfs::ProblemFactory<uint32_t> {
+
+};
+
+#endif //PARALLEL_BFS_BASIC_TREE_GENERATOR_H

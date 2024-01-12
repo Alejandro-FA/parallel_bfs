@@ -2,16 +2,16 @@
 // Created by alejandro on 18/11/23.
 //
 
-#ifndef PARALLEL_BFS_BUILDER_BG_H
-#define PARALLEL_BFS_BUILDER_BG_H
+#ifndef PARALLEL_BFS_BASIC_GRAPH_GENERATOR_H
+#define PARALLEL_BFS_BASIC_GRAPH_GENERATOR_H
 
 #include <parallel_bfs/problem_utils.h>
-#include "transition_model_bg.h"
+#include "basic_graph.h"
 
-class BasicGraphBuilder : public parallel_bfs::RandomBuilder<uint32_t> {
+class BasicGraphGenerator : public parallel_bfs::RandomFactory<uint32_t> {
 public:
-    explicit BasicGraphBuilder(uint32_t num_states, uint32_t num_actions, std::optional<unsigned int> seed = std::nullopt)
-            : RandomBuilder(seed), _num_states{num_states}, _num_actions{num_actions} {}
+    explicit BasicGraphGenerator(uint32_t num_states, uint32_t num_actions, std::optional<unsigned int> seed = std::nullopt)
+            : RandomFactory(seed), _num_states{num_states}, _num_actions{num_actions} {}
 
     [[nodiscard]] uint32_t get_initial() override { return _udist(_prng_engine); }
 
@@ -43,4 +43,9 @@ private:
     std::uniform_int_distribution<uint32_t> _udist{0, _num_states - 1};
 };
 
-#endif //PARALLEL_BFS_BUILDER_BG_H
+
+class BasicGraphReader : public parallel_bfs::ProblemFactory<uint32_t> {
+
+};
+
+#endif //PARALLEL_BFS_BASIC_GRAPH_GENERATOR_H

@@ -2,8 +2,8 @@
 // Created by Alejandro Fernández on 19/11/2023.
 //
 
-#ifndef PARALLEL_BFS_TRANSITION_MODEL_BG_H
-#define PARALLEL_BFS_TRANSITION_MODEL_BG_H
+#ifndef PARALLEL_BFS_BASIC_GRAPH_H
+#define PARALLEL_BFS_BASIC_GRAPH_H
 
 #include <cstdint>
 #include <unordered_map>
@@ -34,4 +34,4 @@ private:
     const graph_t _graph;
 };
 
-#endif //PARALLEL_BFS_TRANSITION_MODEL_BG_H
+#endif //PARALLEL_BFS_BASIC_GRAPH_H

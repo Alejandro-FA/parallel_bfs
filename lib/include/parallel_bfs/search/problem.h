@@ -12,39 +12,43 @@
 #include "node.h"
 
 namespace parallel_bfs {
-    template<Searchable State>
+    template<State State>
     class Problem {
     public:
-        explicit Problem(State initial, std::unordered_set<State> &&goal,
+        explicit Problem(State initial, std::unordered_set<State> &&goal_states,
                          std::unique_ptr<BaseTransitionModel<State>> transition_model) :
-                _initial{std::move(initial)}, _goal{std::move(goal)}, _transition_model{std::move(transition_model)} {}
+                _initial{std::move(initial)}, _goal_states{std::move(goal_states)},
+                _transition_model{std::move(transition_model)} {}
 
         [[nodiscard]] State initial() const { return _initial; }
 
-        [[nodiscard]] std::unordered_set<State> goal() const { return _goal; }
 
-        [[nodiscard]] bool is_goal(const State &state) const { return _goal.contains(state); }
+        [[nodiscard]] bool is_goal(const State &state) const { return _goal_states.contains(state); }
 
         // TODO: perhaps change this to a coroutine when std::generator (C++23) is implemented in gcc/clang
         [[nodiscard]] std::vector<std::shared_ptr<Node<State>>> expand(const std::shared_ptr<Node<State>> &node) const {
             std::vector<std::shared_ptr<Node<State>>> expanded_nodes;
             for (auto &[new_state, cost]: _transition_model->next_states(node->state())) {
-                expanded_nodes.push_back(std::make_shared<Node<State>>(std::move(new_state), node, cost));
+                auto new_node = std::make_shared<Node<State>>(std::move(new_state), node, cost);
+                expanded_nodes.push_back(new_node);
             }
             return expanded_nodes;
         }
 
+        [[nodiscard]] std::unordered_set<State> goal_states() const { return _goal_states; }
+
+        [[nodiscard]] const BaseTransitionModel<State> &transition_model() const { return *_transition_model; }
+
     private:
         const State _initial;
-        const std::unordered_set<State> _goal;
+        const std::unordered_set<State> _goal_states;
         const std::unique_ptr<BaseTransitionModel<State>> _transition_model;
     };
 
-
-    template<Printable State>
+    template<State State>
     std::ostream &operator<<(std::ostream &os, const Problem<State> &p) {
         os << "Initial state: " << p.initial() << "\nGoal state(s):";
-        for (const State &goal: p.goal()) os << "\n - " << goal;
+        for (const State &goal: p.goal_states()) os << "\n - " << goal;
         return os;
     }
 }

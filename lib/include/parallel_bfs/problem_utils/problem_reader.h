@@ -5,17 +5,19 @@
 #ifndef PARALLEL_BFS_PROBLEM_READER_H
 #define PARALLEL_BFS_PROBLEM_READER_H
 
-#include "problem_parser.h"
+#include <filesystem>
+#include "problem_factory.h"
 
 namespace parallel_bfs {
-    class ProblemReader {
+    template<State State>
+    class ProblemReader : public ProblemFactory<State> {
     public:
-        virtual ~ProblemReader() = default;
+        explicit ProblemReader(std::filesystem::path input_path) : _input_path{std::move(input_path)} {}
 
-    protected:
-        ProblemParser _parser;
+        // TODO:
 
-        explicit ProblemReader(ProblemParser parser) : _parser{parser} {}
+    private:
+        std::filesystem::path _input_path;
     };
 }
 

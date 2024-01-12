@@ -8,7 +8,7 @@
 #include "state.h"
 
 namespace parallel_bfs {
-    template<Searchable State>
+    template<State State>
     class Node {
     public:
         explicit Node(State &&state, std::shared_ptr<Node<State>> parent = nullptr, int path_cost = 0)
