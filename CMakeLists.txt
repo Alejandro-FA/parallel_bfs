@@ -3,6 +3,9 @@ project(parallel_bfs)
 
 set(CMAKE_CXX_STANDARD 23)
 
+# Set the output directory to be the root directory of the project
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
+
 # Add the directories so that cmake can find the subdirectory CMakeLists.txt files.
 add_subdirectory(lib)
 
@@ -19,6 +22,9 @@ add_executable(main
 
 target_link_libraries(main PRIVATE parallel_bfs)
 
+set_target_properties(main PROPERTIES SUFFIX ".out")
+
+################### Compile options #####################
 set(is_clang "$<CXX_COMPILER_ID:Clang,AppleClang>")
 add_compile_options("-Wall -Wextra -Wpedantic $<${is_clang}:-Wthread-safety>")
 

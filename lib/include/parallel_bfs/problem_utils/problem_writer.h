@@ -10,14 +10,19 @@
 #include <yaml-cpp/yaml.h>
 
 namespace parallel_bfs {
-    template<State State>
-    class ProblemWriter {
-    public:
-        virtual ~ProblemWriter() = default;
+    template<typename T>
+    concept ConvertibleToYAML = requires(const T &a, T &b, const YAML::Node &node) {
+        { YAML::convert<T>::encode(a)} -> std::same_as<YAML::Node>;
+        { YAML::convert<T>::decode(node, b)} -> std::same_as<bool>;
+    };
 
+
+    class YAMLWriter {
+    public:
+        template<State State>
         void write(const Problem<State> &problem, const std::filesystem::path &output_path) const {
             std::ofstream output_file(output_path);
-            if (!output_file) throw std::runtime_error("Could not open file to write problem.");
+            if (!output_file) throw std::runtime_error("Could not create file to write problem.");
 
             write_metadata(output_file);
             write_initial(output_file, problem);
@@ -26,39 +31,22 @@ namespace parallel_bfs {
         }
 
     protected:
-        virtual void write_metadata(std::ostream& out) const = 0;
-
-        virtual void write_initial(std::ostream& out, const Problem<State> &problem) const = 0;
-
-        virtual void write_goal(std::ostream& out, const Problem<State> &problem) const = 0;
-
-        virtual void write_transition_model(std::ostream& out, const Problem<State> &problem) const = 0;
-    };
-
-
-    template<typename T>
-    concept ConvertibleToYAML = requires(const T &a, T &b, const YAML::Node &node) {
-        { YAML::convert<T>::encode(a)} -> std::same_as<YAML::Node>;
-        { YAML::convert<T>::decode(node, b)} -> std::same_as<bool>;
-    };
-
-
-    template<State State>
-    class YAMLWriter : public ProblemWriter<State> {
-    protected:
-        void write_metadata(std::ostream& out) const override {
+        void write_metadata(std::ostream& out) const {
             // ToDO: Decide if I want to write some metadata
         }
 
-        void write_initial(std::ostream& out, const Problem<State> &problem) const override {
+        template<State State>
+        void write_initial(std::ostream& out, const Problem<State> &problem) const {
             write_node(out, "initial", problem.initial());
         }
 
-        void write_goal(std::ostream& out, const Problem<State> &problem) const override {
+        template<State State>
+        void write_goal(std::ostream& out, const Problem<State> &problem) const {
             write_node(out, "goal_states", problem.goal_states());
         }
 
-        void write_transition_model(std::ostream& out, const Problem<State> &problem) const override {
+        template<State State>
+        void write_transition_model(std::ostream& out, const Problem<State> &problem) const {
             // write_node(out, "transition_model", problem.transition_model()); // TODO: Uncomment this
         }
 

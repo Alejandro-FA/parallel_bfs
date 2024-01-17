@@ -4,3 +4,4 @@ cmake-*
 *.idea
 *.vscode
 .DS_Store
+main.out
