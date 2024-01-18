@@ -48,11 +48,13 @@ namespace YAML {
     struct convert<BasicGraph<T>> {
     static Node encode(const BasicGraph <T> &rhs) {
         const auto graph = rhs.get_graph();
-        Node node;
+        Node output_node(NodeType::Map);
         for(size_t i = 0; i < graph.size(); ++i) {
-            node["graph"][i] = graph[i];
+            Node inner_node(NodeType::Map);
+            inner_node[i] = graph[i];
+            output_node["graph"].push_back(inner_node);
         }
-        return node;
+        return output_node;
     }
 
     static bool decode(const Node &node, BasicGraph <T> &rhs) {
