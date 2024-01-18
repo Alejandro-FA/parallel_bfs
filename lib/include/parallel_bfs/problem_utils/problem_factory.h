@@ -11,24 +11,25 @@
 #include <optional>
 
 namespace parallel_bfs {
-    template<State State>
+    template<State State, std::derived_from<BaseTransitionModel<State>> TM>
     class ProblemFactory {
     public:
-        [[nodiscard]] std::unique_ptr<Problem<State>> make_problem() {
-            return std::make_unique<Problem<State>>(get_initial(), get_goal(), get_transition_model());
+        [[nodiscard]] Problem<State, TM> make_problem() {
+            return Problem{get_initial(), get_goal_states(), get_transition_model()};
         }
 
     protected:
         [[nodiscard]] virtual State get_initial() = 0;
 
-        [[nodiscard]] virtual std::unordered_set<State> get_goal() = 0;
+        [[nodiscard]] virtual std::unordered_set<State> get_goal_states() = 0;
 
-        [[nodiscard]] virtual std::unique_ptr<BaseTransitionModel<State>> get_transition_model() = 0;
+        [[nodiscard]] virtual TM get_transition_model() = 0;
     };
 
 
-    template<State State>
-    class RandomFactory : public ProblemFactory<State> {
+
+    template<State State, std::derived_from<BaseTransitionModel<State>> TM>
+    class RandomFactory : public ProblemFactory<State, TM> {
     protected:
         explicit RandomFactory(std::optional<unsigned int> seed) : _prng_engine{get_prng_engine(seed)} {}
 

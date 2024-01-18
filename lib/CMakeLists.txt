@@ -25,6 +25,7 @@ add_library(parallel_bfs
         include/parallel_bfs/problem_utils/problem_factory.h
         include/parallel_bfs/problem_utils/problem_reader.h
         include/parallel_bfs/problem_utils/problem_writer.h
+        include/parallel_bfs/search/utils.h
 )
 
 target_link_libraries(parallel_bfs

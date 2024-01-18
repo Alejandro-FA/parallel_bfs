@@ -8,24 +8,28 @@
 #include <vector>
 #include "state.h"
 
-namespace parallel_bfs {
+namespace {
+    using namespace parallel_bfs;
+
     template<State State>
     class BaseTransitionModel {
     public:
         virtual ~BaseTransitionModel() = default;
 
         /// Given a state, it returns all possible next states and the cost of going to those states
-        [[nodiscard]] virtual std::vector<std::pair<State, int>> next_states(const State &state) = 0;
+        [[nodiscard]] virtual std::vector<std::pair<State, int>> next_states(const State &state) const = 0;
     };
+}
 
 
+namespace parallel_bfs {
     template<State State, std::regular Action>
     class TransitionModel : public BaseTransitionModel<State> {
     public:
         // TODO: perhaps change this to a coroutine when std::generator (C++23) is implemented in gcc/clang
-        [[nodiscard]] std::vector<std::pair<State, int>> next_states(const State &state) final {
+        [[nodiscard]] std::vector<std::pair<State, int>> next_states(const State &state) const final {
             std::vector<std::pair<State, int>> next_states;
-            for (auto &action: actions(state)) {
+            for (const Action &action: actions(state)) {
                 State new_state = result(state, action);
                 int cost = action_cost(state, action, new_state);
                 next_states.emplace_back(new_state, cost);
@@ -33,7 +37,6 @@ namespace parallel_bfs {
             return next_states;
         }
 
-    protected:
         [[nodiscard]] virtual std::vector<Action> actions(const State &state) const = 0;
 
         [[nodiscard]] virtual int action_cost(const State &current, const Action &action, const State &next) const = 0;

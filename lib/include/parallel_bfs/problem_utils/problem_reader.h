@@ -9,10 +9,10 @@
 #include "problem_factory.h"
 
 namespace parallel_bfs {
-    template<State State>
-    class ProblemReader : public ProblemFactory<State> {
+    template<State State, std::derived_from<BaseTransitionModel<State>> TM>
+    class YAMLReader : public ProblemFactory<State, TM> {
     public:
-        explicit ProblemReader(std::filesystem::path input_path) : _input_path{std::move(input_path)} {}
+        explicit YAMLReader(std::filesystem::path input_path) : _input_path{std::move(input_path)} {}
 
         // TODO:
 

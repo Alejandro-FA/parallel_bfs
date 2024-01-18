@@ -11,21 +11,21 @@
 #include "tree_state.h"
 #include "basic_tree.h"
 
-class BasicTreeGenerator : public parallel_bfs::RandomFactory<TreeState> {
+class BasicTreeGenerator : public parallel_bfs::RandomFactory<TreeState, BasicTree> {
 public:
     /// Creates a random tree with max_depth and a maximum branching factor of max_actions. The average branching
     /// factor is specified by avg_actions, which should be a value between 0 and max_actions
     explicit BasicTreeGenerator(unsigned int max_depth, unsigned int num_goals, unsigned int max_actions,
                                 double avg_actions, std::optional<unsigned int> seed = std::nullopt)
-            : RandomFactory(seed), _max_depth{max_depth}, _num_goals{num_goals}, _max_actions{max_actions},
-              _avg_actions{avg_actions} {
+            : RandomFactory<TreeState, BasicTree>(seed), _max_depth{max_depth}, _num_goals{num_goals},
+            _max_actions{max_actions}, _avg_actions{avg_actions} {
         _possible_actions.resize(_max_actions);
         std::iota(_possible_actions.begin(), _possible_actions.end(), 0);
     }
 
     [[nodiscard]] TreeState get_initial() override { return TreeState{}; }
 
-    [[nodiscard]] std::unordered_set<TreeState> get_goal() override {
+    [[nodiscard]] std::unordered_set<TreeState> get_goal_states() override {
         // Generate a bunch of goal states. Not all goal states have the same depth.
         std::unordered_set<TreeState> goals(_num_goals);
         while (goals.size() < _num_goals) {
@@ -37,7 +37,7 @@ public:
     }
 
     /// Builds an Adjacency List representation of a tree.
-    [[nodiscard]] std::unique_ptr<parallel_bfs::BaseTransitionModel<TreeState>> get_transition_model() override {
+    [[nodiscard]] BasicTree get_transition_model() override {
         // Create an empty tree
         BasicTree::tree_t tree;
         auto max_size = static_cast<std::size_t>(pow(_max_actions, _max_depth));
@@ -60,7 +60,7 @@ public:
             }
         }
 
-        return std::make_unique<BasicTree>(std::move(tree));
+        return BasicTree{std::move(tree)};
     }
 
 private:
@@ -72,6 +72,7 @@ private:
     std::uniform_int_distribution<uint32_t> _udist{0, _max_actions - 1};
     std::binomial_distribution<unsigned int> _depth_bino_dist{_max_depth, 0.9};
     std::binomial_distribution<unsigned int> _arity_bino_dist{_max_actions, _avg_actions / _max_actions};
+
 
     [[nodiscard]] std::vector<uint32_t> get_rand_actions(unsigned int n, bool with_repetition) {
         std::vector<uint32_t> actions(n);
@@ -86,9 +87,5 @@ private:
     }
 };
 
-
-class BasicTreeReader : public parallel_bfs::ProblemFactory<uint32_t> {
-
-};
 
 #endif //PARALLEL_BFS_BASIC_TREE_GENERATOR_H

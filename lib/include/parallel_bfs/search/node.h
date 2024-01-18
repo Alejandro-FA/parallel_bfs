@@ -5,6 +5,7 @@
 #ifndef PARALLEL_BFS_NODE_H
 #define PARALLEL_BFS_NODE_H
 
+#include <memory>
 #include "state.h"
 
 namespace parallel_bfs {

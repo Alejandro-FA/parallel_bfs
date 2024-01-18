@@ -13,11 +13,6 @@
 
 class BasicTree : public parallel_bfs::TransitionModel<TreeState, uint32_t> {
 public:
-    using tree_t = std::unordered_map<TreeState, std::unordered_set<uint32_t>>;
-
-    explicit BasicTree(tree_t &&tree) : _tree{std::move(tree)} {}
-
-protected:
     [[nodiscard]] std::vector<uint32_t> actions(const TreeState &state) const override {
         auto states = _tree.at(state);
         return {states.cbegin(), states.cend()};
@@ -30,6 +25,10 @@ protected:
     [[nodiscard]] TreeState result(const TreeState &state, const uint32_t &action) const override {
         return TreeState{state, action};
     }
+
+    using tree_t = std::unordered_map<TreeState, std::unordered_set<uint32_t>>;
+
+    explicit BasicTree(tree_t &&tree) : _tree{std::move(tree)} {}
 
 private:
     const tree_t _tree;

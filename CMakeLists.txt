@@ -12,7 +12,6 @@ add_subdirectory(lib)
 ##################### Executables #######################
 add_executable(main
         src/main.cpp
-        src/utils.h
         src/example_problems/basic_graph/basic_graph.h
         src/example_problems/basic_graph/basic_graph_generator.h
         src/example_problems/basic_tree/basic_tree.h

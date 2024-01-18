@@ -13,8 +13,8 @@ namespace parallel_bfs {
     /// In order to avoid data races, ParallelBFS only works with tree-like search.
     class ParallelBFS {
     public:
-        template<typename State>
-        [[nodiscard]] std::shared_ptr<Node<State>> operator()(const Problem<State> &problem) const {
+        template<typename State, typename TM>
+        [[nodiscard]] std::shared_ptr<Node<State>> operator()(const Problem<State, TM> &problem) const {
             auto init_node = std::make_shared<Node<State>>(problem.initial());
             std::queue<std::shared_ptr<Node<State>>> frontier({init_node});
 

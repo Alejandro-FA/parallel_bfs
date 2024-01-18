@@ -8,44 +8,39 @@
 #include <parallel_bfs/problem_utils.h>
 #include "basic_graph.h"
 
-class BasicGraphGenerator : public parallel_bfs::RandomFactory<uint32_t> {
+template<UnsignedInteger T>
+class BasicGraphGenerator : public parallel_bfs::RandomFactory<T, BasicGraph<T>> {
 public:
-    explicit BasicGraphGenerator(uint32_t num_states, uint32_t num_actions, std::optional<unsigned int> seed = std::nullopt)
-            : RandomFactory(seed), _num_states{num_states}, _num_actions{num_actions} {}
+    explicit BasicGraphGenerator(T num_states, T num_actions, std::optional<unsigned int> seed = std::nullopt)
+            : RandomFactory<T, BasicGraph<T>>(seed), _num_states{num_states}, _num_actions{num_actions} {
+        if (num_states < 1) throw std::invalid_argument("A BasicGraph must have at least 1 state.");
+        if (num_actions > num_states) throw std::invalid_argument("Each node of the graph cannot have more edges than the total number of nodes.");
+    }
 
-    [[nodiscard]] uint32_t get_initial() override { return _udist(_prng_engine); }
+    [[nodiscard]] uint32_t get_initial() override { return _udist(this->_prng_engine); }
 
-    [[nodiscard]] std::unordered_set<uint32_t> get_goal() override { return {_udist(_prng_engine)}; }
+    [[nodiscard]] std::unordered_set<uint32_t> get_goal_states() override { return {_udist(this->_prng_engine)}; }
 
     /// Builds an Adjacency List representation of a graph. Might not return a connected graph.
-    [[nodiscard]] std::unique_ptr<parallel_bfs::BaseTransitionModel<uint32_t>> get_transition_model() override {
-        // Create empty graph and add each possible state as a key of the map.
-        BasicGraph::graph_t graph;
-        graph.reserve(_num_states);
-        for (uint32_t i = 0; i < _num_states; ++i) {
-            graph.insert({i, std::unordered_set<uint32_t>()});
-        }
+    [[nodiscard]] BasicGraph<T> get_transition_model() override {
+        // Create a graph with _num_states nodes and no edges.
+        typename BasicGraph<T> ::graph_t graph(_num_states);
 
         // For each state, create up to [_max_actions] children states (graph edges)
-        for (uint32_t i = 0; i < _num_states; ++i) {
-            for (uint32_t j = 0; j < _num_actions; ++j) {
-                uint32_t rand_node{_udist(_prng_engine)};
+        for (int i = 0; i < _num_states; ++i) {
+            for (int j = 0; j < _num_actions; ++j) {
+                T rand_node{_udist(this->_prng_engine)};
                 graph[i].insert(rand_node);
             }
         }
 
-        return std::make_unique<BasicGraph>(std::move(graph));
+        return BasicGraph{std::move(graph)};
     }
 
 private:
-    const uint32_t _num_states;
-    const uint32_t _num_actions;
-    std::uniform_int_distribution<uint32_t> _udist{0, _num_states - 1};
-};
-
-
-class BasicGraphReader : public parallel_bfs::ProblemFactory<uint32_t> {
-
+    const T _num_states;
+    const T _num_actions;
+    std::uniform_int_distribution<T> _udist{0, static_cast<T>(_num_states - 1)};
 };
 
 #endif //PARALLEL_BFS_BASIC_GRAPH_GENERATOR_H

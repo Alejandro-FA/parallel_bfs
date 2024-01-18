@@ -9,6 +9,7 @@
 #include <filesystem>
 #include <yaml-cpp/yaml.h>
 
+
 namespace parallel_bfs {
     template<typename T>
     concept ConvertibleToYAML = requires(const T &a, T &b, const YAML::Node &node) {
@@ -19,38 +20,22 @@ namespace parallel_bfs {
 
     class YAMLWriter {
     public:
-        template<State State>
-        void write(const Problem<State> &problem, const std::filesystem::path &output_path) const {
+        template<State State, std::derived_from<BaseTransitionModel<State>> TM>
+        void write(const Problem<State, TM> &problem, const std::filesystem::path &output_path) const {
             std::ofstream output_file(output_path);
             if (!output_file) throw std::runtime_error("Could not create file to write problem.");
 
             write_metadata(output_file);
-            write_initial(output_file, problem);
-            write_goal(output_file, problem);
-            write_transition_model(output_file, problem);
+            write_node(output_file, "initial", problem.initial());
+            write_node(output_file, "goal_states", problem.goal_states());
+            write_node(output_file, "transition_model", problem.transition_model());
         }
 
-    protected:
+    private:
         void write_metadata(std::ostream& out) const {
             // ToDO: Decide if I want to write some metadata
         }
 
-        template<State State>
-        void write_initial(std::ostream& out, const Problem<State> &problem) const {
-            write_node(out, "initial", problem.initial());
-        }
-
-        template<State State>
-        void write_goal(std::ostream& out, const Problem<State> &problem) const {
-            write_node(out, "goal_states", problem.goal_states());
-        }
-
-        template<State State>
-        void write_transition_model(std::ostream& out, const Problem<State> &problem) const {
-            // write_node(out, "transition_model", problem.transition_model()); // TODO: Uncomment this
-        }
-
-    private:
         void write_node(std::ostream& out, const std::string &key, const ConvertibleToYAML auto &data) const {
             YAML::Node node;
             node[key] = data;
@@ -66,6 +51,7 @@ namespace parallel_bfs {
 
 
 namespace YAML {
+    // Template specialization for std::unordered_set<T>. Needed for problem.goal_states().
     template<parallel_bfs::ConvertibleToYAML T>
     struct convert<std::unordered_set<T>> {
         static Node encode(const std::unordered_set<T> &rhs) {
