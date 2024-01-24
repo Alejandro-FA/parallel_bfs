@@ -1,10 +1,6 @@
 ################## External libraries ###################
 include(FetchContent)
 
-#FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz)
-#set(JSON_ImplicitConversions OFF CACHE INTERNAL "")
-#FetchContent_MakeAvailable(json)
-
 FetchContent_Declare(
         yaml-cpp
         GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
@@ -13,7 +9,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(yaml-cpp)
 
 ####################### Sources #########################
-add_library(parallel_bfs
+add_library(parallel_bfs INTERFACE
         include/parallel_bfs/search.h
         include/parallel_bfs/problem_utils.h
         include/parallel_bfs/search/node.h
@@ -22,17 +18,14 @@ add_library(parallel_bfs
         include/parallel_bfs/search/state.h
         include/parallel_bfs/search/sync_bfs.h
         include/parallel_bfs/search/transition_model.h
+        include/parallel_bfs/search/utils.h
         include/parallel_bfs/problem_utils/problem_factory.h
         include/parallel_bfs/problem_utils/problem_reader.h
         include/parallel_bfs/problem_utils/problem_writer.h
-        include/parallel_bfs/search/utils.h
 )
 
-target_link_libraries(parallel_bfs
-#        PUBLIC nlohmann_json::nlohmann_json
-        PUBLIC yaml-cpp::yaml-cpp
-)
+target_link_libraries(parallel_bfs INTERFACE yaml-cpp::yaml-cpp)
 
-target_include_directories(parallel_bfs PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
+target_include_directories(parallel_bfs INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
 
 set_target_properties(parallel_bfs PROPERTIES LINKER_LANGUAGE CXX)
