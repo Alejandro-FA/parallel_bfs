@@ -13,6 +13,8 @@
 
 template<UnsignedInteger T>
 class BasicGraph : public parallel_bfs::TransitionModel<T, T> {
+    using graph_t = std::vector<std::unordered_set<T>>;
+
 public:
     [[nodiscard]] std::vector<T> actions(const T &state) const override {
         auto states = _graph.at(state);
@@ -27,13 +29,25 @@ public:
         return action;
     }
 
-    using graph_t = std::vector<std::unordered_set<T>>;
+    explicit BasicGraph() = default;
 
-    explicit BasicGraph(graph_t &&graph) : _graph{std::move(graph)} {}
+    explicit BasicGraph(T graph_size) : _graph(graph_size) {}
 
-    void set_graph(graph_t &&graph) { _graph = std::move(graph); }
+    void push_back(std::unordered_set<T> node) { _graph.push_back(std::move(node)); }
 
-    const graph_t &get_graph() const { return _graph; }
+    std::unordered_set<T>& operator[](std::size_t idx) { return _graph[idx]; }
+
+    const std::unordered_set<T>& operator[](std::size_t idx) const { return _graph[idx]; }
+
+    [[nodiscard]] std::size_t size() const { return _graph.size(); }
+
+    typename graph_t::iterator begin() { return _graph.begin(); }
+
+    typename graph_t::const_iterator begin() const { return _graph.begin(); }
+
+    typename graph_t::iterator end() { return _graph.end(); }
+
+    typename graph_t::const_iterator end() const { return _graph.end(); }
 
 private:
     graph_t _graph;
@@ -43,21 +57,20 @@ private:
 namespace YAML {
     template<parallel_bfs::ConvertibleToYAML T>
     struct convert<BasicGraph<T>> {
-    static Node encode(const BasicGraph<T> &rhs) {
-        const auto graph = rhs.get_graph();
-        Node output_node(NodeType::Map);
-        Node graph_nodes(NodeType::Map);
+        static Node encode(const BasicGraph<T> &rhs) {
+            Node output_node(NodeType::Map);
+            Node graph_nodes(NodeType::Map);
 
-        for(size_t i = 0; i < graph.size(); ++i) {
-            Node graph_edges(NodeType::Sequence);
-            graph_edges = graph[i];
-            graph_nodes[i] = graph_edges;
-            graph_edges.SetStyle(YAML::EmitterStyle::Flow);
+            for(size_t i = 0; i < rhs.size(); ++i) {
+                Node graph_edges(NodeType::Sequence);
+                graph_edges = rhs[i];
+                graph_nodes[i] = graph_edges;
+                graph_edges.SetStyle(YAML::EmitterStyle::Flow);
+            }
+
+            output_node["graph"] = graph_nodes;
+            return output_node;
         }
-
-        output_node["graph"] = graph_nodes;
-        return output_node;
-    }
 
     static bool decode(const Node &node, BasicGraph<T> &rhs) {
         if (!node.IsSequence()) return false;

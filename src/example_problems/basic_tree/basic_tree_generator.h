@@ -26,6 +26,7 @@ public:
         std::iota(_possible_actions.begin(), _possible_actions.end(), 0);
     }
 
+protected:
     [[nodiscard]] TreeState<T> get_initial() override { return TreeState<T>{}; }
 
     [[nodiscard]] std::unordered_set<TreeState<T>> get_goal_states() override {
@@ -42,13 +43,12 @@ public:
     /// Builds an Adjacency List representation of a tree.
     [[nodiscard]] BasicTree<T> get_transition_model() override {
         // Create an empty tree
-        typename BasicTree<T>::tree_t tree;
         auto max_size = static_cast<std::size_t>(pow(_max_actions, _max_depth));
-        tree.reserve(max_size);
+        BasicTree<T> tree(max_size);
 
         // Fill the graph using Breadth-First-Search
         std::queue<TreeState<T>> frontier({TreeState<T>{}});
-        tree.insert({TreeState<T>{}, std::unordered_set<T>()});
+        tree.insert(TreeState<T>{}, std::unordered_set<T>());
 
         while (!frontier.empty()) {
             TreeState<T> state{frontier.front()};
@@ -57,7 +57,7 @@ public:
             T n{_arity_bino_dist(this->_prng_engine)};
             for (const auto action: get_rand_actions(n, false)) {
                 TreeState<T> child{state, action};
-                tree.insert({child, std::unordered_set<T>()});
+                tree.insert(child, std::unordered_set<T>());
                 frontier.push(child);
                 tree[state].insert(action);
             }
