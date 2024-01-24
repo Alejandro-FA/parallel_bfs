@@ -17,6 +17,7 @@ add_executable(main
         src/example_problems/basic_tree/basic_tree.h
         src/example_problems/basic_tree/basic_tree_generator.h
         src/example_problems/basic_tree/tree_state.h
+        src/example_problems/common.h
 )
 
 target_link_libraries(main PRIVATE parallel_bfs)

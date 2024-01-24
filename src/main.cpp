@@ -10,9 +10,10 @@
 
 int main() {
     // Choose which type of problem to create
-    BasicGraphGenerator<std::uint32_t> generator{100, 4, 34};
-    // BasicGraphGenerator<std::uint32_t> factory{1'000'000, 4, 34};
-    // BasicTreeGenerator factory{9, 5, 7, 5.0, 87};
+    // BasicGraphGenerator<std::uint32_t> generator{100, 4, 34};
+    // BasicGraphGenerator<std::uint32_t> generator{1'000'000, 4, 34};
+    // BasicTreeGenerator<std::uint32_t> generator{9, 5, 7, 5.0, 87};
+    BasicTreeGenerator<std::uint32_t> generator{4, 3, 3, 2.5, 87};
 
 
     // Create random problem
@@ -33,7 +34,7 @@ int main() {
 
     // Save problem
     parallel_bfs::YAMLWriter writer;
-    writer.write(problem, "test.yml");
+    writer.write(problem, "test2.yml");
 
     return 0;
 }

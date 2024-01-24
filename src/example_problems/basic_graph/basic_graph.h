@@ -8,10 +8,7 @@
 #include <vector>
 #include <unordered_set>
 #include <parallel_bfs/search.h>
-
-template<typename T>
-concept UnsignedInteger = std::same_as<T, unsigned short> || std::same_as<T, unsigned int> ||
-                          std::same_as<T, unsigned long> || std::same_as<T, unsigned long long>;
+#include "../common.h"
 
 
 template<UnsignedInteger T>
@@ -46,18 +43,23 @@ private:
 namespace YAML {
     template<parallel_bfs::ConvertibleToYAML T>
     struct convert<BasicGraph<T>> {
-    static Node encode(const BasicGraph <T> &rhs) {
+    static Node encode(const BasicGraph<T> &rhs) {
         const auto graph = rhs.get_graph();
         Node output_node(NodeType::Map);
+        Node graph_nodes(NodeType::Map);
+
         for(size_t i = 0; i < graph.size(); ++i) {
-            Node inner_node(NodeType::Map);
-            inner_node[i] = graph[i];
-            output_node["graph"].push_back(inner_node);
+            Node graph_edges(NodeType::Sequence);
+            graph_edges = graph[i];
+            graph_nodes[i] = graph_edges;
+            graph_edges.SetStyle(YAML::EmitterStyle::Flow);
         }
+
+        output_node["graph"] = graph_nodes;
         return output_node;
     }
 
-    static bool decode(const Node &node, BasicGraph <T> &rhs) {
+    static bool decode(const Node &node, BasicGraph<T> &rhs) {
         if (!node.IsSequence()) return false;
         // std::for_each(node.begin(), node.end(), [&rhs](const auto &v) { rhs.insert(v.template as<T>()); });
         std::cout << "WARNING: Unimplemented decoding graph" << std::endl;

@@ -17,14 +17,14 @@ public:
         if (num_actions > num_states) throw std::invalid_argument("Each node of the graph cannot have more edges than the total number of nodes.");
     }
 
-    [[nodiscard]] uint32_t get_initial() override { return _udist(this->_prng_engine); }
+    [[nodiscard]] T get_initial() override { return _udist(this->_prng_engine); }
 
-    [[nodiscard]] std::unordered_set<uint32_t> get_goal_states() override { return {_udist(this->_prng_engine)}; }
+    [[nodiscard]] std::unordered_set<T> get_goal_states() override { return {_udist(this->_prng_engine)}; }
 
     /// Builds an Adjacency List representation of a graph. Might not return a connected graph.
     [[nodiscard]] BasicGraph<T> get_transition_model() override {
         // Create a graph with _num_states nodes and no edges.
-        typename BasicGraph<T> ::graph_t graph(_num_states);
+        typename BasicGraph<T>::graph_t graph(_num_states);
 
         // For each state, create up to [_max_actions] children states (graph edges)
         for (int i = 0; i < _num_states; ++i) {
@@ -34,7 +34,7 @@ public:
             }
         }
 
-        return BasicGraph{std::move(graph)};
+        return BasicGraph<T>{std::move(graph)};
     }
 
 private:

@@ -15,20 +15,20 @@ namespace parallel_bfs {
     };
 
     template<SearchType type>
-    class SyncBFS {
+    class SyncBFS { // FIXME: Change this from Breadth First Search to Best First Search
     public:
         template<typename State, typename TM>
         [[nodiscard]] std::shared_ptr<Node<State>> operator()(const Problem<State, TM> &problem) const {
             auto init_node = std::make_shared<Node<State>>(problem.initial());
+            if (problem.is_goal(problem.initial())) return init_node;
+
             std::queue<std::shared_ptr<Node<State>>> frontier({init_node});
-            std::unordered_set<State> reached(
-                    {init_node->state()}); // Keep track of reached states in graph-search type
+            std::unordered_set<State> reached({init_node->state()}); // Keep track of reached states in graph-search type
 
             while (!frontier.empty()) {
                 auto node = frontier.front();
                 frontier.pop();
-                auto children = problem.expand(node);
-                for (const auto &child: children) {
+                for (const auto &child: problem.expand(node)) {
                     State child_state = child->state();
                     if (problem.is_goal(child_state)) return child;
 

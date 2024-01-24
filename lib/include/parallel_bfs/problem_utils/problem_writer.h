@@ -57,7 +57,6 @@ namespace YAML {
         static Node encode(const std::unordered_set<T> &rhs) {
             Node node(NodeType::Sequence);
             std::for_each(rhs.cbegin(), rhs.cend(), [&node](const T &v) { node.push_back(v); });
-            node.SetStyle(YAML::EmitterStyle::Flow);
             return node;
         }
 

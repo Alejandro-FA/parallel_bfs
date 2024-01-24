@@ -8,27 +8,30 @@
 #include <cstdint>
 #include <iostream>
 #include <vector>
+#include "../common.h"
 
+template<UnsignedInteger T>
 class TreeState {
 public:
-    TreeState(std::initializer_list<uint32_t> init_values = {}) : _vec{init_values} {}
+    TreeState(std::initializer_list<T> init_values = {}) : _vec{init_values} {}
 
-    explicit TreeState(std::vector<uint32_t> &&init_values) : _vec{std::move(init_values)} {}
+    explicit TreeState(std::vector<T> &&init_values) : _vec{std::move(init_values)} {}
 
-    explicit TreeState(const TreeState &prev_state, uint32_t new_element) : _vec{prev_state._vec} {
+    explicit TreeState(const TreeState &prev_state, T new_element) : _vec{prev_state._vec} {
         _vec.push_back(new_element);
     }
 
     [[nodiscard]] std::size_t depth() const { return _vec.size(); }
 
-    [[nodiscard]] std::vector<uint32_t> path() const { return _vec; }
+    [[nodiscard]] const std::vector<T> &path() const { return _vec; }
 
 private:
-    std::vector<uint32_t> _vec;
+    std::vector<T> _vec;
 };
 
 
-std::ostream &operator<<(std::ostream &os, const TreeState &s) {
+template<UnsignedInteger T>
+std::ostream &operator<<(std::ostream &os, const TreeState<T> &s) {
     os << "[";
     bool first = true;
     for (const auto action: s.path()) {
@@ -39,18 +42,24 @@ std::ostream &operator<<(std::ostream &os, const TreeState &s) {
     return os << "]";
 }
 
-bool operator==(const TreeState &lhs, const TreeState &rhs) {
+
+template<UnsignedInteger T>
+bool operator==(const TreeState<T> &lhs, const TreeState<T> &rhs) {
+    if (lhs.depth() != rhs.depth()) return false;
     return lhs.path() == rhs.path();
 }
 
-bool operator!=(const TreeState &lhs, const TreeState &rhs) { return !(lhs == rhs); }
+
+template<UnsignedInteger T>
+bool operator!=(const TreeState<T> &lhs, const TreeState<T> &rhs) { return !(lhs == rhs); }
+
 
 template<>
-struct std::hash<TreeState> {
+struct std::hash<TreeState<std::uint32_t>> {
     /// Algorithm to compute the hash of a vector taken from https://stackoverflow.com/a/72073933
-    std::size_t operator()(const TreeState &s) const noexcept {
+    std::size_t operator()(const TreeState<std::uint32_t> &s) const noexcept {
         std::size_t seed = s.depth();
-        for (uint32_t x: s.path()) {
+        for (std::uint32_t x: s.path()) {
             x = ((x >> 16) ^ x) * 0x45d9f3b;
             x = ((x >> 16) ^ x) * 0x45d9f3b;
             x = (x >> 16) ^ x;
@@ -59,6 +68,29 @@ struct std::hash<TreeState> {
         return seed;
     }
 };
+
+
+namespace YAML {
+    // Template specialization for std::unordered_set<T>. Needed for problem.goal_states().
+    template<parallel_bfs::ConvertibleToYAML T>
+    struct convert<TreeState<T>> {
+        static Node encode(const TreeState<T> &rhs) {
+            Node node(NodeType::Sequence);
+            node = rhs.path();
+            // std::for_each(rhs.cbegin(), rhs.cend(), [&node](const T &v) { node.push_back(v); });
+            node.SetStyle(YAML::EmitterStyle::Flow);
+            return node;
+        }
+
+        static bool decode(const Node &node, TreeState<T> &rhs) {
+            if (!node.IsSequence()) return false;
+            std::vector<T> vec = node.as<std::vector<T>>();
+            // std::for_each(node.begin(), node.end(), [&rhs](const auto &v) { rhs.insert(v.template as<T>()); });
+            rhs = TreeState<T>{std::move(vec)};
+            return true;
+        }
+    };
+}
 
 
 #endif //PARALLEL_BFS_TREE_STATE_H
