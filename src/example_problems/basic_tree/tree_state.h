@@ -15,7 +15,7 @@ class TreeState {
 public:
     TreeState(std::initializer_list<T> init_values = {}) : _vec{init_values} {}
 
-    explicit TreeState(std::vector<T> &&init_values) : _vec{std::move(init_values)} {}
+    explicit TreeState(std::vector<T> init_values) : _vec{std::move(init_values)} {}
 
     explicit TreeState(const TreeState &prev_state, T new_element) : _vec{prev_state._vec} {
         _vec.push_back(new_element);
