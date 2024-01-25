@@ -5,6 +5,8 @@ FetchContent_Declare(
         yaml-cpp
         GIT_REPOSITORY https://github.com/Alejandro-FA/yaml-cpp.git
         master # Can be a tag (yaml-cpp-x.x.x), a commit hash, or a branch name (master)
+        # GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git # FIXME: Change to official repo once the PR is merged
+        # GIT_TAG 0.8.0 # Can be a tag (yaml-cpp-x.x.x), a commit hash, or a branch name (master)
 )
 FetchContent_MakeAvailable(yaml-cpp)
 
