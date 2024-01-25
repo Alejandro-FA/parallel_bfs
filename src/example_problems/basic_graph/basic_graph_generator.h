@@ -12,7 +12,7 @@ template<UnsignedInteger T>
 class BasicGraphGenerator : public parallel_bfs::RandomFactory<T, BasicGraph<T>> {
 public:
     explicit BasicGraphGenerator(T num_states, T num_actions, std::optional<unsigned int> seed = std::nullopt)
-            : RandomFactory<T, BasicGraph<T>>(seed), _num_states{num_states}, _num_actions{num_actions} {
+            : parallel_bfs::RandomFactory<T, BasicGraph<T>>(seed), _num_states{num_states}, _num_actions{num_actions} {
         if (num_states < 1) throw std::invalid_argument("A BasicGraph must have at least 1 state.");
         if (num_actions > num_states) throw std::invalid_argument("Each node of the graph cannot have more edges than the total number of nodes.");
     }

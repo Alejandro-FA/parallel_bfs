@@ -77,15 +77,13 @@ namespace YAML {
         static Node encode(const TreeState<T> &rhs) {
             Node node(NodeType::Sequence);
             node = rhs.path();
-            // std::for_each(rhs.cbegin(), rhs.cend(), [&node](const T &v) { node.push_back(v); });
-            node.SetStyle(YAML::EmitterStyle::Flow);
+            if (rhs.depth() > 0) node.SetStyle(YAML::EmitterStyle::Flow);
             return node;
         }
 
         static bool decode(const Node &node, TreeState<T> &rhs) {
             if (!node.IsSequence()) return false;
             std::vector<T> vec = node.as<std::vector<T>>();
-            // std::for_each(node.begin(), node.end(), [&rhs](const auto &v) { rhs.insert(v.template as<T>()); });
             rhs = TreeState<T>{std::move(vec)};
             return true;
         }

@@ -18,10 +18,12 @@ public:
     /// factor is specified by avg_actions, which should be a value between 0 and max_actions
     explicit BasicTreeGenerator(unsigned int max_depth, unsigned int num_goals, T max_actions,
                                 double avg_actions, std::optional<unsigned int> seed = std::nullopt)
-            : RandomFactory<TreeState<T>, BasicTree<T>>(seed), _max_depth{max_depth}, _num_goals{num_goals},
-            _max_actions{max_actions}, _avg_actions{avg_actions} {
-        if (avg_actions > max_actions) throw std::invalid_argument("The average number of actions possible at each state must be lower or equal to the maximum number of actions possible.");
-        if (num_goals > static_cast<unsigned int>(pow(max_actions, max_depth))) throw std::invalid_argument("The number of goals must be lower or equal to the maximum number of different states in the tree.");
+            : parallel_bfs::RandomFactory<TreeState<T>, BasicTree<T>>(seed), _max_depth{max_depth},
+              _num_goals{num_goals}, _max_actions{max_actions}, _avg_actions{avg_actions} {
+        if (avg_actions > max_actions)
+            throw std::invalid_argument("The average number of actions possible at each state must be lower or equal to the maximum number of actions possible.");
+        if (num_goals > static_cast<unsigned int>(pow(max_actions, max_depth)))
+            throw std::invalid_argument("The number of goals must be lower or equal to the maximum number of different states in the tree.");
         _possible_actions.resize(_max_actions);
         std::iota(_possible_actions.begin(), _possible_actions.end(), 0);
     }
@@ -80,9 +82,10 @@ private:
     [[nodiscard]] std::vector<T> get_rand_actions(unsigned int n, bool with_repetition) {
         std::vector<T> actions(n);
         if (with_repetition) {
-            std::generate(actions.begin(), actions.end(), [this](){return _udist(this->_prng_engine); });
+            std::generate(actions.begin(), actions.end(), [this]() { return _udist(this->_prng_engine); });
         } else {
-            if (n > _max_actions) throw std::invalid_argument("n cannot be larger than the maximum number of actions possible for any given state.");
+            if (n > _max_actions)
+                throw std::invalid_argument("n cannot be larger than the maximum number of actions possible for any given state.");
             std::ranges::shuffle(_possible_actions, this->_prng_engine);
             actions = {_possible_actions.cbegin(), _possible_actions.cbegin() + n};
         }

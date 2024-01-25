@@ -41,6 +41,8 @@ public:
 
     [[nodiscard]] std::size_t size() const { return _graph.size(); }
 
+    void resize(std::size_t new_size) { _graph.resize(new_size); }
+
     typename graph_t::iterator begin() { return _graph.begin(); }
 
     typename graph_t::const_iterator begin() const { return _graph.begin(); }
@@ -72,12 +74,20 @@ namespace YAML {
             return output_node;
         }
 
-    static bool decode(const Node &node, BasicGraph<T> &rhs) {
-        if (!node.IsSequence()) return false;
-        // std::for_each(node.begin(), node.end(), [&rhs](const auto &v) { rhs.insert(v.template as<T>()); });
-        std::cout << "WARNING: Unimplemented decoding graph" << std::endl;
-        return true;
-    }
+        static bool decode(const Node &node, BasicGraph<T> &rhs) {
+            if (!node.IsMap()) return false;
+            Node graph_node = node["graph"];
+            if (!graph_node.IsMap()) return false;
+            rhs.resize(graph_node.size());
+
+            for (const auto key_value_pair: graph_node) {
+                T node_idx = key_value_pair.first.template as<T>();
+                std::unordered_set<T> children = key_value_pair.second.template as<std::unordered_set<T>>();
+                rhs[node_idx] = std::move(children);
+            }
+
+            return true;
+        }
     };
 }
 

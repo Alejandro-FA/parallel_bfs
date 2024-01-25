@@ -5,11 +5,12 @@
 #ifndef PARALLEL_BFS_BASIC_TREE_H
 #define PARALLEL_BFS_BASIC_TREE_H
 
-#include <cstdint>
 #include <unordered_map>
 #include <unordered_set>
 #include <parallel_bfs/search.h>
 #include "tree_state.h"
+#include "../common.h"
+
 
 template<UnsignedInteger T>
 class BasicTree : public parallel_bfs::TransitionModel<TreeState<T>, T> {
@@ -43,6 +44,8 @@ public:
 
     [[nodiscard]] std::size_t size() const { return _tree.size(); }
 
+    void reserve(std::size_t count) { _tree.reserve(count); }
+
     typename tree_t::iterator begin() { return _tree.begin(); }
 
     typename tree_t::const_iterator begin() const { return _tree.begin(); }
@@ -75,9 +78,17 @@ namespace YAML {
         }
 
         static bool decode(const Node &node, BasicTree<T> &rhs) {
-            if (!node.IsSequence()) return false;
-            // std::for_each(node.begin(), node.end(), [&rhs](const auto &v) { rhs.insert(v.template as<T>()); });
-            std::cout << "WARNING: Unimplemented decoding tree" << std::endl;
+            if (!node.IsMap()) return false;
+            Node tree_node = node["tree"];
+            if (!tree_node.IsMap()) return false;
+            rhs.reserve(tree_node.size());
+
+            for (const auto key_value_pair: tree_node) {
+                TreeState<T> state = key_value_pair.first.template as<TreeState<T>>();
+                std::unordered_set<T> children = key_value_pair.second.template as<std::unordered_set<T>>();
+                rhs.insert(state, std::move(children));
+            }
+
             return true;
         }
     };

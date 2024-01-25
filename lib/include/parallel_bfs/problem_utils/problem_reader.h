@@ -6,18 +6,25 @@
 #define PARALLEL_BFS_PROBLEM_READER_H
 
 #include <filesystem>
-#include "problem_factory.h"
+#include <yaml-cpp/yaml.h>
+#include "problem_writer.h"
 
 namespace parallel_bfs {
     template<State State, std::derived_from<BaseTransitionModel<State>> TM>
-    class YAMLReader : public ProblemFactory<State, TM> {
+    requires ConvertibleToYAML<State> && ConvertibleToYAML<TM>
+    class YAMLReader {
     public:
-        explicit YAMLReader(std::filesystem::path input_path) : _input_path{std::move(input_path)} {}
+        [[nodiscard]] Problem<State, TM> read(const std::filesystem::path &input_path) {
+            std::ifstream input_file(input_path);
+            if (!input_file) throw std::runtime_error("Could not read file " + input_path.string());
 
-        // TODO:
+            YAML::Node node = YAML::LoadFile(input_path);
+            State initial = node["initial"].as<State>();
+            std::unordered_set<State> goal_states = node["goal_states"].as<std::unordered_set<State>>();
+            TM transition_model = node["transition_model"].as<TM>();
 
-    private:
-        std::filesystem::path _input_path;
+            return Problem<State, TM>{initial, std::move(goal_states), std::move(transition_model)};
+        }
     };
 }
 

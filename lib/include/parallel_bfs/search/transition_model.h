@@ -8,9 +8,8 @@
 #include <vector>
 #include "state.h"
 
-namespace {
-    using namespace parallel_bfs;
 
+namespace parallel_bfs {
     template<State State>
     class BaseTransitionModel {
     public:
@@ -19,10 +18,8 @@ namespace {
         /// Given a state, it returns all possible next states and the cost of going to those states
         [[nodiscard]] virtual std::vector<std::pair<State, int>> next_states(const State &state) const = 0;
     };
-}
 
 
-namespace parallel_bfs {
     template<State State, std::regular Action>
     class TransitionModel : public BaseTransitionModel<State> {
     public:
