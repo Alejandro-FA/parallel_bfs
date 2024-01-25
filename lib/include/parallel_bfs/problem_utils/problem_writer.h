@@ -12,9 +12,10 @@
 
 namespace parallel_bfs {
     template<typename T>
-    concept ConvertibleToYAML = requires(const T &a, T &b, const YAML::Node &node) {
+    concept ConvertibleToYAML = requires(const T &a, T &b, const YAML::Node &node, YAML::Emitter &emitter) {
         { YAML::convert<T>::encode(a)} -> std::same_as<YAML::Node>;
         { YAML::convert<T>::decode(node, b)} -> std::same_as<bool>;
+        { emitter << a } -> std::same_as<YAML::Emitter&>;
     };
 
 
@@ -22,28 +23,24 @@ namespace parallel_bfs {
     public:
         template<State State, std::derived_from<BaseTransitionModel<State>> TM>
         void write(const Problem<State, TM> &problem, const std::filesystem::path &output_path) const {
-            std::ofstream output_file(output_path);
+            std::ofstream output_file{output_path};
             if (!output_file) throw std::runtime_error("Could not create file to write problem.");
 
             write_metadata(output_file);
-            write_node(output_file, "initial", problem.initial());
-            write_node(output_file, "goal_states", problem.goal_states());
-            write_node(output_file, "transition_model", problem.transition_model());
+
+            YAML::Emitter emitter;
+            emitter << YAML::BeginMap;
+            emitter << YAML::Key << "initial" << YAML::Value << problem.initial();
+            emitter << YAML::Key << "goal_states" << YAML::Value << problem.goal_states();
+            emitter << YAML::Key << "transition_model" << YAML::Value << problem.transition_model();
+            emitter << YAML::EndMap;
+
+            output_file << emitter.c_str() << '\n';
         }
 
     private:
         void write_metadata(std::ostream& out) const {
             // ToDO: Decide if I want to write some metadata
-        }
-
-        void write_node(std::ostream& out, const std::string &key, const ConvertibleToYAML auto &data) const {
-            YAML::Node node;
-            node[key] = data;
-
-            YAML::Emitter emitter;
-            emitter << node;
-
-            out << emitter.c_str() << '\n';
         }
     };
 }
@@ -66,6 +63,15 @@ namespace YAML {
             return true;
         }
     };
+
+
+    template<parallel_bfs::ConvertibleToYAML T>
+    Emitter& operator << (Emitter& out, const std::unordered_set<T> s) {
+        out << YAML::BeginSeq;
+        std::for_each(s.cbegin(), s.cend(), [&out](const T &v) { out << v; });
+        out << YAML::EndSeq;
+        return out;
+    }
 }
 
 #endif //PARALLEL_BFS_PROBLEM_WRITER_H

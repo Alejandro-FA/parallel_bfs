@@ -89,6 +89,19 @@ namespace YAML {
             return true;
         }
     };
+
+
+    template<parallel_bfs::ConvertibleToYAML T>
+    Emitter& operator << (Emitter& out, const BasicGraph<T> graph) {
+        out << YAML::BeginMap;
+        out << YAML::Key << "graph" << YAML::Value << YAML::BeginMap;
+
+        for(size_t i = 0; i < graph.size(); ++i)
+            out << YAML::Key << i << YAML::Value << YAML::Flow << graph[i];
+
+        out << YAML::EndMap << YAML::EndMap;
+        return out;
+    }
 }
 
 #endif //PARALLEL_BFS_BASIC_GRAPH_H

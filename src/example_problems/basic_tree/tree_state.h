@@ -77,7 +77,7 @@ namespace YAML {
         static Node encode(const TreeState<T> &rhs) {
             Node node(NodeType::Sequence);
             node = rhs.path();
-            if (rhs.depth() > 0) node.SetStyle(YAML::EmitterStyle::Flow);
+            node.SetStyle(YAML::EmitterStyle::Flow);
             return node;
         }
 
@@ -88,6 +88,13 @@ namespace YAML {
             return true;
         }
     };
+
+
+    template<parallel_bfs::ConvertibleToYAML T>
+    Emitter& operator << (Emitter& out, const TreeState<T> state) {
+        out << YAML::Flow << state.path();
+        return out;
+    }
 }
 
 

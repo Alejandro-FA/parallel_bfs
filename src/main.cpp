@@ -29,8 +29,15 @@ int main() {
     measure(problem, par_bfs, "ParallelBFS");
 
     // Save problem
+    std::filesystem::path output_path = "problem.yml";
+    std::cout << "\n[INFO] Writing problem to " << output_path << "..." << std::endl;
     parallel_bfs::YAMLWriter writer;
-    writer.write(problem, "problem.yml");
+    writer.write(problem, output_path);
+
+    // // Read problem
+    // parallel_bfs::YAMLReader<std::uint32_t, BasicGraph<std::uint32_t>> reader;
+    // auto problem_read = reader.read("problem.yml");
+    // writer.write(problem_read, "problem_read.yml");
 
     return 0;
 }

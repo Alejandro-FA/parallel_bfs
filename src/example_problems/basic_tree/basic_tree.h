@@ -92,6 +92,19 @@ namespace YAML {
             return true;
         }
     };
+
+
+    template<parallel_bfs::ConvertibleToYAML T>
+    Emitter& operator << (Emitter& out, const BasicTree<T> tree) {
+        out << YAML::BeginMap;
+        out << YAML::Key << "tree" << YAML::Value << YAML::BeginMap;
+
+        for (const auto& [key, value]: tree)
+            out << YAML::Key << key << YAML::Value << YAML::Flow << value;
+
+        out << YAML::EndMap << YAML::EndMap;
+        return out;
+    }
 }
 
 #endif //PARALLEL_BFS_BASIC_TREE_H
