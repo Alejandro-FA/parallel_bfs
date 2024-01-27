@@ -8,6 +8,7 @@
 #include <iostream>
 #include <filesystem>
 #include <yaml-cpp/yaml.h>
+#include "type_name.h"
 
 
 namespace parallel_bfs {
@@ -31,9 +32,11 @@ namespace parallel_bfs {
 
             YAML::Emitter emitter;
             emitter << YAML::BeginMap;
+            emitter << YAML::Key << "state type" << YAML::Value << std::string{type_name<State>()};
+            emitter << YAML::Key << "transition model type" << YAML::Value << std::string{type_name<TM>()};
             emitter << YAML::Key << "initial" << YAML::Value << problem.initial();
-            emitter << YAML::Key << "goal_states" << YAML::Value << problem.goal_states();
-            emitter << YAML::Key << "transition_model" << YAML::Value << problem.transition_model();
+            emitter << YAML::Key << "goal states" << YAML::Value << problem.goal_states();
+            emitter << YAML::Key << "transition model" << YAML::Value << problem.transition_model();
             emitter << YAML::EndMap;
 
             output_file << emitter.c_str() << '\n';

@@ -20,8 +20,8 @@ namespace parallel_bfs {
 
             YAML::Node node = YAML::LoadFile(input_path);
             State initial = node["initial"].as<State>();
-            std::unordered_set<State> goal_states = node["goal_states"].as<std::unordered_set<State>>();
-            TM transition_model = node["transition_model"].as<TM>();
+            std::unordered_set<State> goal_states = node["goal states"].as<std::unordered_set<State>>();
+            TM transition_model = node["transition model"].as<TM>();
 
             return Problem<State, TM>{initial, std::move(goal_states), std::move(transition_model)};
         }

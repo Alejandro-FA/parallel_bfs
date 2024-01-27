@@ -4,7 +4,7 @@
 #include <parallel_bfs/problem_utils.h>
 #include "example_problems/basic_graph/basic_graph_generator.h"
 #include "example_problems/basic_tree/basic_tree_generator.h"
-
+#include <numeric>
 
 
 int main() {
@@ -33,11 +33,17 @@ int main() {
     std::cout << "\n[INFO] Writing problem to " << output_path << "..." << std::endl;
     parallel_bfs::YAMLWriter writer;
     writer.write(problem, output_path);
+    std::cout << "[INFO] Problem written." << std::endl;
 
     // // Read problem
-    // parallel_bfs::YAMLReader<std::uint32_t, BasicGraph<std::uint32_t>> reader;
+    // std::filesystem::path input_path = "problem.yml";
+    // std::cout << "\n[INFO] Reading problem from " << input_path << "..." << std::endl;
+    // parallel_bfs::YAMLReader<TreeState<std::uint32_t>, BasicTree<std::uint32_t>> reader;
     // auto problem_read = reader.read("problem.yml");
+    // std::cout << "[INFO] Problem read." << std::endl;
+    // std::cout << "[INFO] Writing problem to " << "problem_read.yml" << "..." << std::endl;
     // writer.write(problem_read, "problem_read.yml");
+    // std::cout << "[INFO] Problem written." << std::endl;
 
     return 0;
 }
