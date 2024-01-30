@@ -2,8 +2,8 @@
 // Created by Alejandro Fernández on 04/11/2023.
 //
 
-#ifndef PARALLEL_BFS_TREE_STATE_H
-#define PARALLEL_BFS_TREE_STATE_H
+#ifndef PARALLEL_BFS_PROJECT_TREE_STATE_H
+#define PARALLEL_BFS_PROJECT_TREE_STATE_H
 
 #include <cstdint>
 #include <iostream>

@@ -1,10 +1,12 @@
 cmake_minimum_required(VERSION 3.24)
-project(parallel_bfs)
+project(parallel_bfs_project
+        VERSION 0.1
+        DESCRIPTION "Project for testing parallel strategies for Best First Search"
+        LANGUAGES CXX
+        HOMEPAGE_URL "https://github.com/Alejandro-FA/parallel_bfs"
+)
 
 set(CMAKE_CXX_STANDARD 23)
-
-# Set the output directory to be the root directory of the project
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
 
 # Add the directories so that cmake can find the subdirectory CMakeLists.txt files.
 add_subdirectory(lib)
@@ -12,6 +14,7 @@ add_subdirectory(lib)
 ##################### Executables #######################
 add_executable(main
         src/main.cpp
+        src/utils.h
         src/example_problems/basic_graph/basic_graph.h
         src/example_problems/basic_graph/basic_graph_generator.h
         src/example_problems/basic_tree/basic_tree.h
@@ -40,22 +43,22 @@ set(common_build_opts
 
 set(asan_flags "-fsanitize=address,undefined -fno-omit-frame-pointer -Og")
 add_test(asan_lsan_ubsan ${CMAKE_CTEST_COMMAND}
-        --build-and-test "${CMAKE_SOURCE_DIR}" "${CMAKE_BINARY_DIR}/cmake-build-asan-tests"
+        --build-and-test "${CMAKE_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}/cmake-build-tests-asan"
         --build-generator ${CMAKE_GENERATOR}
         --build-makeprogram ${CMAKE_MAKE_PROGRAM}
         --build-project "parallel_bfs"
         --build-options -DCMAKE_CXX_FLAGS=${asan_flags} ${common_build_opts}
-        --test-command "main"
+        --test-command "main.out"
 )
 
 set(tsan_flags "-fsanitize=thread -fno-omit-frame-pointer -O2")
 add_test(tsan ${CMAKE_CTEST_COMMAND}
-        --build-and-test "${CMAKE_SOURCE_DIR}" "${CMAKE_BINARY_DIR}/cmake-build-tsan-tests"
+        --build-and-test "${CMAKE_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}/cmake-build-tests-tsan"
         --build-generator ${CMAKE_GENERATOR}
         --build-makeprogram ${CMAKE_MAKE_PROGRAM}
         --build-project "parallel_bfs"
         --build-options -DCMAKE_CXX_FLAGS=${tsan_flags} ${common_build_opts}
-        --test-command "main"
+        --test-command "main.out"
 )
 
 set(sanitizers_env_options

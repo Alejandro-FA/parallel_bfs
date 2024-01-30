@@ -2,8 +2,8 @@
 // Created by alejandro on 04/01/24.
 //
 
-#ifndef PARALLEL_BFS_BASIC_TREE_H
-#define PARALLEL_BFS_BASIC_TREE_H
+#ifndef PARALLEL_BFS_PROJECT_BASIC_TREE_H
+#define PARALLEL_BFS_PROJECT_BASIC_TREE_H
 
 #include <unordered_map>
 #include <unordered_set>
@@ -180,4 +180,4 @@ Emitter &operator<<(Emitter &out, const BasicTree<T> tree) {
 
 }
 
-#endif //PARALLEL_BFS_BASIC_TREE_H
+#endif //PARALLEL_BFS_PROJECT_BASIC_TREE_H

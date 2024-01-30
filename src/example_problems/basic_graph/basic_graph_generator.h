@@ -2,8 +2,8 @@
 // Created by alejandro on 18/11/23.
 //
 
-#ifndef PARALLEL_BFS_BASIC_GRAPH_GENERATOR_H
-#define PARALLEL_BFS_BASIC_GRAPH_GENERATOR_H
+#ifndef PARALLEL_BFS_PROJECT_BASIC_GRAPH_GENERATOR_H
+#define PARALLEL_BFS_PROJECT_BASIC_GRAPH_GENERATOR_H
 
 #include <parallel_bfs/problem_utils.h>
 #include "basic_graph.h"

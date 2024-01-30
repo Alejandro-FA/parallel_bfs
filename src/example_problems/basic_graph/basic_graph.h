@@ -2,8 +2,8 @@
 // Created by Alejandro Fernández on 19/11/2023.
 //
 
-#ifndef PARALLEL_BFS_BASIC_GRAPH_H
-#define PARALLEL_BFS_BASIC_GRAPH_H
+#ifndef PARALLEL_BFS_PROJECT_BASIC_GRAPH_H
+#define PARALLEL_BFS_PROJECT_BASIC_GRAPH_H
 
 #include <vector>
 #include <unordered_set>

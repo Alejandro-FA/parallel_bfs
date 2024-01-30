@@ -2,8 +2,8 @@
 // Created by Alejandro Fernández on 29/11/2023.
 //
 
-#ifndef PARALLEL_BFS_BASIC_TREE_GENERATOR_H
-#define PARALLEL_BFS_BASIC_TREE_GENERATOR_H
+#ifndef PARALLEL_BFS_PROJECT_BASIC_TREE_GENERATOR_H
+#define PARALLEL_BFS_PROJECT_BASIC_TREE_GENERATOR_H
 
 #include <queue>
 #include <algorithm>
@@ -94,4 +94,4 @@ private:
 };
 
 
-#endif //PARALLEL_BFS_BASIC_TREE_GENERATOR_H
+#endif //PARALLEL_BFS_PROJECT_BASIC_TREE_GENERATOR_H
