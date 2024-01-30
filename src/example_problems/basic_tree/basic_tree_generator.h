@@ -16,16 +16,15 @@ class BasicTreeGenerator : public parallel_bfs::RandomFactory<TreeState<T>, Basi
 public:
     /// Creates a random tree with max_depth and a maximum branching factor of max_actions. The average branching
     /// factor is specified by avg_actions, which should be a value between 0 and max_actions
-    explicit BasicTreeGenerator(unsigned int max_depth, unsigned int num_goals, T max_actions,
-                                double avg_actions, std::optional<unsigned int> seed = std::nullopt)
-            : parallel_bfs::RandomFactory<TreeState<T>, BasicTree<T>>(seed), _max_depth{max_depth},
-              _num_goals{num_goals}, _max_actions{max_actions}, _avg_actions{avg_actions} {
+    explicit BasicTreeGenerator(unsigned int max_depth, unsigned int num_goals, T max_actions, double avg_actions)
+            : _max_depth{max_depth}, _num_goals{num_goals}, _max_actions{max_actions}, _avg_actions{avg_actions},
+              _possible_actions{get_iota_vector(max_actions)} {
         if (avg_actions > max_actions)
-            throw std::invalid_argument("The average number of actions possible at each state must be lower or equal to the maximum number of actions possible.");
+            throw std::invalid_argument(
+                    "The average number of actions possible at each state must be lower or equal to the maximum number of actions possible.");
         if (num_goals > static_cast<unsigned int>(pow(max_actions, max_depth)))
-            throw std::invalid_argument("The number of goals must be lower or equal to the maximum number of different states in the tree.");
-        _possible_actions.resize(_max_actions);
-        std::iota(_possible_actions.begin(), _possible_actions.end(), 0);
+            throw std::invalid_argument(
+                    "The number of goals must be lower or equal to the maximum number of different states in the tree.");
     }
 
 protected:
@@ -35,8 +34,8 @@ protected:
         // Generate a bunch of goal states. Not all goal states have the same depth.
         std::unordered_set<TreeState<T>> goals(_num_goals);
         while (goals.size() < _num_goals) {
-            unsigned int goal_depth = _depth_bino_dist(this->_prng_engine);
-            TreeState goal{get_rand_actions(goal_depth, true)};
+            unsigned int goal_depth = this->get_random_value(_depth_binomial);
+            TreeState goal{this->get_random_values(_udist, goal_depth)};
             goals.insert(std::move(goal));
         }
         return goals;
@@ -56,8 +55,8 @@ protected:
             TreeState<T> state{frontier.front()};
             frontier.pop();
             if (state.depth() == _max_depth) break; // Stop once we reach max_depth
-            T n{_arity_bino_dist(this->_prng_engine)};
-            for (const auto action: get_rand_actions(n, false)) {
+            T n{this->get_random_value(_branch_factor_binomial)};
+            for (const auto action: this->get_random_sample(_possible_actions, n)) {
                 TreeState<T> child{state, action};
                 tree.insert(child, std::unordered_set<T>());
                 frontier.push(child);
@@ -72,24 +71,16 @@ private:
     const unsigned int _max_depth;
     const unsigned int _num_goals;
     const unsigned int _max_actions;
-    double _avg_actions;
-    std::vector<T> _possible_actions;
+    const double _avg_actions;
+    const std::vector<T> _possible_actions;
     std::uniform_int_distribution<T> _udist{0, _max_actions - 1};
-    std::binomial_distribution<unsigned int> _depth_bino_dist{_max_depth, 0.9};
-    std::binomial_distribution<T> _arity_bino_dist{_max_actions, _avg_actions / _max_actions};
+    std::binomial_distribution<unsigned int> _depth_binomial{_max_depth, 0.9};
+    std::binomial_distribution<T> _branch_factor_binomial{_max_actions, _avg_actions / _max_actions};
 
-
-    [[nodiscard]] std::vector<T> get_rand_actions(unsigned int n, bool with_repetition) {
-        std::vector<T> actions(n);
-        if (with_repetition) {
-            std::generate(actions.begin(), actions.end(), [this]() { return _udist(this->_prng_engine); });
-        } else {
-            if (n > _max_actions)
-                throw std::invalid_argument("n cannot be larger than the maximum number of actions possible for any given state.");
-            std::ranges::shuffle(_possible_actions, this->_prng_engine);
-            actions = {_possible_actions.cbegin(), _possible_actions.cbegin() + n};
-        }
-        return actions;
+    [[nodiscard]] static std::vector<T> get_iota_vector(T n) {
+        std::vector<T> output(n);
+        std::iota(output.begin(), output.end(), 0);
+        return output;
     }
 };
 

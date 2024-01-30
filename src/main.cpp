@@ -8,35 +8,40 @@
 
 
 int main() {
-    // Choose which type of problem to create
-    // BasicGraphGenerator<std::uint32_t> generator{1'000'000, 4, 34};
-    BasicTreeGenerator<std::uint32_t> generator{9, 5, 7, 5.0, 87};
+    BasicGraphGenerator<std::uint32_t> graph_generator{1'000'000, 4};
+    BasicTreeGenerator<std::uint32_t> tree_generator{9, 5, 7, 5.0};
 
-    // Create random problem
-    std::cout << "[INFO] Creating random problem..." << std::endl;
-    auto start = std::chrono::high_resolution_clock::now();
-    parallel_bfs::Problem problem{generator.make_problem()};
-    auto stop = std::chrono::high_resolution_clock::now();
-    std::cout << "[INFO] Problem created. " << parallel_bfs::seconds_elapsed(start, stop) << "\n";
-    std::cout << "\n" << problem << "\n";
+    std::vector<unsigned int> seeds{87, 48};
 
-    // Solve created problem with method 1
-    parallel_bfs::SyncBFS<parallel_bfs::SearchType::tree_like> sync_bfs;
-    measure(problem, sync_bfs, "Synchronous BFS");
+    for (int i = 0; i < seeds.size(); ++i) {
+        // Create random problem
+        std::cout << "[INFO] Creating random problem " << i+1 << "..." << std::endl;
+        auto start = std::chrono::high_resolution_clock::now();
+        parallel_bfs::Problem problem{tree_generator.make_problem(seeds[i])};
+        auto stop = std::chrono::high_resolution_clock::now();
+        std::cout << "[INFO] Problem created. " << parallel_bfs::seconds_elapsed(start, stop) << "\n";
+        std::cout << "\n" << problem << "\n";
 
-    // Solve created problem with method 2
-    parallel_bfs::ParallelBFS par_bfs;
-    measure(problem, par_bfs, "ParallelBFS");
+        // Solve created problem with method 1
+        parallel_bfs::SyncBFS sync_bfs;
+        measure(problem, sync_bfs, "Synchronous BFS");
 
-    // Save problem
-    std::filesystem::path root_path = get_build_dir_parent();
-    std::filesystem::path output_path = root_path / "problem.yml";
-    std::cout << "\n[INFO] Writing problem to " << output_path << "..." << std::endl;
-    parallel_bfs::YAMLWriter writer;
-    writer.write(problem, output_path);
-    std::cout << "[INFO] Problem written." << std::endl;
+        // Solve created problem with method 2
+        parallel_bfs::ParallelBFS par_bfs;
+        measure(problem, par_bfs, "ParallelBFS");
 
-    // // Read problem
+        // Save problem
+        std::filesystem::path root_path = get_build_dir_parent();
+        std::filesystem::path output_path = root_path / "problem.yml";
+        std::cout << "\n[INFO] Writing problem to " << output_path << "..." << std::endl;
+        parallel_bfs::YAMLWriter writer;
+        writer.write(problem, output_path);
+        std::cout << "[INFO] Problem written." << std::endl;
+
+        std::cout << "\n----------------------------------------\n" << std::endl;
+    }
+
+    // // Example on how to read a problem
     // const std::filesystem::path &input_path = output_path;
     // std::cout << "\n[INFO] Reading problem from " << input_path << "..." << std::endl;
     // parallel_bfs::YAMLReader<TreeState<std::uint32_t>, BasicTree<std::uint32_t>> reader;

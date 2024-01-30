@@ -14,7 +14,7 @@ namespace parallel_bfs {
         graph [[maybe_unused]], tree_like [[maybe_unused]],
     };
 
-    template<SearchType type>
+    template<SearchType type = SearchType::tree_like>
     class SyncBFS { // FIXME: Change this from Breadth First Search to Best First Search
     public:
         template<typename State, typename TM>
