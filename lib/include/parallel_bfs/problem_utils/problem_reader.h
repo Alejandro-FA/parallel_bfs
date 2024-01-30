@@ -5,17 +5,21 @@
 #ifndef PARALLEL_BFS_PROBLEM_READER_H
 #define PARALLEL_BFS_PROBLEM_READER_H
 
+#include <fstream>
 #include <filesystem>
 #include <yaml-cpp/yaml.h>
 #include "problem_writer.h"
+#include "../search/state.h"
+#include "../search/transition_model.h"
+#include "../search/problem.h"
 
 namespace parallel_bfs {
-    template<State State, std::derived_from<BaseTransitionModel<State>> TM>
+    template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM>
     requires ConvertibleToYAML<State> && ConvertibleToYAML<TM>
     class YAMLReader {
     public:
         [[nodiscard]] Problem<State, TM> read(const std::filesystem::path &input_path) {
-            std::ifstream input_file(input_path);
+            std::ifstream input_file{input_path};
             if (!input_file) throw std::runtime_error("Could not read file " + input_path.string());
 
             YAML::Node node = YAML::LoadFile(input_path);

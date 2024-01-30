@@ -21,7 +21,7 @@ concept RandomDist = requires(T &dist, std::default_random_engine &engine) {
 
 
 namespace parallel_bfs {
-    template<State State, std::derived_from<BaseTransitionModel<State>> TM>
+    template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM>
     class ProblemFactory {
     public:
         [[nodiscard]] Problem<State, TM> make_problem() {
@@ -38,7 +38,7 @@ namespace parallel_bfs {
 
 
 
-    template<State State, std::derived_from<BaseTransitionModel<State>> TM>
+    template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM>
     class RandomFactory : public ProblemFactory<State, TM> {
     public:
         [[nodiscard]] Problem<State, TM> make_problem(std::optional<unsigned int> seed = std::nullopt) {

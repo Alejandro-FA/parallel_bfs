@@ -14,7 +14,7 @@
 #include "problem.h"
 
 namespace parallel_bfs {
-    template<State State>
+    template<Searchable State>
     void print_solution(const Node<State> *node) {
         // Check if there is a solution first
         if (!node) {
@@ -55,7 +55,7 @@ namespace parallel_bfs {
         return "[" + sstr.str() + "ms]";
     }
 
-    template<State State, typename TM, std::invocable<const Problem<State, TM> &> SearchAlgorithm>
+    template<Searchable State, typename TM, std::invocable<const Problem<State, TM> &> SearchAlgorithm>
     void measure(const Problem<State, TM> &problem, const SearchAlgorithm &algo, const std::string &algo_name) {
         std::cout << "\n[INFO] Searching solution with " << algo_name << "..." << std::endl;
         auto start = std::chrono::high_resolution_clock::now();

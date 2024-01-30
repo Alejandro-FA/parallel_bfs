@@ -14,7 +14,7 @@
 
 
 namespace parallel_bfs {
-    template<State State, std::derived_from<BaseTransitionModel<State>> TM>
+    template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM>
     class Problem {
     public:
         explicit Problem(State initial, std::unordered_set<State> &&goal_states, TM &&tm) :
@@ -46,7 +46,7 @@ namespace parallel_bfs {
 
 
 
-    template<State State, std::derived_from<BaseTransitionModel<State>> TM>
+    template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM>
     std::ostream &operator<<(std::ostream &os, const Problem<State, TM> &p) {
         os << "Initial state: " << p.initial() << "\nGoal state(s):";
         for (const State &goal: p.goal_states()) os << "\n - " << goal;

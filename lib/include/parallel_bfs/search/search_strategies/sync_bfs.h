@@ -6,8 +6,8 @@
 #define PARALLEL_BFS_SYNC_BFS_H
 
 #include <queue>
-#include "problem.h"
-#include "node.h"
+#include "parallel_bfs/search/problem.h"
+#include "parallel_bfs/search/node.h"
 
 namespace parallel_bfs {
     enum class SearchType {
@@ -17,7 +17,7 @@ namespace parallel_bfs {
     template<SearchType type = SearchType::tree_like>
     class SyncBFS { // FIXME: Change this from Breadth First Search to Best First Search
     public:
-        template<typename State, typename TM>
+        template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM>
         [[nodiscard]] std::shared_ptr<Node<State>> operator()(const Problem<State, TM> &problem) const {
             auto init_node = std::make_shared<Node<State>>(problem.initial());
             if (problem.is_goal(problem.initial())) return init_node;

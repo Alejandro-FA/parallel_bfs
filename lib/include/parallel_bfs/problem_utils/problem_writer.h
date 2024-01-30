@@ -22,7 +22,7 @@ namespace parallel_bfs {
 
     class YAMLWriter {
     public:
-        template<State State, std::derived_from<BaseTransitionModel<State>> TM>
+        template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM>
         requires ConvertibleToYAML<State> && ConvertibleToYAML<TM>
         void write(const Problem<State, TM> &problem, const std::filesystem::path &output_path) const {
             std::ofstream output_file{output_path};

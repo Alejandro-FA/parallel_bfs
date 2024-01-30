@@ -27,8 +27,12 @@ int main() {
         measure(problem, sync_bfs, "Synchronous BFS");
 
         // Solve created problem with method 2
-        parallel_bfs::ParallelBFS par_bfs;
-        measure(problem, par_bfs, "ParallelBFS");
+        parallel_bfs::ParallelBFSTasks par_bfs_tasks;
+        measure(problem, par_bfs_tasks, "ParallelBFSTasks");
+
+        // Solve created problem with method 3
+        parallel_bfs::ParallelBFSAsync par_bfs_async;
+        measure(problem, par_bfs_async, "ParallelBFSAsync");
 
         // Save problem
         std::filesystem::path root_path = get_build_dir_parent();

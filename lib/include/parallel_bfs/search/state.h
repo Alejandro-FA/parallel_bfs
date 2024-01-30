@@ -17,7 +17,7 @@ namespace {
 }
 
 namespace parallel_bfs {
-    template<typename T> concept State = Hashable<T> && Printable<T>;
+    template<typename T> concept Searchable = Hashable<T> && Printable<T>;
 }
 
 #endif //PARALLEL_BFS_STATE_H
