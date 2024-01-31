@@ -11,7 +11,6 @@
 #include <parallel_bfs/search.h>
 #include "../common.h"
 
-
 template<UnsignedInteger T>
 class BasicGraph : public parallel_bfs::TransitionModel<T, T> {
     using graph_t = std::vector<std::unordered_set<T>>;

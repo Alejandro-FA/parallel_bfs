@@ -9,9 +9,6 @@
 #include <filesystem>
 #include <yaml-cpp/yaml.h>
 #include "problem_writer.h"
-#include "../search/state.h"
-#include "../search/transition_model.h"
-#include "../search/problem.h"
 
 namespace parallel_bfs {
     template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM>

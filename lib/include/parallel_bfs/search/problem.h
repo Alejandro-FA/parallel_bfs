@@ -11,8 +11,6 @@
 #include "node.h"
 #include "transition_model.h"
 
-
-
 namespace parallel_bfs {
     template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM>
     class Problem {

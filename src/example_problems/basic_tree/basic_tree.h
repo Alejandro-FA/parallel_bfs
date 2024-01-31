@@ -10,8 +10,6 @@
 #include <numeric>
 #include <parallel_bfs/search.h>
 #include "tree_state.h"
-#include "../common.h"
-
 
 template<UnsignedInteger T>
 class BasicTree : public parallel_bfs::TransitionModel<TreeState<T>, T> {

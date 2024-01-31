@@ -5,10 +5,8 @@
 #ifndef PARALLEL_BFS_PROJECT_TREE_STATE_H
 #define PARALLEL_BFS_PROJECT_TREE_STATE_H
 
-#include <cstdint>
 #include <iostream>
 #include <vector>
-#include "../common.h"
 
 template<UnsignedInteger T>
 class TreeState {

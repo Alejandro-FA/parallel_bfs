@@ -8,7 +8,6 @@
 #include <vector>
 #include "state.h"
 
-
 namespace parallel_bfs {
     template<Searchable State>
     class BaseTransitionModel {

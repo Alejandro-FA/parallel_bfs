@@ -7,9 +7,7 @@
 
 #include <queue>
 #include <future>
-#include <thread>
 #include "../problem.h"
-#include "../node.h"
 
 namespace parallel_bfs {
     /// In order to avoid data races, ParallelBFSTasks only works with tree-like search.

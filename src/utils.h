@@ -7,8 +7,8 @@
 
 #include <filesystem>
 #include <stack>
+#include <chrono>
 #include <parallel_bfs/search.h>
-
 
 std::filesystem::path get_build_dir_parent() {
     std::filesystem::path current_path = std::filesystem::current_path();
