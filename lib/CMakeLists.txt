@@ -4,7 +4,7 @@ include(FetchContent)
 FetchContent_Declare(
         yaml-cpp
         GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
-        master # Can be a tag (GIT_TAG x.y.z), a commit hash, or a branch name (master)
+        GIT_TAG c67d701ad81da65a576efd3341634f8cd3892c9b # Can be a tag (GIT_TAG x.y.z), a commit hash, or a branch name (master)
 )
 FetchContent_MakeAvailable(yaml-cpp)
 

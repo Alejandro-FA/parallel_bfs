@@ -5,10 +5,10 @@ The end goal is to port the results to [BFGP++](https://github.com/jsego/bfgp-pp
 
 ## Usage
 
-### Compilation
+### Compiling the project
 
 The easiest way to compile the project is using CMake. You can install `cmake` using a package manager (like `apt` in
-Ubuntu and [`macports`](https://www.macports.org/) or [`homebrew`](https://brew.sh/) in macOS). You can also install it
+Ubuntu and [macports](https://www.macports.org/) or [homebrew](https://brew.sh/) in macOS). You can also install it
 directly from the [official site](https://cmake.org/). If you have never used `cmake`, you can check the official
 [getting started tutorial](https://cmake.org/cmake/help/book/mastering-cmake/chapter/Getting%20Started.html).
 
@@ -22,37 +22,41 @@ Then change directory to this folder.
     mkdir cmake-build
     cd cmake-build
     ```
-2. Then use `cmake` to configure the project. At this point you can use certain flags to specify how do you want the
-project to be built, like the *compiler* to use or the *build type*. To use the default values and compile in `Release`
-mode, simply execute the following command (the two dots `..` are important):
+2. Then use `cmake` to configure the project. Most of the configuration is already specified in the `CmakeLists.txt` file
+at the root of the project, but you can override some settings, like which *compiler* to use or the *build type*.
+To use the default values and compile in `Release` mode, simply execute the following command:
 
     ```bash
     cmake .. -DCMAKE_BUILD_TYPE=Release
     ```
 
-    > If you want to specify which compiler to use, you can use the `CMAKE_CXX_COMPILER` flag. For example, if you
-    have installed `clang` with `macports`:
-   > ```bash
-   > cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=/opt/local/bin/clang++-mp-17
-   > ```
-After this one-time step, everytime that you want to recompile the project you simply need to execute this:
+    >    If you want to specify which compiler to use, you can use the `CMAKE_CXX_COMPILER` flag. In particular, I
+   > recommend to use `gcc` instead of `clang` because it has better support for C++20 and C++23 features. This is usually
+   > the default for Linux systems, but in macOS you may need to install `gcc` with `macports` or `homebrew`. For example,
+   > if you have installed `GCC 13` with `macports` you can use the following command to configure the project:
+   >    ```bash
+   >    cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=/opt/local/bin/g++-mp-13
+   >    ```
+   > For other compilers or platforms simply change the compiler path.
 
-```bash
-cmake --build .
-```
+3. At this point, you only need to compile the project. To do so, simply execute the following command:
 
-> If you are no longer inside the build folder, you can change the command to `cmake --build <path-to-build-folder>`
+    ```bash
+    cmake --build .
+    ```
 
-### Run the program
+    If you have changed the configuration of the project, you will need to reconfigure it again (step 2).
+
+### Running the program
 
 When compiling with `cmake`, the executable will be placed inside the build folder that you created in the first step.
 You can simply execute it as follows:
 
 ```bash
-./parallel_bfs
+./main.out
 ```
 
-### Test for bugs using Google Sanitizers
+### Testing for bugs using Google Sanitizers
 
 This project comes with some built-in tests to check for memory errors, undefined behaviour errors and data races. To
 check if the program has any bugs, you can simply run the following command:
@@ -74,5 +78,6 @@ the [`clang` documentation](https://clang.llvm.org/docs/UsersManual.html#control
 
 > **NOTE 2**: Apple Clang (the compiler that comes with XCode by default in macOS) does not currently support memory leak
 > detection with the `AddressSanitizer`. If you want to use the first test in macOS, I recommend to install another compiler
-> separately. For example, you can [install `clang` with `macports`](https://ports.macports.org/search/?q=clang&name=on).
-> You can also disable leak detection by changing `ASAN_OPTIONS=detect_leaks` to `0`.
+> separately. Alternatively, you can also disable leak detection by changing `ASAN_OPTIONS=detect_leaks` to `0`.
+
+> **NOTE 3**: `gcc` does not currently support Google Sanitizers for arm64 processors.
