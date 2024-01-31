@@ -28,8 +28,6 @@ namespace parallel_bfs {
             std::ofstream output_file{output_path};
             if (!output_file) throw std::runtime_error("Could not create file to write problem.");
 
-            write_metadata(output_file);
-
             YAML::Emitter emitter;
             emitter << YAML::BeginMap;
             emitter << YAML::Key << "state type" << YAML::Value << std::string{type_name<State>()};
@@ -40,11 +38,6 @@ namespace parallel_bfs {
             emitter << YAML::EndMap;
 
             output_file << emitter.c_str() << '\n';
-        }
-
-    private:
-        void write_metadata(std::ostream& out) const {
-            // ToDO: Decide if I want to write some metadata
         }
     };
 }

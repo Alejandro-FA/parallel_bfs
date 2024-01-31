@@ -12,6 +12,5 @@
 #include "search/problem.h"
 #include "search/state.h"
 #include "search/transition_model.h"
-#include "search/utils.h"
 
 #endif //PARALLEL_BFS_SEARCH_H

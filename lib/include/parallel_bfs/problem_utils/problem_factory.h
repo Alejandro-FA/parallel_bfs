@@ -5,11 +5,10 @@
 #ifndef PARALLEL_BFS_PROBLEM_FACTORY_H
 #define PARALLEL_BFS_PROBLEM_FACTORY_H
 
-#include <memory>
 #include <unordered_set>
 #include <random>
 #include <optional>
-#include <ranges>
+#include <algorithm>
 
 
 template<typename T>
@@ -56,7 +55,7 @@ namespace parallel_bfs {
         [[nodiscard]] std::vector<typename Dist::result_type> get_random_values(Dist &random_dist, unsigned int n) {
             std::vector<typename Dist::result_type> output(n);
             for (auto &v: output) v = get_random_value(random_dist);
-            std::generate(output.begin(), output.end(), [&] { return get_random_value(random_dist); });
+            std::ranges::generate(output, [&] { return get_random_value(random_dist); });
             return output;
         }
 
@@ -66,7 +65,7 @@ namespace parallel_bfs {
         [[nodiscard]] std::vector<std::ranges::range_value_t<R>> get_random_sample(const R &r, unsigned int n) {
             if (n > std::ranges::size(r)) throw std::invalid_argument("n cannot be larger than the size of the vector.");
             std::vector<std::ranges::range_value_t<R>> output(n);
-            std::sample(r.cbegin(), r.cend(), output.begin(), n, _prng_engine);
+            std::ranges::sample(r, output.begin(), n, _prng_engine);
             return output;
         }
 

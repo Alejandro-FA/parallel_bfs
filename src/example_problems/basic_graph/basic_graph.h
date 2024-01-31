@@ -8,7 +8,6 @@
 #include <vector>
 #include <unordered_set>
 #include <numeric>
-#include <execution>
 #include <parallel_bfs/search.h>
 #include "../common.h"
 
@@ -23,11 +22,11 @@ public:
         return {states.cbegin(), states.cend()};
     }
 
-    [[nodiscard]] int action_cost(const T &current, const T &action, const T &next) const override {
+    [[nodiscard]] int action_cost([[maybe_unused]] const T &current, [[maybe_unused]] const T &action, [[maybe_unused]] const T &next) const override {
         return 1;
     }
 
-    [[nodiscard]] T result(const T &state, const T &action) const override {
+    [[nodiscard]] T result([[maybe_unused]] const T &state, const T &action) const override {
         return action;
     }
 
@@ -59,7 +58,6 @@ public:
 
     [[nodiscard]] std::size_t max_out_degree() const {
         return std::transform_reduce(
-                _policy,
                 _graph.cbegin(), _graph.cend(),
                 0,
                 [](std::size_t acc, std::size_t s) { return std::max(acc, s); },
@@ -69,7 +67,6 @@ public:
 
     [[nodiscard]] std::size_t min_out_degree() const {
         return std::transform_reduce(
-                _policy,
                 _graph.cbegin(), _graph.cend(),
                 std::numeric_limits<std::size_t>::max(),
                 [](std::size_t acc, std::size_t s) { return std::min(acc, s); },
@@ -79,7 +76,6 @@ public:
 
     [[nodiscard]] double avg_out_degree() const {
         std::size_t sum = std::transform_reduce(
-                _policy,
                 _graph.cbegin(), _graph.cend(),
                 0,
                 std::plus<>(),
@@ -90,7 +86,6 @@ public:
 
 private:
     graph_t _graph;
-    static constexpr auto _policy = std::execution::unseq;
 };
 
 

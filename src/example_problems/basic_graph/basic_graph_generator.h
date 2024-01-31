@@ -29,8 +29,8 @@ protected:
         BasicGraph<T> graph(_num_states);
 
         // For each state, create up to [_max_actions] children states (graph edges)
-        for (int i = 0; i < _num_states; ++i) {
-            for (int j = 0; j < _num_actions; ++j) {
+        for (T i = 0; i < _num_states; ++i) {
+            for (T j = 0; j < _num_actions; ++j) {
                 T rand_node{this->get_random_value(_udist)};
                 graph[i].insert(rand_node);
             }

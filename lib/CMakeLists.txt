@@ -18,7 +18,6 @@ add_library(parallel_bfs INTERFACE
         include/parallel_bfs/search/problem.h
         include/parallel_bfs/search/state.h
         include/parallel_bfs/search/transition_model.h
-        include/parallel_bfs/search/utils.h
         include/parallel_bfs/problem_utils.h
         include/parallel_bfs/problem_utils/problem_factory.h
         include/parallel_bfs/problem_utils/problem_reader.h

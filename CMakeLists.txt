@@ -6,12 +6,17 @@ project(parallel_bfs_project
         HOMEPAGE_URL "https://github.com/Alejandro-FA/parallel_bfs"
 )
 
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+################### Compile options #####################
+set(is_clang "$<CXX_COMPILER_ID:Clang,AppleClang>")
+add_compile_options(-Wall -Wextra -Wpedantic "$<${is_clang}:-Wthread-safety>")
+
+##################### Executables #######################
 # Add the directories so that cmake can find the subdirectory CMakeLists.txt files.
 add_subdirectory(lib)
 
-##################### Executables #######################
 add_executable(main
         src/main.cpp
         src/utils.h
@@ -26,10 +31,6 @@ add_executable(main
 target_link_libraries(main PRIVATE parallel_bfs)
 
 set_target_properties(main PROPERTIES SUFFIX ".out")
-
-################### Compile options #####################
-set(is_clang "$<CXX_COMPILER_ID:Clang,AppleClang>")
-add_compile_options("-Wall -Wextra -Wpedantic $<${is_clang}:-Wthread-safety>")
 
 ####################### Testing #########################
 enable_testing()

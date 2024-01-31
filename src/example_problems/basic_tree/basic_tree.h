@@ -8,7 +8,6 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <numeric>
-#include <execution>
 #include <parallel_bfs/search.h>
 #include "tree_state.h"
 #include "../common.h"
@@ -25,7 +24,7 @@ public:
     }
 
     [[nodiscard]] int
-    action_cost(const TreeState<T> &current, const T &action, const TreeState<T> &next) const override {
+    action_cost([[maybe_unused]] const TreeState<T> &current, [[maybe_unused]] const T &action, [[maybe_unused]] const TreeState<T> &next) const override {
         return 1;
     }
 
@@ -59,7 +58,6 @@ public:
 
     [[nodiscard]] std::size_t max_depth() const {
         return std::transform_reduce(
-                _policy,
                 _tree.cbegin(), _tree.cend(),
                 0,
                 [](std::size_t acc, std::size_t s) { return std::max(acc, s); },
@@ -70,7 +68,6 @@ public:
     /// Returns the average depth of leaf nodes.
     [[nodiscard]] double avg_depth() const {
         std::size_t sum = std::transform_reduce(
-                _policy,
                 _tree.cbegin(), _tree.cend(),
                 0,
                 std::plus<>(),
@@ -79,7 +76,6 @@ public:
                 }
         );
         std::size_t leaf_node_count = std::transform_reduce(
-                _policy,
                 _tree.cbegin(), _tree.cend(),
                 0,
                 std::plus<>(),
@@ -90,7 +86,6 @@ public:
 
     [[nodiscard]] std::size_t max_branch_factor() const {
         return std::transform_reduce(
-                _policy,
                 _tree.cbegin(), _tree.cend(),
                 0,
                 [](std::size_t acc, std::size_t s) { return std::max(acc, s); },
@@ -101,14 +96,12 @@ public:
     /// Returns the average branching factor of internal nodes.
     [[nodiscard]] double avg_branch_factor() const {
         std::size_t sum = std::transform_reduce(
-                _policy,
                 _tree.cbegin(), _tree.cend(),
                 0,
                 std::plus<>(),
                 [](const std::pair<TreeState<T>, std::unordered_set<T>> &kv) { return kv.second.size(); }
         );
         std::size_t internal_node_count = std::transform_reduce(
-                _policy,
                 _tree.cbegin(), _tree.cend(),
                 0,
                 std::plus<>(),
@@ -119,7 +112,6 @@ public:
 
 private:
     tree_t _tree;
-    static constexpr auto _policy = std::execution::unseq;
 };
 
 

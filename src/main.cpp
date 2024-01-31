@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <format>
 #include <parallel_bfs/search.h>
 #include <parallel_bfs/problem_utils.h>
 #include "example_problems/basic_graph/basic_graph_generator.h"
@@ -8,41 +9,40 @@
 
 
 int main() {
+    // Setup
     BasicGraphGenerator<std::uint32_t> graph_generator{1'000'000, 4};
     BasicTreeGenerator<std::uint32_t> tree_generator{9, 5, 7, 5.0};
+    parallel_bfs::SyncBFS sync_bfs;
+    parallel_bfs::ParallelBFSTasks par_bfs_tasks;
+    parallel_bfs::ParallelBFSAsync par_bfs_async;
 
-    std::vector<unsigned int> seeds{87, 48};
+    const parallel_bfs::YAMLWriter writer;
+    const std::vector<unsigned int> seeds{87, 48};
 
-    for (int i = 0; i < seeds.size(); ++i) {
+    for (std::size_t i = 0; i < seeds.size(); ++i) {
         // Create random problem
-        std::cout << "[INFO] Creating random problem " << i+1 << "..." << std::endl;
-        auto start = std::chrono::high_resolution_clock::now();
-        parallel_bfs::Problem problem{tree_generator.make_problem(seeds[i])};
-        auto stop = std::chrono::high_resolution_clock::now();
-        std::cout << "[INFO] Problem created. " << parallel_bfs::seconds_elapsed(start, stop) << "\n";
+        std::string message = std::format("Creating random problem {}", i + 1);
+        parallel_bfs::Problem problem = run_and_measure([&]{ return tree_generator.make_problem(seeds[i]); }, message);
         std::cout << "\n" << problem << "\n";
 
         // Solve created problem with method 1
-        parallel_bfs::SyncBFS sync_bfs;
-        measure(problem, sync_bfs, "Synchronous BFS");
+        auto solution = run_and_measure([&] { return sync_bfs(problem); }, "SyncBFS");
+        log_solution(solution.get());
 
         // Solve created problem with method 2
-        parallel_bfs::ParallelBFSTasks par_bfs_tasks;
-        measure(problem, par_bfs_tasks, "ParallelBFSTasks");
+        solution = run_and_measure([&] { return par_bfs_tasks(problem); }, "ParallelBFSTasks");
+        log_solution(solution.get());
 
         // Solve created problem with method 3
-        parallel_bfs::ParallelBFSAsync par_bfs_async;
-        measure(problem, par_bfs_async, "ParallelBFSAsync");
+        solution = run_and_measure([&] { return par_bfs_async(problem); }, "ParallelBFSAsync");
+        log_solution(solution.get());
 
         // Save problem
-        std::filesystem::path root_path = get_build_dir_parent();
-        std::filesystem::path output_path = root_path / "problem.yml";
-        std::cout << "\n[INFO] Writing problem to " << output_path << "..." << std::endl;
-        parallel_bfs::YAMLWriter writer;
-        writer.write(problem, output_path);
-        std::cout << "[INFO] Problem written." << std::endl;
+        const std::filesystem::path output_path = get_build_dir_parent() / "problem.yml";
+        message = std::format("Writing problem to {}", output_path.string());
+        run_and_measure([&] { return writer.write(problem, output_path); }, message);
 
-        std::cout << "\n----------------------------------------\n" << std::endl;
+        std::cout << "\n----------------------------------------\n";
     }
 
     // // Example on how to read a problem
