@@ -19,13 +19,9 @@ add_subdirectory(lib)
 
 add_executable(main
         src/main.cpp
+        src/generate.h
+        src/solve.h
         src/utils.h
-        src/example_problems/basic_graph/basic_graph.h
-        src/example_problems/basic_graph/basic_graph_generator.h
-        src/example_problems/basic_tree/basic_tree.h
-        src/example_problems/basic_tree/basic_tree_generator.h
-        src/example_problems/basic_tree/tree_state.h
-        src/example_problems/common.h
 )
 
 target_link_libraries(main PRIVATE parallel_bfs)
@@ -49,7 +45,7 @@ add_test(asan_lsan_ubsan ${CMAKE_CTEST_COMMAND}
         --build-makeprogram ${CMAKE_MAKE_PROGRAM}
         --build-project "parallel_bfs"
         --build-options -DCMAKE_CXX_FLAGS=${asan_flags} ${common_build_opts}
-        --test-command "main.out"
+        --test-command main.out --generate problems --solve problems -n 1
 )
 
 set(tsan_flags "-fsanitize=thread -fno-omit-frame-pointer -O2")
@@ -59,7 +55,7 @@ add_test(tsan ${CMAKE_CTEST_COMMAND}
         --build-makeprogram ${CMAKE_MAKE_PROGRAM}
         --build-project "parallel_bfs"
         --build-options -DCMAKE_CXX_FLAGS=${tsan_flags} ${common_build_opts}
-        --test-command "main.out"
+        --test-command main.out --generate problems --solve problems -n 1
 )
 
 set(sanitizers_env_options

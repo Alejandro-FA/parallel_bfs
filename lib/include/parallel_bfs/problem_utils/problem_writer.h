@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <filesystem>
+#include <string>
 #include <yaml-cpp/yaml.h>
 #include "type_name.h"
 
@@ -39,6 +40,8 @@ namespace parallel_bfs {
 
             output_file << emitter.c_str() << '\n';
         }
+
+        std::string file_extension{".yaml"};
     };
 }
 

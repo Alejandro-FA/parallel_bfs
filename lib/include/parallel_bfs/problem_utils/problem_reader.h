@@ -7,6 +7,7 @@
 
 #include <fstream>
 #include <filesystem>
+#include <string>
 #include <yaml-cpp/yaml.h>
 #include "problem_writer.h"
 
@@ -15,7 +16,7 @@ namespace parallel_bfs {
     requires ConvertibleToYAML<State> && ConvertibleToYAML<TM>
     class YAMLReader {
     public:
-        [[nodiscard]] Problem<State, TM> read(const std::filesystem::path &input_path) {
+        [[nodiscard]] Problem<State, TM> read(const std::filesystem::path &input_path) const {
             std::ifstream input_file{input_path};
             if (!input_file) throw std::runtime_error("Could not read file " + input_path.string());
 
@@ -26,6 +27,8 @@ namespace parallel_bfs {
 
             return Problem<State, TM>{initial, std::move(goal_states), std::move(transition_model)};
         }
+
+        std::string file_extension{".yaml"};
     };
 }
 

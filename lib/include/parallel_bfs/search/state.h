@@ -5,7 +5,7 @@
 #ifndef PARALLEL_BFS_STATE_H
 #define PARALLEL_BFS_STATE_H
 
-namespace {
+namespace parallel_bfs::detail {
     template<typename T>
     concept Printable = requires(const T &a) { std::cout << a; };
 
@@ -17,7 +17,7 @@ namespace {
 }
 
 namespace parallel_bfs {
-    template<typename T> concept Searchable = Hashable<T> && Printable<T>;
+    template<typename T> concept Searchable = detail::Hashable<T> && detail::Printable<T>;
 }
 
 #endif //PARALLEL_BFS_STATE_H

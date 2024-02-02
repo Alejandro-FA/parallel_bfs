@@ -1,0 +1,9 @@
+Problem: "problem_00.yaml"
+SyncBFS: [2106.87 ms], Solution: [] -> [5] -> [5, 4] -> [5, 4, 4] -> [5, 4, 4, 0] -> [5, 4, 4, 0, 3] -> [5, 4, 4, 0, 3, 4] -> [5, 4, 4, 0, 3, 4, 3] -> [5, 4, 4, 0, 3, 4, 3, 4]
+ParallelBFSTasks: [78.75 ms], Solution: [] -> [5] -> [5, 4] -> [5, 4, 4] -> [5, 4, 4, 0] -> [5, 4, 4, 0, 3] -> [5, 4, 4, 0, 3, 4] -> [5, 4, 4, 0, 3, 4, 3] -> [5, 4, 4, 0, 3, 4, 3, 4]
+ParallelBFSAsync: [65.36 ms], Solution: [] -> [5] -> [5, 4] -> [5, 4, 4] -> [5, 4, 4, 0] -> [5, 4, 4, 0, 3] -> [5, 4, 4, 0, 3, 4] -> [5, 4, 4, 0, 3, 4, 3] -> [5, 4, 4, 0, 3, 4, 3, 4]
+
+Problem: "problem_01.yaml"
+SyncBFS: [501.52 ms], No solution found!
+ParallelBFSTasks: [552.62 ms], No solution found!
+ParallelBFSAsync: [560.06 ms], No solution found!

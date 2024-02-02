@@ -15,6 +15,8 @@ namespace parallel_bfs {
     template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM>
     class Problem {
     public:
+        explicit Problem() = default;
+
         explicit Problem(State initial, std::unordered_set<State> &&goal_states, TM &&tm) :
                 _initial{std::move(initial)}, _goal_states{std::move(goal_states)}, _transition_model{std::move(tm)} {}
 
@@ -37,11 +39,10 @@ namespace parallel_bfs {
         [[nodiscard]] const TM &transition_model() const { return _transition_model; }
 
     private:
-        const State _initial;
-        const std::unordered_set<State> _goal_states;
-        const TM _transition_model;
+        State _initial;
+        std::unordered_set<State> _goal_states;
+        TM _transition_model;
     };
-
 
 
     template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM>

@@ -18,7 +18,7 @@ namespace parallel_bfs {
     constexpr std::string_view type_name<void>() { return "void"; }
 }
 
-namespace detail {
+namespace parallel_bfs::detail {
     using type_name_prober = void;
 
     template <typename T>

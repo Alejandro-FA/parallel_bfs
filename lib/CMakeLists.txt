@@ -11,6 +11,7 @@ FetchContent_MakeAvailable(yaml-cpp)
 ####################### Sources #########################
 add_library(parallel_bfs INTERFACE
         include/parallel_bfs/search.h
+        include/parallel_bfs/search/search_strategies/bfs.h
         include/parallel_bfs/search/search_strategies/parallel_bfs_async.h
         include/parallel_bfs/search/search_strategies/parallel_bfs_tasks.h
         include/parallel_bfs/search/search_strategies/sync_bfs.h
@@ -23,6 +24,13 @@ add_library(parallel_bfs INTERFACE
         include/parallel_bfs/problem_utils/problem_reader.h
         include/parallel_bfs/problem_utils/problem_writer.h
         include/parallel_bfs/problem_utils/type_name.h
+        include/parallel_bfs/problems.h
+        include/parallel_bfs/problems/basic_graph/basic_graph.h
+        include/parallel_bfs/problems/basic_graph/basic_graph_generator.h
+        include/parallel_bfs/problems/basic_tree/basic_tree.h
+        include/parallel_bfs/problems/basic_tree/basic_tree_generator.h
+        include/parallel_bfs/problems/basic_tree/tree_state.h
+        include/parallel_bfs/problems/problems_common.h
 )
 
 target_link_libraries(parallel_bfs INTERFACE yaml-cpp::yaml-cpp)

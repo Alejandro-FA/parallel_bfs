@@ -11,11 +11,13 @@
 #include <algorithm>
 
 
-template<typename T>
-concept RandomDist = requires(T &dist, std::default_random_engine &engine) {
-    typename T::result_type;  // This requires T to have a type named result_type
-    { dist(engine) } -> std::same_as<typename T::result_type>;
-};
+namespace parallel_bfs::detail {
+    template<typename T>
+    concept RandomDist = requires(T &dist, std::default_random_engine &engine) {
+        typename T::result_type;  // This requires T to have a type named result_type
+        { dist(engine) } -> std::same_as<typename T::result_type>;
+    };
+}
 
 
 
@@ -46,12 +48,12 @@ namespace parallel_bfs {
         }
 
     protected:
-        template<RandomDist Dist>
+        template<detail::RandomDist Dist>
         [[nodiscard]] typename Dist::result_type get_random_value(Dist &random_dist) {
             return random_dist(_prng_engine);
         }
 
-        template<RandomDist Dist>
+        template<detail::RandomDist Dist>
         [[nodiscard]] std::vector<typename Dist::result_type> get_random_values(Dist &random_dist, unsigned int n) {
             std::vector<typename Dist::result_type> output(n);
             for (auto &v: output) v = get_random_value(random_dist);

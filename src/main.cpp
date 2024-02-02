@@ -1,59 +1,96 @@
+#include <filesystem>
+#include <optional>
 #include <iostream>
-#include <fstream>
-#include <format>
-#include <parallel_bfs/search.h>
-#include <parallel_bfs/problem_utils.h>
-#include "example_problems/basic_graph/basic_graph_generator.h"
-#include "example_problems/basic_tree/basic_tree_generator.h"
-#include "utils.h"
+#include "generate.h"
+#include "solve.h"
 
 
-int main() {
-    // Setup
-    BasicGraphGenerator<std::uint32_t> graph_generator{1'000'000, 4};
-    BasicTreeGenerator<std::uint32_t> tree_generator{9, 5, 7, 5.0};
-    parallel_bfs::SyncBFS sync_bfs;
-    parallel_bfs::ParallelBFSTasks par_bfs_tasks;
-    parallel_bfs::ParallelBFSAsync par_bfs_async;
+void show_help() {
+    std::cout << "Usage: \n"
+              << "\t--generate/-g <folder> : Generate problems in the given folder\n"
+              << "\t--solve/-s <folder> : Solve problems from the given folder\n"
+              << "\t--num-problems/-n <number> : Number of problems to generate and/or solve\n"
+              << "\t--help/-h : Display this message\n"
+              << "Example usage (must use either --generate or --solve, or both):\n"
+              << "\t./main.out [(--generate <problems_gen_folder>)|(--solve <problems_sol_folder>)] [--num-problems <num_problems>]\n";
+}
 
-    const parallel_bfs::YAMLWriter writer;
-    const std::vector<unsigned int> seeds{87, 48};
 
-    for (std::size_t i = 0; i < seeds.size(); ++i) {
-        // Create random problem
-        std::string message = std::format("Creating random problem {}", i + 1);
-        parallel_bfs::Problem problem = run_and_measure([&]{ return tree_generator.make_problem(seeds[i]); }, message);
-        std::cout << "\n" << problem << "\n";
+int main(int argc, char** argv) {
+    std::optional<std::filesystem::path> gen_path;
+    std::optional<std::filesystem::path> sol_path;
+    std::optional<unsigned int> num_problems;
 
-        // Solve created problem with method 1
-        auto solution = run_and_measure([&] { return sync_bfs(problem); }, "SyncBFS");
-        log_solution(solution.get());
-
-        // Solve created problem with method 2
-        solution = run_and_measure([&] { return par_bfs_tasks(problem); }, "ParallelBFSTasks");
-        log_solution(solution.get());
-
-        // Solve created problem with method 3
-        solution = run_and_measure([&] { return par_bfs_async(problem); }, "ParallelBFSAsync");
-        log_solution(solution.get());
-
-        // Save problem
-        const std::filesystem::path output_path = get_build_dir_parent() / "problem.yml";
-        message = std::format("Writing problem to {}", output_path.string());
-        run_and_measure([&] { return writer.write(problem, output_path); }, message);
-
-        std::cout << "\n----------------------------------------\n";
+    if (argc == 1) {
+        show_help();
+        return 1;
     }
 
-    // // Example on how to read a problem
-    // const std::filesystem::path &input_path = output_path;
-    // std::cout << "\n[INFO] Reading problem from " << input_path << "..." << std::endl;
-    // parallel_bfs::YAMLReader<TreeState<std::uint32_t>, BasicTree<std::uint32_t>> reader;
-    // auto problem_read = reader.read(input_path);
-    // std::cout << "[INFO] Problem read." << std::endl;
-    // std::cout << "[INFO] Writing problem to " << "problem_read.yml" << "..." << std::endl;
-    // writer.write(problem_read, root_path / "problem_read.yml");
-    // std::cout << "[INFO] Problem written." << std::endl;
+    for (int i = 1; i < argc; ++i) {
+        std::string arg = argv[i];
+
+        if (arg == "--help" || arg == "-h") {
+            show_help();
+            return 0;
+        }
+
+        if (arg == "--generate" || arg == "-g") {
+            if (i + 1 < argc) {
+                gen_path = argv[++i];
+            } else {
+                std::cerr << "No directory provided for " << arg << "\n";
+                return 1;
+            }
+        }
+
+        else if (arg == "--solve" || arg == "-s") {
+            if (i + 1 < argc) {
+                sol_path = argv[++i];
+            } else {
+                std::cerr << "No directory provided for " << arg << "\n";
+                return 1;
+            }
+        }
+
+        else if (arg == "--num-problems" || arg == "-n") {
+            if (i + 1 < argc) {
+                num_problems = std::stoi(argv[++i]);
+            } else {
+                std::cerr << "No number specified for " << arg << "\n";
+                return 1;
+            }
+        }
+
+        else {
+            std::cerr << "Unknown argument: " << arg << "\n";
+            return 1;
+        }
+    }
+
+    if (!gen_path.has_value() && !sol_path.has_value()) {
+        std::cerr << "No action specified. At least one of --generate or --solve flags must be provided.\n";
+        return 1;
+    }
+
+    if (gen_path.has_value()) {
+        if (!std::filesystem::exists(gen_path.value())) {
+            std::filesystem::create_directories(gen_path.value());
+            std::cout << "The directory '" << gen_path->string() << "' did not exist, so it has been created\n";
+        }
+        if (!std::filesystem::is_directory(gen_path.value())) {
+            std::cerr << "The given path '" << gen_path->string() << "' is not a directory\n";
+            return 1;
+        }
+        generate(*gen_path, num_problems);
+    }
+
+    if (sol_path.has_value()) {
+        if (!std::filesystem::exists(sol_path.value()) || !std::filesystem::is_directory(sol_path.value())) {
+            std::cerr << "The given path '" << sol_path->string() << "' does not exist or is not a directory\n";
+            return 1;
+        }
+        solve(*sol_path, num_problems);
+    }
 
     return 0;
 }
