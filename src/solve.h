@@ -69,34 +69,43 @@ void solve(const std::filesystem::path &input_dir, std::optional<unsigned int> n
     std::ofstream log_stream{log_path};
 
     unsigned int count = 0;
+    std::default_random_engine random_engine{std::random_device{}()};
 
     for (const auto & entry : std::filesystem::directory_iterator(input_dir)) {
         const std::filesystem::path &file_path = std::filesystem::canonical(entry.path());
-        if (file_path.extension() != reader.file_extension) continue;
+        if (file_path.extension() != reader.file_extension || !file_path.filename().string().starts_with("problem")) continue;
         if (count > 0) log_stream << "\n";
 
         // Read problem
         std::cout << "\n[INFO] Reading problem from '" << file_path << "'..." << std::flush;
-        auto [problem, elapsed_time] = invoke_and_time([&] { return reader.read(file_path); });
-        std::cout << " [" << elapsed_time.as_seconds() << " s]" << std::endl;
+        auto [problem, reading_time] = invoke_and_time([&] { return reader.read(file_path); });
+        std::cout << " [" << reading_time.as_seconds() << " s]" << std::endl;
+
+        // Cache warming
+        std::cout << "[INFO] Warming up cache..." << std::flush;
+        auto [_, warming_time] = invoke_and_time(bfs_functions[0].first, problem);
+        std::cout << " [" << warming_time.as_milliseconds() << " ms]" << std::endl;
+
+        // Shuffle the algorithms to reduce the effect of caching
+        std::ranges::shuffle(bfs_functions, random_engine);
 
         // Solve problems with all the methods
-        std::cout << "[INFO] Solving problem " << file_path.filename() << " ..." << std::flush;
+        std::cout << "[INFO] Solving problem " << file_path.filename() << " with multiple algorithms..." << std::flush;
         log_stream << "Problem: " << file_path.filename() << "\n";
+        double total_time = 0;
         for (const auto & [algo, algo_name] : bfs_functions) {
             auto [solution, time] = invoke_and_time(algo, problem);
             log_stream << algo_name << ": [" << time.as_milliseconds() << " ms], ";
             log_solution(solution.get(), log_stream);
-            std::cout << " [" << time.as_milliseconds() << " ms]" << std::flush;
+            total_time += time.as_milliseconds();
         }
-        std::cout << " Done!" << std::endl;
-
-        // FIXME: Most likely the results are not accurate due to caching. Randomize order -> std::ranges::shuffle
-        // TODO: Cache warming -> call one algorithm first, then call all the algorithms. Check if necessary.
+        std::cout << " [" << total_time << " ms]" << std::endl;
 
         count++;
         if (num_problems.has_value() && count >= num_problems.value()) break; // Don't read more than num_problems
     }
+
+    std::cout << "\n[INFO] Results logged in '" << log_path << "'.\n";
 }
 
 #endif //PARALLEL_BFS_PROJECT_SOLVE_H

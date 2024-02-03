@@ -9,6 +9,7 @@
 #include <random>
 #include <optional>
 #include <algorithm>
+#include "../search/problem.h"
 
 
 namespace parallel_bfs::detail {

@@ -53,7 +53,7 @@ When compiling with `cmake`, the executable will be placed inside the build fold
 You can simply execute it as follows:
 
 ```bash
-./main.out --generate "problems" --solve "problems" -n 1
+./main.out "problems" --num-problems 1 --config "../config/simple_tree.yaml"
 ```
 
 ### Testing for bugs using Google Sanitizers

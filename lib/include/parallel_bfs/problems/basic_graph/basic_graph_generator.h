@@ -7,11 +7,12 @@
 
 #include "basic_graph.h"
 
+
 namespace parallel_bfs {
     template<detail::UnsignedInteger T>
     class BasicGraphGenerator : public RandomFactory<T, BasicGraph<T>> {
     public:
-        explicit BasicGraphGenerator(T num_states, T num_actions)
+        explicit BasicGraphGenerator(unsigned int num_states, unsigned num_actions)
                 : _num_states{num_states}, _num_actions{num_actions} {
             if (num_states < 1) throw std::invalid_argument("A BasicGraph must have at least 1 state.");
             if (num_actions > num_states)
@@ -30,8 +31,8 @@ namespace parallel_bfs {
             BasicGraph<T> graph(_num_states);
 
             // For each state, create up to [_max_actions] children states (graph edges)
-            for (T i = 0; i < _num_states; ++i) {
-                for (T j = 0; j < _num_actions; ++j) {
+            for (unsigned int i = 0; i < _num_states; ++i) {
+                for (unsigned int j = 0; j < _num_actions; ++j) {
                     T rand_node{this->get_random_value(_udist)};
                     graph[i].insert(rand_node);
                 }
@@ -41,8 +42,8 @@ namespace parallel_bfs {
         }
 
     private:
-        const T _num_states;
-        const T _num_actions;
+        const unsigned int _num_states;
+        const unsigned int _num_actions;
         std::uniform_int_distribution<T> _udist{0, static_cast<T>(_num_states - 1)};
     };
 }

@@ -17,9 +17,6 @@ namespace parallel_bfs {
     class YAMLReader {
     public:
         [[nodiscard]] Problem<State, TM> read(const std::filesystem::path &input_path) const {
-            std::ifstream input_file{input_path};
-            if (!input_file) throw std::runtime_error("Could not read file " + input_path.string());
-
             YAML::Node node = YAML::LoadFile(input_path);
             State initial = node["initial"].as<State>();
             std::unordered_set<State> goal_states = node["goal states"].as<std::unordered_set<State>>();

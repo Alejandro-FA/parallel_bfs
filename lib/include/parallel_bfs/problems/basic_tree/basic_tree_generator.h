@@ -17,7 +17,7 @@ namespace parallel_bfs {
     public:
         /// Creates a random tree with max_depth and a maximum branching factor of max_actions. The average branching
         /// factor is specified by avg_actions, which should be a value between 0 and max_actions
-        explicit BasicTreeGenerator(unsigned int max_depth, unsigned int num_goals, T max_actions, double avg_actions)
+        explicit BasicTreeGenerator(unsigned int max_depth, unsigned int num_goals, unsigned int max_actions, double avg_actions)
                 : _max_depth{max_depth}, _num_goals{num_goals}, _max_actions{max_actions}, _avg_actions{avg_actions},
                   _possible_actions{get_iota_vector(max_actions)} {
             if (avg_actions > max_actions)
@@ -74,9 +74,9 @@ namespace parallel_bfs {
         const unsigned int _max_actions;
         const double _avg_actions;
         const std::vector<T> _possible_actions;
-        std::uniform_int_distribution<T> _udist{0, _max_actions - 1};
+        std::uniform_int_distribution<T> _udist{0, static_cast<T>(_max_actions - 1)};
         std::binomial_distribution<unsigned int> _depth_binomial{_max_depth, 0.9};
-        std::binomial_distribution<T> _branch_factor_binomial{_max_actions, _avg_actions / _max_actions};
+        std::binomial_distribution<T> _branch_factor_binomial{static_cast<T>(_max_actions), _avg_actions / _max_actions};
 
         [[nodiscard]] static std::vector<T> get_iota_vector(T n) {
             std::vector<T> output(n);

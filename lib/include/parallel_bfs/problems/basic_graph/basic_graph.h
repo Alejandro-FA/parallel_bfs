@@ -8,6 +8,8 @@
 #include <vector>
 #include <unordered_set>
 #include <numeric>
+#include <yaml-cpp/yaml.h>
+#include <parallel_bfs/problem_utils.h>
 #include "../problems_common.h"
 
 
@@ -32,7 +34,7 @@ namespace parallel_bfs {
 
         explicit BasicGraph() = default;
 
-        explicit BasicGraph(T graph_size) : _graph(graph_size) {}
+        explicit BasicGraph(std::size_t graph_size) : _graph(graph_size) {}
 
         void push_back(std::unordered_set<T> node) {
             if (size() >= std::numeric_limits<T>::max())

@@ -8,6 +8,7 @@
 #include <iostream>
 #include <filesystem>
 #include <string>
+#include <unordered_set>
 #include <yaml-cpp/yaml.h>
 #include "type_name.h"
 

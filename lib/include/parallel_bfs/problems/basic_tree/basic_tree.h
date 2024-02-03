@@ -8,6 +8,8 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <numeric>
+#include <yaml-cpp/yaml.h>
+#include <parallel_bfs/problem_utils.h>
 #include "tree_state.h"
 
 
@@ -33,7 +35,7 @@ namespace parallel_bfs {
 
         explicit BasicTree() = default;
 
-        explicit BasicTree(T tree_size) { _tree.reserve(tree_size); }
+        explicit BasicTree(std::size_t tree_size) { _tree.reserve(tree_size); }
 
         std::unordered_set<T> &operator[](const TreeState<T> &key) { return _tree[key]; }
 

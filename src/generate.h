@@ -7,15 +7,11 @@
 
 #include <filesystem>
 #include <iostream>
-#include <format>
 #include <optional>
-#include <parallel_bfs/search.h>
 #include <parallel_bfs/problem_utils.h>
 #include <parallel_bfs/problems.h>
+#include "generator_config.h"
 #include "utils.h"
-
-
-constexpr unsigned int default_num_problems = 1;
 
 
 /**
@@ -42,15 +38,17 @@ std::string to_padded_string(unsigned int number, int pad_width) {
 *
 * @param output_dir: a path to the directory where problems will be written.
 * @param num_problems: the number of problems to generate.
+* @param config: the configuration for the problem generator.
 *
 * NOTE: This function does NOT validate if @output_dir is a valid directory.
 */
-void generate(const std::filesystem::path &output_dir, std::optional<unsigned int> num_problems = std::nullopt) {
-    unsigned int n = num_problems.value_or(default_num_problems);
+void generate(const std::filesystem::path &output_dir, std::optional<unsigned int> num_problems, std::optional<BasicTreeGeneratorConfig> config) {
+    using namespace parallel_bfs;
+    unsigned int n = num_problems.value_or(1);
+    BasicTreeGeneratorConfig c = config.value_or(BasicTreeGeneratorConfig::simple());
 
-    // parallel_bfs::BasicGraphGenerator<std::uint32_t> graph_generator{1'000'000, 4};
-    parallel_bfs::BasicTreeGenerator<std::uint32_t> tree_generator{9, 5, 7, 5.0};
-    const parallel_bfs::YAMLWriter writer;
+    BasicTreeGenerator<std::uint32_t> tree_generator{c.max_depth, c.num_goals, c.max_actions, c.avg_actions};
+    const YAMLWriter writer;
 
     for (unsigned int i = 0; i < n; ++i) {
         // Create random problem
