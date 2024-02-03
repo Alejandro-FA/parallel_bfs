@@ -65,19 +65,19 @@ void solve(const std::filesystem::path &input_dir, std::optional<unsigned int> n
     };
 
     const YAMLReader<StateType, TransitionModelType> reader;
-    std::filesystem::path log_path = input_dir / "results_log.txt";
+    std::filesystem::path log_path = std::filesystem::weakly_canonical(input_dir / "results_log.txt");
     std::ofstream log_stream{log_path};
 
     unsigned int count = 0;
     std::default_random_engine random_engine{std::random_device{}()};
 
     for (const auto & entry : std::filesystem::directory_iterator(input_dir)) {
-        const std::filesystem::path &file_path = std::filesystem::canonical(entry.path());
+        const auto file_path = std::filesystem::canonical(entry.path());
         if (file_path.extension() != reader.file_extension || !file_path.filename().string().starts_with("problem")) continue;
         if (count > 0) log_stream << "\n";
 
         // Read problem
-        std::cout << "\n[INFO] Reading problem from '" << file_path << "'..." << std::flush;
+        std::cout << "\n[INFO] Reading problem from " << file_path << "..." << std::flush;
         auto [problem, reading_time] = invoke_and_time([&] { return reader.read(file_path); });
         std::cout << " [" << reading_time.as_seconds() << " s]" << std::endl;
 
@@ -90,7 +90,7 @@ void solve(const std::filesystem::path &input_dir, std::optional<unsigned int> n
         std::ranges::shuffle(bfs_functions, random_engine);
 
         // Solve problems with all the methods
-        std::cout << "[INFO] Solving problem " << file_path.filename() << " with multiple algorithms..." << std::flush;
+        std::cout << "[INFO] Solving " << file_path.filename() << " with multiple algorithms..." << std::flush;
         log_stream << "Problem: " << file_path.filename() << "\n";
         double total_time = 0;
         for (const auto & [algo, algo_name] : bfs_functions) {
@@ -105,7 +105,7 @@ void solve(const std::filesystem::path &input_dir, std::optional<unsigned int> n
         if (num_problems.has_value() && count >= num_problems.value()) break; // Don't read more than num_problems
     }
 
-    std::cout << "\n[INFO] Results logged in '" << log_path << "'.\n";
+    std::cout << "\n[INFO] Results logged in " << log_path << ".\n";
 }
 
 #endif //PARALLEL_BFS_PROJECT_SOLVE_H

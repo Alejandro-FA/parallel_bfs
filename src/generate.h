@@ -60,10 +60,10 @@ void generate(const std::filesystem::path &output_dir, std::optional<unsigned in
         std::string padded_string = to_padded_string(i, static_cast<int>(std::to_string(n-1).length()));
         std::string filename {"problem_" + padded_string};
         filename += writer.file_extension;
-        const std::filesystem::path output_path = output_dir / filename;
+        const auto output_path = std::filesystem::weakly_canonical(output_dir / filename);
 
         // Write the problem
-        std::cout << "[INFO] Writing problem to '" << output_path.string() << "'..." << std::flush;
+        std::cout << "[INFO] Writing problem to " << output_path << "..." << std::flush;
         elapsed_time = invoke_and_time([&]{ writer.write(problem, output_path); });
         std::cout << " [" << elapsed_time.as_seconds() << " s]" << std::endl;
     }

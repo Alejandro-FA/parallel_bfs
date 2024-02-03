@@ -46,7 +46,7 @@ add_test(asan_lsan_ubsan ${CMAKE_CTEST_COMMAND}
         --build-makeprogram ${CMAKE_MAKE_PROGRAM}
         --build-project "parallel_bfs"
         --build-options -DCMAKE_CXX_FLAGS=${asan_flags} ${common_build_opts}
-        --test-command main.out --config ${CMAKE_SOURCE_DIR}/config/test_tree.yaml
+        --test-command main.out --config=${CMAKE_SOURCE_DIR}/config/test_tree.yaml
 )
 
 set(tsan_flags "-fsanitize=thread -fno-omit-frame-pointer -O2")
@@ -56,7 +56,7 @@ add_test(tsan ${CMAKE_CTEST_COMMAND}
         --build-makeprogram ${CMAKE_MAKE_PROGRAM}
         --build-project "parallel_bfs"
         --build-options -DCMAKE_CXX_FLAGS=${tsan_flags} ${common_build_opts}
-        --test-command main.out --config ${CMAKE_SOURCE_DIR}/config/test_tree.yaml
+        --test-command main.out --config=${CMAKE_SOURCE_DIR}/config/test_tree.yaml
 )
 
 set(sanitizers_env_options

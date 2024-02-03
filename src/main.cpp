@@ -43,8 +43,17 @@ std::filesystem::path parse_directory(const std::string &arg) noexcept(false) {
 }
 
 
+std::pair<std::string, std::optional<std::string>> key_value_split(const char *raw_arg) {
+    std::string arg{raw_arg};
+    std::string::size_type equal_pos = arg.find('=');
+    if (arg.starts_with("--") && equal_pos != std::string::npos)
+        return {arg.substr(0, equal_pos), arg.substr(equal_pos + 1)};
+    return {arg, std::nullopt};
+}
+
+
 int main(int argc, char** argv) {
-    std::unordered_set<std::filesystem::path> paths;
+    std::unordered_set<std::string> directories;
     std::optional<unsigned int> num_problems;
     bool call_generate = false, call_solve = false;
     std::optional<BasicTreeGeneratorConfig> config;
@@ -53,56 +62,49 @@ int main(int argc, char** argv) {
     // Parse command line arguments
     // NOTE: If the same option is specified multiple times, the last one will be used.
     for (int i = 1; i < argc; ++i) {
-        std::string arg = argv[i];
+        auto [arg_name, arg_value] = key_value_split(argv[i]);
 
-        if (arg == "--help" || arg == "-h") {
+        if (arg_name == "--help" || arg_name == "-h") {
             show_help(argv[0]);
             return 0;
         }
 
-        else if (arg.front() != '-') {
-            try {
-                paths.insert(parse_directory(arg));
-            } catch (std::filesystem::filesystem_error &e) {
-                std::cerr << e.what() << "\n";
-                return 1;
-            }
+        else if (arg_name.front() != '-') directories.insert(arg_name);
+
+        else if (arg_name == "--config" || arg_name == "-c") {
+            std::string config_file;
+            if (arg_value.has_value()) config_file = arg_value.value();
+            else if (i + 1 < argc) config_file = argv[++i];
+            else { std::cerr << "No config file specified for " << arg_name << "\n"; return 1; }
+
+            try { config = parse_config(config_file); }
+            catch (const std::exception &e) { std::cerr << e.what() << "\n"; return 1; }
         }
 
-        else if (arg == "--config" || arg == "-c") {
-            if (i + 1 < argc) {
-                try {
-                    config = parse_config(argv[++i]);
-                } catch (const std::exception &e) {
-                    std::cerr << "Failed to parse config: " << e.what() << "\n";
-                    return 1;
-                }
-            } else {
-                std::cerr << "No config file specified for " << arg << "\n";
-                return 1;
-            }
-        }
+        else if (arg_name == "--generate" || arg_name == "-g") call_generate = true;
 
-        else if (arg == "--generate" || arg == "-g") call_generate = true;
+        else if (arg_name == "--solve" || arg_name == "-s") call_solve = true;
 
-        else if (arg == "--solve" || arg == "-s") call_solve = true;
+        else if (arg_name == "--num-problems" || arg_name == "-n") {
+            std::string n;
+            if (arg_value.has_value()) n = arg_value.value();
+            else if (i + 1 < argc) n = argv[++i];
+            else { std::cerr << "No number specified for " << arg_name << "\n"; return 1; }
 
-        else if (arg == "--num-problems" || arg == "-n") {
-            if (i + 1 < argc) {
-                num_problems = std::stoi(argv[++i]);
-            } else {
-                std::cerr << "No number specified for " << arg << "\n";
-                return 1;
-            }
+            try { num_problems = std::stoi(n); }
+            catch (const std::exception &e) { std::cerr << e.what() << "\n"; return 1; }
         }
 
         else {
-            std::cerr << "Unknown argument: " << arg << "\n";
+            std::cerr << "Unknown argument: " << arg_name << "\n";
             return 1;
         }
     }
 
-    if (paths.empty()) paths.insert(std::filesystem::current_path());
+    std::vector<std::filesystem::path> paths;
+    std::ranges::transform(directories, std::back_inserter(paths), parse_directory);
+
+    if (paths.empty()) paths.push_back(std::filesystem::current_path());
 
     if (!(call_generate || call_solve)) call_generate = call_solve = true;
 
