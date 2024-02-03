@@ -28,23 +28,17 @@ void show_help(const std::string& program_name){
 }
 
 
-std::filesystem::path parse_directory(const std::string &arg) noexcept(false) {
-    if (!std::filesystem::exists(arg)) {
-        try {
-            std::filesystem::create_directories(arg);
-        }
-        catch (std::filesystem::filesystem_error &e) {
-            throw e;
-        }
-    } else if (!std::filesystem::is_directory(arg)) {
-        throw std::filesystem::filesystem_error{"cannot parse directory", arg, std::make_error_code(std::errc::not_a_directory)};
-    }
-    return std::filesystem::path{arg};
-}
+struct Arguments {
+    std::unordered_set<std::filesystem::path> directories;
+    std::optional<unsigned int> num_problems;
+    std::optional<BasicTreeGeneratorConfig> config;
+    bool call_generate = false;
+    bool call_solve = false;
+    bool show_help = false;
+};
 
 
-std::pair<std::string, std::optional<std::string>> key_value_split(const char *raw_arg) {
-    std::string arg{raw_arg};
+std::pair<std::string, std::optional<std::string>> key_value_split(const std::string &arg) {
     std::string::size_type equal_pos = arg.find('=');
     if (arg.starts_with("--") && equal_pos != std::string::npos)
         return {arg.substr(0, equal_pos), arg.substr(equal_pos + 1)};
@@ -52,67 +46,87 @@ std::pair<std::string, std::optional<std::string>> key_value_split(const char *r
 }
 
 
-int main(int argc, char** argv) {
-    std::unordered_set<std::string> directories;
-    std::optional<unsigned int> num_problems;
-    bool call_generate = false, call_solve = false;
-    std::optional<BasicTreeGeneratorConfig> config;
+void check_directory(const std::filesystem::path &path) noexcept(false) {
+    if (!std::filesystem::exists(path)) {
+        std::filesystem::create_directories(path);
+    } else if (!std::filesystem::is_directory(path)) {
+        throw std::filesystem::filesystem_error{
+            "cannot parse directory",
+            path,
+            std::make_error_code(std::errc::not_a_directory)
+        };
+    }
+}
 
 
-    // Parse command line arguments
+Arguments parse_arguments(int argc, char** argv) noexcept(false) {
+    Arguments args;
+
     // NOTE: If the same option is specified multiple times, the last one will be used.
     for (int i = 1; i < argc; ++i) {
-        auto [arg_name, arg_value] = key_value_split(argv[i]);
+        const std::string full_arg{argv[i]};
+        auto [arg_name, arg_value] = key_value_split(full_arg);
 
-        if (arg_name == "--help" || arg_name == "-h") {
-            show_help(argv[0]);
-            return 0;
-        }
+        if (full_arg == "--help" || full_arg == "-h") args.show_help = true;
 
-        else if (arg_name.front() != '-') directories.insert(arg_name);
+        else if (full_arg.front() != '-') args.directories.insert(arg_name);
 
         else if (arg_name == "--config" || arg_name == "-c") {
             std::string config_file;
             if (arg_value.has_value()) config_file = arg_value.value();
             else if (i + 1 < argc) config_file = argv[++i];
-            else { std::cerr << "No config file specified for " << arg_name << "\n"; return 1; }
+            else throw std::runtime_error{"No config file specified for " + arg_name};
 
-            try { config = parse_config(config_file); }
-            catch (const std::exception &e) { std::cerr << e.what() << "\n"; return 1; }
+            args.config = parse_config(config_file);
         }
 
-        else if (arg_name == "--generate" || arg_name == "-g") call_generate = true;
+        else if (full_arg == "--generate" || full_arg == "-g") args.call_generate = true;
 
-        else if (arg_name == "--solve" || arg_name == "-s") call_solve = true;
+        else if (full_arg == "--solve" || full_arg == "-s") args.call_solve = true;
 
         else if (arg_name == "--num-problems" || arg_name == "-n") {
             std::string n;
             if (arg_value.has_value()) n = arg_value.value();
             else if (i + 1 < argc) n = argv[++i];
-            else { std::cerr << "No number specified for " << arg_name << "\n"; return 1; }
+            else throw std::runtime_error{"No number specified for " + arg_name};
 
-            try { num_problems = std::stoi(n); }
-            catch (const std::exception &e) { std::cerr << e.what() << "\n"; return 1; }
+            args.num_problems = std::stoi(n);
         }
 
-        else {
-            std::cerr << "Unknown argument: " << arg_name << "\n";
-            return 1;
-        }
+        else throw std::runtime_error{"Unknown argument: " + full_arg};
     }
 
-    std::vector<std::filesystem::path> paths;
-    std::ranges::transform(directories, std::back_inserter(paths), parse_directory);
+    // Ensure that all directories are valid paths
+    std::ranges::for_each(args.directories, check_directory);
 
-    if (paths.empty()) paths.push_back(std::filesystem::current_path());
+    // Set default values
+    if (args.directories.empty()) args.directories.insert(std::filesystem::current_path());
+    if (!(args.call_generate || args.call_solve)) args.call_generate = args.call_solve = true;
 
-    if (!(call_generate || call_solve)) call_generate = call_solve = true;
+    return args;
+}
 
-    if (call_generate)
-        std::ranges::for_each(paths, [num_problems, config](const auto &p) {generate(p, num_problems, config); });
 
-    if (call_solve)
-        std::ranges::for_each(paths, [num_problems](const auto &p) {solve(p, num_problems); });
+int main(int argc, char** argv) {
+    Arguments args;
+
+    try {
+        args = parse_arguments(argc, argv);
+    } catch (const std::exception &e) {
+        std::cerr << e.what() << "\n";
+        return 1;
+    }
+
+    if (args.show_help) {
+        show_help(argv[0]);
+        return 0;
+    }
+
+    if (args.call_generate)
+        std::ranges::for_each(args.directories, [args](const auto &p) {generate(p, args.num_problems, args.config); });
+
+    if (args.call_solve)
+        std::ranges::for_each(args.directories, [args](const auto &p) {solve(p, args.num_problems); });
 
     return 0;
 }
