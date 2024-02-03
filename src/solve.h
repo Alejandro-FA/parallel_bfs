@@ -81,13 +81,13 @@ void solve(const std::filesystem::path &input_dir, std::optional<unsigned int> n
         auto [problem, reading_time] = invoke_and_time([&] { return reader.read(file_path); });
         std::cout << " [" << reading_time.as_seconds() << " s]" << std::endl;
 
+        // Shuffle the algorithms to reduce the effect of caching
+        std::ranges::shuffle(bfs_functions, random_engine);
+
         // Cache warming
         std::cout << "[INFO] Warming up cache..." << std::flush;
         auto [_, warming_time] = invoke_and_time(bfs_functions[0].first, problem);
         std::cout << " [" << warming_time.as_milliseconds() << " ms]" << std::endl;
-
-        // Shuffle the algorithms to reduce the effect of caching
-        std::ranges::shuffle(bfs_functions, random_engine);
 
         // Solve problems with all the methods
         std::cout << "[INFO] Solving " << file_path.filename() << " with multiple algorithms..." << std::flush;

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.24)
 project(parallel_bfs_project
-        VERSION 0.2
+        VERSION 0.3
         DESCRIPTION "Project for testing parallel strategies for Best First Search"
         LANGUAGES CXX
         HOMEPAGE_URL "https://github.com/Alejandro-FA/parallel_bfs"

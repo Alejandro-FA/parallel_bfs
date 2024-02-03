@@ -5,4 +5,4 @@ cmake-*
 *.vscode
 .DS_Store
 main.out
-problems/*.yaml
+problems
