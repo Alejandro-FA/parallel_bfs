@@ -50,11 +50,12 @@ void generate(const std::filesystem::path &output_dir, std::optional<unsigned in
     BasicTreeGenerator<std::uint32_t> tree_generator{c.max_depth, c.num_goals, c.max_actions, c.avg_actions};
     const YAMLWriter writer;
 
+    auto bar = SimpleProgressBar(n * 2, true);
     for (unsigned int i = 0; i < n; ++i) {
         // Create random problem
-        std::cout << "\n[INFO] Creating random problem " << i + 1 << "..." << std::flush;
-        auto [problem, elapsed_time] = invoke_and_time([&]{ return tree_generator.make_problem(); });
-        std::cout << " [" << elapsed_time.as_seconds() << " s]" << std::endl;
+        bar.set_status("Creating random problem " + std::to_string(i));
+        const auto problem = tree_generator.make_problem();
+        bar.tick();
 
         // Build file path to write the problem to
         std::string padded_string = to_padded_string(i, static_cast<int>(std::to_string(n-1).length()));
@@ -63,9 +64,9 @@ void generate(const std::filesystem::path &output_dir, std::optional<unsigned in
         const auto output_path = std::filesystem::weakly_canonical(output_dir / filename);
 
         // Write the problem
-        std::cout << "[INFO] Writing problem to " << output_path << "..." << std::flush;
-        elapsed_time = invoke_and_time([&]{ writer.write(problem, output_path); });
-        std::cout << " [" << elapsed_time.as_seconds() << " s]" << std::endl;
+        bar.set_status("Writing " + output_path.filename().string());
+        writer.write(problem, output_path);
+        bar.tick();
     }
 }
 

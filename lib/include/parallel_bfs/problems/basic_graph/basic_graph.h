@@ -87,7 +87,7 @@ namespace parallel_bfs {
         }
 
     private:
-        graph_t _graph;
+        graph_t _graph{};
     };
 }
 

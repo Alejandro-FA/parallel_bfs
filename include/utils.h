@@ -8,10 +8,12 @@
 #include <filesystem>
 #include <functional>
 #include <cmath>
+#include <indicators/progress_bar.hpp>
 
 
 struct ExecutionTime {
     using TimePoint = std::chrono::time_point<std::chrono::high_resolution_clock>;
+    explicit ExecutionTime() = default;
     explicit ExecutionTime(TimePoint start, TimePoint end) : start{start}, end{end} {}
 
     [[nodiscard]] double as_milliseconds() const {
@@ -56,6 +58,43 @@ ExecutionTime invoke_and_time(F&& f, Args&&... args) {
     auto end = ExecutionTime::now();
     return ExecutionTime{start, end};
 }
+
+
+class SimpleProgressBar {
+public:
+    explicit SimpleProgressBar(std::size_t iterations, bool show_time = false, std::string description = "") {
+        _bar.set_option(indicators::option::PrefixText{std::move(description)});
+        _bar.set_option(indicators::option::MaxProgress{iterations});
+        _bar.set_option(indicators::option::ShowElapsedTime{show_time});
+        _bar.set_option(indicators::option::ShowRemainingTime{show_time});
+    }
+
+    explicit SimpleProgressBar(const std::ranges::sized_range auto &range, bool show_time = false, std::string description = "") :
+        SimpleProgressBar(std::ranges::size(range), show_time, std::move(description)) {}
+
+    virtual ~SimpleProgressBar() { if (!_bar.is_completed()) _bar.mark_as_completed(); }
+
+    void tick() { _bar.tick(); }
+
+    void set_status(std::string status) {
+        _bar.set_option(indicators::option::PostfixText{std::move(status)});
+        _bar.set_progress(_bar.current()); // Trick to update the bar
+    }
+
+private:
+    indicators::ProgressBar _bar {
+        indicators::option::BarWidth{40},
+        indicators::option::Start{" ["},
+        indicators::option::Fill{"="},
+        indicators::option::Lead{">"},
+        indicators::option::Remainder{" "},
+        indicators::option::End{"]"},
+        indicators::option::ForegroundColor{indicators::Color::green},
+        indicators::option::FontStyles{std::vector<indicators::FontStyle>{indicators::FontStyle::bold}},
+        indicators::option::ShowPercentage(true),
+    };
+};
+
 
 
 #endif //PARALLEL_BFS_PROJECT_UTILS_H

@@ -2,9 +2,9 @@
 #include <optional>
 #include <iostream>
 #include <unordered_set>
-#include "generator_config.h"
-#include "generate.h"
-#include "solve.h"
+#include "../include/generator_config.h"
+#include "../include/generate.h"
+#include "../include/solve.h"
 
 
 void show_help(const std::string& program_name){

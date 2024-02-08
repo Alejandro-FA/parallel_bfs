@@ -13,20 +13,30 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(is_clang "$<CXX_COMPILER_ID:Clang,AppleClang>")
 add_compile_options(-Wall -Wextra -Wpedantic "$<${is_clang}:-Wthread-safety>")
 
-##################### Executables #######################
-# Add the directories so that cmake can find the subdirectory CMakeLists.txt files.
-add_subdirectory(lib)
+##################### Dependencies ######################
+include(FetchContent)
+FetchContent_Declare(
+        indicators
+        GIT_REPOSITORY https://github.com/p-ranav/indicators.git
+        GIT_TAG v2.3
+)
+FetchContent_MakeAvailable(indicators)
 
+add_subdirectory(lib) # Custom library for parallel BFS
+
+##################### Executables #######################
 add_executable(main
         src/main.cpp
-        src/generate.h
-        src/generator_config.h
-        src/solve.h
-        src/utils.h
+        include/generate.h
+        include/generator_config.h
+        include/solve.h
+        include/solver.h
+        include/statistics.h
+        include/utils.h
 )
 
 target_link_libraries(main PRIVATE parallel_bfs)
-
+target_link_libraries(main PRIVATE indicators::indicators)
 set_target_properties(main PROPERTIES SUFFIX ".out")
 
 ####################### Testing #########################

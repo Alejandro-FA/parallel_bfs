@@ -112,7 +112,7 @@ namespace parallel_bfs {
         }
 
     private:
-        tree_t _tree;
+        tree_t _tree{};
     };
 }
 

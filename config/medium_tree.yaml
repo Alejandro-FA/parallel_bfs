@@ -9,4 +9,4 @@ max_actions: 6
 
 # The average number of actions that a node has. Also known as the average branching factor.
 # The branching factor of each node follows a binomial distribution.
-avg_actions: 3.0
+avg_actions: 4.0
