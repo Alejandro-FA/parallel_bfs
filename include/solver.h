@@ -90,7 +90,7 @@ public:
         for (const auto &[problem_name, measurements] : grouped) {
             stream << problem_name << "\n";
             for (const auto &m : measurements) {
-                stream << m.algorithm_name << ": [" << m.time.as_milliseconds() << " ms], "
+                stream << m.algorithm_name << ": " << m.time.as_milliseconds() << " ms, "
                        << solution_path(m.solution.get()) << "\n";
             }
             stream << "\n";

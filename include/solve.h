@@ -34,6 +34,23 @@ std::vector<std::filesystem::path> get_problem_files(const std::filesystem::path
 }
 
 
+std::filesystem::path get_log_path(const std::filesystem::path &input_dir) {
+    // Get current time
+    auto now = std::chrono::system_clock::now();
+    std::time_t current_time = std::chrono::system_clock::to_time_t(now);
+    std::tm* time_info = std::localtime(&current_time);
+
+    // Convert time to compact string
+    std::stringstream file_name;
+    file_name << "results_";
+    file_name << std::put_time(time_info, "%Y-%m-%d-%H:%M:%S"); // Compact datetime format
+    file_name << ".log";
+
+    // Append file_name to input_dir
+    return std::filesystem::weakly_canonical(input_dir / file_name.str());
+}
+
+
 /**
 * Function: solve
 * ----------------
@@ -81,7 +98,7 @@ void solve(const std::filesystem::path &input_dir, std::optional<unsigned int> n
     }
 
     // Log results
-    std::filesystem::path log_path = std::filesystem::weakly_canonical(input_dir / "results_log.txt");
+    auto log_path = get_log_path(input_dir);
     std::ofstream log_stream{log_path};
     log_stream << solver.results() << "\nSUMMARY:\n" << solver.statistics_summary<Average, Median>();
     log_stream.close();
