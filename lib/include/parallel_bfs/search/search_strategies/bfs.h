@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <queue>
+#include <stop_token>
 
 
 namespace parallel_bfs {
@@ -19,13 +20,13 @@ namespace parallel_bfs {
 namespace parallel_bfs::detail {
     /// TODO: Change this from Breadth First Search to Best First Search
     template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM, SearchType type = SearchType::tree_like>
-    [[nodiscard]] std::shared_ptr<Node<State>> bfs(std::shared_ptr<Node<State>> init_node, const Problem<State, TM> &problem) {
+    [[nodiscard]] std::shared_ptr<Node<State>> bfs(std::shared_ptr<Node<State>> init_node, const Problem<State, TM> &problem, std::stop_token st = std::stop_token{}) {
         if (problem.is_goal(init_node->state())) return init_node;
         std::queue<std::shared_ptr<Node<State>>> frontier({init_node});
         std::unordered_set<State> reached;
         if constexpr (type == SearchType::graph) reached.insert(init_node->state());
 
-        while (!frontier.empty()) {
+        while (!frontier.empty() && !st.stop_requested()) {
             auto node = frontier.front();
             frontier.pop();
             for (const auto &child: problem.expand(node)) {

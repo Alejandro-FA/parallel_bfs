@@ -2,6 +2,7 @@
 #include <optional>
 #include <iostream>
 #include <unordered_set>
+#include <thread>
 #include "../include/generator_config.h"
 #include "../include/generate.h"
 #include "../include/solve.h"
@@ -125,8 +126,10 @@ int main(int argc, char** argv) {
     if (args.call_generate)
         std::ranges::for_each(args.directories, [args](const auto &p) {generate(p, args.num_problems, args.config); });
 
-    if (args.call_solve)
+    if (args.call_solve) {
+        std::cout << "CPU cores available: " << std::thread::hardware_concurrency() << std::endl;
         std::ranges::for_each(args.directories, [args](const auto &p) {solve(p, args.num_problems); });
+    }
 
     return 0;
 }
