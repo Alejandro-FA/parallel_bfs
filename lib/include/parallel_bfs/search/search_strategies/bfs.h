@@ -30,6 +30,7 @@ namespace parallel_bfs::detail {
             auto node = frontier.front();
             frontier.pop();
             for (const auto &child: problem.expand(node)) {
+                if (st.stop_requested()) break;
                 State child_state = child->state();
                 if (problem.is_goal(child_state)) return child;
                 if constexpr (type == SearchType::graph) {

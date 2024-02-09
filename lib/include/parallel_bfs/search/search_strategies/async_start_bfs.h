@@ -1,39 +1,38 @@
 //
-// Created by Alejandro Fernández on 06/11/2023.
+// Created by alejandro on 30/01/24.
 //
 
-#ifndef PARALLEL_BFS_PARALLEL_BFS_TASKS_H
-#define PARALLEL_BFS_PARALLEL_BFS_TASKS_H
+#ifndef PARALLEL_BFS_PROJECT_ASYNC_START_BFS_H
+#define PARALLEL_BFS_PROJECT_ASYNC_START_BFS_H
 
+#include <future>
+#include <iostream>
 #include <vector>
 #include <memory>
-#include <future>
 #include <thread>
-#include <iostream>
 #include "bfs.h"
 
 
 namespace parallel_bfs {
     /// In order to avoid data races, ParallelBFSTasks only works with tree-like search.
     template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM>
-    [[nodiscard]] std::shared_ptr<Node<State>> parallel_bfs_tasks(const Problem<State, TM> &problem) {
+    [[nodiscard]] std::shared_ptr<Node<State>> async_start_bfs(const Problem<State, TM> &problem) {
         std::queue<std::shared_ptr<Node<State>>> frontier({std::make_shared<Node<State>>(problem.initial())});
 
         std::vector<std::future<std::shared_ptr<Node<State>>>> futures;
-        unsigned int cpu_cores = std::thread::hardware_concurrency();
+        unsigned int min_spawned_tasks = std::thread::hardware_concurrency() * 4;
         std::stop_source stop_source{};
 
-        while(!frontier.empty() && futures.size() < cpu_cores) {
+        while(!frontier.empty() && futures.size() < min_spawned_tasks) {
             auto node = frontier.front();
             frontier.pop();
             for (const auto &child: problem.expand(node)) {
-                std::packaged_task task{ [child, &problem, &stop_source]() {
+                auto future = std::async(std::launch::async, [child, &problem, &stop_source]() {
                     auto solution {detail::bfs(child, problem, stop_source.get_token())};
                     if (solution != nullptr) stop_source.request_stop();
                     return solution;
-                }};
-                futures.push_back(task.get_future());
-                std::jthread thread{std::move(task)};
+                });
+                futures.push_back(std::move(future));
             }
         }
 
@@ -43,4 +42,5 @@ namespace parallel_bfs {
         return nullptr;
     }
 }
-#endif //PARALLEL_BFS_PARALLEL_BFS_TASKS_H
+
+#endif //PARALLEL_BFS_PROJECT_ASYNC_START_BFS_H

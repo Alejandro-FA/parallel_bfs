@@ -12,6 +12,7 @@
 #include <ranges>
 #include <parallel_bfs/problem_utils.h>
 #include <parallel_bfs/problems.h>
+#include <parallel_bfs/search.h>
 #include "utils.h"
 #include "solver.h"
 
@@ -77,7 +78,7 @@ std::filesystem::path get_log_path(const std::filesystem::path &input_dir) {
  * @brief Logs the results of the Solver.
  *
  * This function logs the results of the Solver to a file in the given input directory.
- * It also prints a summary of the statistics to the console.
+ * It also prints a performance statistics summary to the console.
  *
  * @tparam State The searchable state type.
  * @tparam TM The transition model type.
@@ -90,7 +91,7 @@ void log_results(const std::filesystem::path &input_dir, const Solver<State, TM>
     std::ofstream log_stream{log_path};
     const auto stats = solver.template statistics_summary<Average, Median, StandardDeviation>();
     log_stream << solver.results() << "\nSUMMARY:\n" << stats;
-    std::cout << "[INFO] Results summary:\n" << stats << "\n";
+    std::cout << "\n[INFO] Results summary:\n" << stats << "\n";
     std::cout << "[INFO] Detailed results logged in " << log_path << "." << std::endl;
 }
 
@@ -112,8 +113,9 @@ void solve(const std::filesystem::path &input_dir, std::optional<unsigned int> n
     // Create solver and add algorithms
     Solver<StateType , TransitionModelType> solver;
     solver.add_algorithm(parallel_bfs::sync_bfs<StateType, TransitionModelType, parallel_bfs::SearchType::tree_like>, "SyncBFS");
-    solver.add_algorithm(parallel_bfs::parallel_bfs_tasks<StateType, TransitionModelType>, "ParallelBFSTasks");
-    solver.add_algorithm(parallel_bfs::parallel_bfs_async<StateType, TransitionModelType>, "ParallelBFSAsync");
+    solver.add_algorithm(parallel_bfs::tasks_bfs<StateType, TransitionModelType>, "TasksBFS");
+    solver.add_algorithm(parallel_bfs::async_start_bfs<StateType, TransitionModelType>, "AsyncStartBFS");
+    // solver.add_algorithm(parallel_bfs::async_bfs<StateType, TransitionModelType>, "AsyncBFS"); // Very slow
 
     // Create reader
     const parallel_bfs::YAMLReader<StateType, TransitionModelType> reader;

@@ -11,9 +11,10 @@ FetchContent_MakeAvailable(yaml-cpp)
 ####################### Sources #########################
 add_library(parallel_bfs INTERFACE
         include/parallel_bfs/search.h
+        include/parallel_bfs/search/search_strategies/async_bfs.h
+        include/parallel_bfs/search/search_strategies/async_start_bfs.h
         include/parallel_bfs/search/search_strategies/bfs.h
-        include/parallel_bfs/search/search_strategies/parallel_bfs_async.h
-        include/parallel_bfs/search/search_strategies/parallel_bfs_tasks.h
+        include/parallel_bfs/search/search_strategies/tasks_bfs.h
         include/parallel_bfs/search/search_strategies/sync_bfs.h
         include/parallel_bfs/search/node.h
         include/parallel_bfs/search/problem.h

@@ -13,7 +13,6 @@
 #include <functional>
 #include <ranges>
 #include <parallel_bfs/search.h>
-#include <parallel_bfs/problem_utils.h>
 #include "utils.h"
 #include "statistics.h"
 
