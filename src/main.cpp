@@ -2,6 +2,7 @@
 #include <optional>
 #include <iostream>
 #include <unordered_set>
+#include <string>
 #include <thread>
 #include "../include/generator_config.h"
 #include "../include/generate.h"

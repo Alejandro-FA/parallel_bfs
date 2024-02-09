@@ -32,16 +32,16 @@ std::string to_padded_string(unsigned int number, int pad_width) {
 
 
 /**
-* Function: generate
-* ----------------------
-* Generates random problems and writes them to @output_dir.
-*
-* @param output_dir: a path to the directory where problems will be written.
-* @param num_problems: the number of problems to generate.
-* @param config: the configuration for the problem generator.
-*
-* NOTE: This function does NOT validate if @output_dir is a valid directory.
-*/
+ * @brief Generates random problems and writes them to files.
+ *
+ * This function generates random problems using a tree generator and writes them to individual files in the specified output directory.
+ * The number of problems to generate can be specified, as well as the configuration for the tree generator.
+ *
+ * @param output_dir The directory where the generated problems will be written.
+ * @param num_problems The number of problems to generate. If not specified, 1 problem will be generated.
+ * @param config The configuration for the tree generator. If not specified, default values will be used.
+ * @note This function does NOT validate if @output_dir is a valid directory.
+ */
 void generate(const std::filesystem::path &output_dir, std::optional<unsigned int> num_problems, std::optional<BasicTreeGeneratorConfig> config) {
     using namespace parallel_bfs;
     unsigned int n = num_problems.value_or(1);

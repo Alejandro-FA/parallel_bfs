@@ -16,6 +16,18 @@
 #include "solver.h"
 
 
+/**
+ * @brief Get a list of problem files in a directory that match the given extension.
+ *
+ * This function searches for files in the specified directory that have the given extension and start with "problem".
+ * The function optionally allows specifying a maximum number of files to retrieve.
+ *
+ * @param dir The directory to search for problem files.
+ * @param extension The file extension to match.
+ * @param max_files Optional maximum number of files to retrieve. Defaults to retrieving all matching files.
+ * @return A vector of paths to the problem files.
+ * @note If the directory does not exist or is not a directory, an empty vector will be returned.
+ */
 std::vector<std::filesystem::path> get_problem_files(const std::filesystem::path &dir, const std::string &extension, std::optional<unsigned int> max_files = std::nullopt) {
     std::vector<std::filesystem::path> result;
 
@@ -34,6 +46,16 @@ std::vector<std::filesystem::path> get_problem_files(const std::filesystem::path
 }
 
 
+/**
+ * @brief Get the path for a log file based on the current time and a given input directory.
+ *
+ * This function generates a log file name in the format "results_YYYY-MM-DD-HH:MM:SS.log"
+ * based on the current system time, and appends it to the given input directory. The resulting
+ * file path is returned.
+ *
+ * @param input_dir The input directory path where the log file will be placed.
+ * @return The path to the log file.
+ */
 std::filesystem::path get_log_path(const std::filesystem::path &input_dir) {
     // Get current time
     auto now = std::chrono::system_clock::now();
@@ -52,16 +74,38 @@ std::filesystem::path get_log_path(const std::filesystem::path &input_dir) {
 
 
 /**
-* Function: solve
-* ----------------
-* Reads search problems from the directory @input_dir and solves them.
-*
-* @param input_dir: a path to the directory from where the problems will be read.
-* @param num_problems: optional parameter, the number of problems to solve. If not provided, all problems in the directory will be solved.
-*
-* NOTE: This function does NOT validate if @input_dir is a valid directory.
-*/
-void solve(const std::filesystem::path &input_dir, std::optional<unsigned int> num_problems = std::nullopt) {
+ * @brief Logs the results of the Solver.
+ *
+ * This function logs the results of the Solver to a file in the given input directory.
+ * It also prints a summary of the statistics to the console.
+ *
+ * @tparam State The searchable state type.
+ * @tparam TM The transition model type.
+ * @param input_dir The input directory path.
+ * @param solver The Solver object.
+ */
+template<parallel_bfs::Searchable State, std::derived_from<parallel_bfs::BaseTransitionModel<State>> TM>
+void log_results(const std::filesystem::path &input_dir, const Solver<State, TM> &solver) {
+    auto log_path = get_log_path(input_dir);
+    std::ofstream log_stream{log_path};
+    const auto stats = solver.template statistics_summary<Average, Median, StandardDeviation>();
+    log_stream << solver.results() << "\nSUMMARY:\n" << stats;
+    std::cout << "[INFO] Results summary:\n" << stats << "\n";
+    std::cout << "[INFO] Detailed results logged in " << log_path << "." << std::endl;
+}
+
+
+/**
+ * @brief Solve a set of problems using various algorithms.
+ *
+ * Given an input directory and an optional number of problems to solve, this function reads the problem files
+ * from the directory, solves each problem using multiple algorithms, and logs the results.
+ *
+ * @param input_dir The directory containing the problem files.
+ * @param num_problems Optional. The number of problems to solve. If not specified, all problems will be solved.
+ * @note This function does NOT validate if @input_dir is a valid directory.
+ */
+void solve(const std::filesystem::path &input_dir, std::optional<unsigned int> num_problems) {
     using StateType = parallel_bfs::TreeState<std::uint32_t>; // FIXME: Don't hardcode types
     using TransitionModelType = parallel_bfs::BasicTree<std::uint32_t>; // FIXME: Don't hardcode types
 
@@ -97,12 +141,7 @@ void solve(const std::filesystem::path &input_dir, std::optional<unsigned int> n
         bar.tick();
     }
 
-    // Log results
-    auto log_path = get_log_path(input_dir);
-    std::ofstream log_stream{log_path};
-    log_stream << solver.results() << "\nSUMMARY:\n" << solver.statistics_summary<Average, Median>();
-    log_stream.close();
-    std::cout << "[INFO] Results logged in " << log_path << ".\n";
+    log_results(input_dir, solver);
 }
 
 #endif //PARALLEL_BFS_PROJECT_SOLVE_H
