@@ -47,8 +47,11 @@ void generate(const std::filesystem::path &output_dir, std::optional<unsigned in
     unsigned int n = num_problems.value_or(1);
     BasicTreeGeneratorConfig c = config.value_or(BasicTreeGeneratorConfig::simple());
 
-    BasicTreeGenerator<std::uint32_t> tree_generator{c.max_depth, c.num_goals, c.max_actions, c.avg_actions};
     const YAMLWriter writer;
+    auto tree_generator =
+        c.avg_actions.has_value()
+        ? BasicTreeGenerator<std::uint32_t>{c.max_depth, c.num_goals, c.avg_actions.value(), c.max_actions}
+        : BasicTreeGenerator<std::uint32_t>{c.max_depth, c.num_goals, c.min_actions.value(), c.max_actions};
 
     auto bar = SimpleProgressBar(n * 2, true);
     for (unsigned int i = 0; i < n; ++i) {

@@ -13,10 +13,10 @@
 
 
 namespace parallel_bfs::detail {
-    template<typename T>
+    template<typename T, typename U = T::result_type>
     concept RandomDist = requires(T &dist, std::default_random_engine &engine) {
         typename T::result_type;  // This requires T to have a type named result_type
-        { dist(engine) } -> std::same_as<typename T::result_type>;
+        { dist(engine) } -> std::same_as<U>;
     };
 }
 
