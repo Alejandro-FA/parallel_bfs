@@ -70,7 +70,7 @@ std::filesystem::path get_log_path(const std::filesystem::path &input_dir) {
     file_name << ".log";
 
     // Append file_name to input_dir
-    return std::filesystem::weakly_canonical(input_dir / file_name.str());
+    return input_dir / file_name.str();
 }
 
 
@@ -123,9 +123,14 @@ void solve(const std::filesystem::path &input_dir, std::optional<unsigned int> n
     // Create reader
     const parallel_bfs::YAMLReader<StateType, TransitionModelType> reader;
     const auto problem_files = get_problem_files(input_dir, reader.file_extension, num_problems);
+    if (problem_files.empty()) {
+        std::cerr << "[ERROR] No problem files found in " << input_dir << std::endl;
+        return;
+    }
 
     // Solve all problems with all algorithms
-    std::cout << "\n[INFO] Solving problems from " << std::filesystem::canonical(input_dir) << "...\n";
+    std::cout << "\n[INFO] Solving " << problem_files.size() << " problems from " << input_dir << "...\n";
+    std::cout << "[INFO] CPU cores available: " << std::thread::hardware_concurrency() << std::endl;
     auto bar = SimpleProgressBar(problem_files.size() * 3, true);
 
     for (const auto &file_path : problem_files) {

@@ -71,7 +71,7 @@ Arguments parse_arguments(int argc, char** argv) noexcept(false) {
 
         if (full_arg == "--help" || full_arg == "-h") args.show_help = true;
 
-        else if (full_arg.front() != '-') args.directories.insert(arg_name);
+        else if (full_arg.front() != '-') args.directories.insert(std::filesystem::weakly_canonical(arg_name));
 
         else if (arg_name == "--config" || arg_name == "-c") {
             std::string config_file;
@@ -128,7 +128,6 @@ int main(int argc, char** argv) {
         std::ranges::for_each(args.directories, [args](const auto &p) {generate(p, args.num_problems, args.config); });
 
     if (args.call_solve) {
-        std::cout << "CPU cores available: " << std::thread::hardware_concurrency() << std::endl;
         std::ranges::for_each(args.directories, [args](const auto &p) {solve(p, args.num_problems); });
     }
 
