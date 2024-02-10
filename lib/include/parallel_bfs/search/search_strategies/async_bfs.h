@@ -23,11 +23,11 @@ namespace parallel_bfs::detail {
 
         for (const auto &child: problem.expand(init_node)) {
             if (token.stop_requested()) break;
-            auto future = std::async([child, &problem, &stop_source]() {
-                auto solution {detail::async_bfs_task(child, problem, stop_source)};
+            auto future = std::async([&problem, &stop_source](auto init_node) {
+                auto solution {detail::async_bfs_task(init_node, problem, stop_source)};
                 if (solution != nullptr) stop_source.request_stop();
                 return solution;
-            });
+            }, std::move(child));
             futures.push_back(std::move(future));
         }
 

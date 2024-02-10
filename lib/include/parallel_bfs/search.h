@@ -7,6 +7,9 @@
 
 #include "search/search_strategies/async_bfs.h"
 #include "search/search_strategies/async_start_bfs.h"
+#include "search/search_strategies/foreach_bfs.h"
+#include "search/search_strategies/foreach_start_bfs.h"
+#include "search/search_strategies/multithread_bfs.h"
 #include "search/search_strategies/tasks_bfs.h"
 #include "search/search_strategies/sync_bfs.h"
 #include "search/node.h"
