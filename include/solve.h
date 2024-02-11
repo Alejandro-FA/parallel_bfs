@@ -90,7 +90,7 @@ void log_results(const std::filesystem::path &input_dir, const Solver<State, TM>
     auto log_path = get_log_path(input_dir);
     std::ofstream log_stream{log_path};
     const auto stats = solver.template statistics_summary<Average, Median, StandardDeviation>();
-    log_stream << solver.results() << "\nSUMMARY:\n" << stats;
+    log_stream << solver.results() << "\n[INFO] Results summary:\n" << stats;
     std::cout << "\n[INFO] Results summary:\n" << stats << "\n";
     std::cout << "[INFO] Detailed results logged in " << log_path << "." << std::endl;
 }
@@ -106,7 +106,7 @@ void log_results(const std::filesystem::path &input_dir, const Solver<State, TM>
  * @param num_problems Optional. The number of problems to solve. If not specified, all problems will be solved.
  * @note This function does NOT validate if @input_dir is a valid directory.
  */
-void solve(const std::filesystem::path &input_dir, std::optional<unsigned int> num_problems) {
+void solve(const std::filesystem::path &input_dir, std::optional<unsigned int> num_problems) noexcept(false) {
     using StateType = parallel_bfs::TreeState<std::uint32_t>; // FIXME: Don't hardcode types
     using TransitionModelType = parallel_bfs::BasicTree<std::uint32_t>; // FIXME: Don't hardcode types
 
@@ -119,14 +119,10 @@ void solve(const std::filesystem::path &input_dir, std::optional<unsigned int> n
     solver.add_algorithm(parallel_bfs::foreach_bfs<StateType, TransitionModelType>, "ForeachBFS");
     solver.add_algorithm(parallel_bfs::foreach_start_bfs<StateType, TransitionModelType>, "ForeachStartBFS");
 
-
     // Create reader
     const parallel_bfs::YAMLReader<StateType, TransitionModelType> reader;
     const auto problem_files = get_problem_files(input_dir, reader.file_extension, num_problems);
-    if (problem_files.empty()) {
-        std::cerr << "[ERROR] No problem files found in " << input_dir << std::endl;
-        return;
-    }
+    if (problem_files.empty()) throw std::runtime_error{"No problem files found in \"" + input_dir.string() + '"'};
 
     // Solve all problems with all algorithms
     std::cout << "\n[INFO] Solving " << problem_files.size() << " problems from " << input_dir << "...\n";

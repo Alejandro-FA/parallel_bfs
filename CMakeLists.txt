@@ -12,6 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 ################### Compile options #####################
 set(is_clang "$<CXX_COMPILER_ID:Clang,AppleClang>")
 add_compile_options(-Wall -Wextra -Wpedantic "$<${is_clang}:-Wthread-safety>")
+# TODO: Add -fopenmp or -ltbb flags for parallelism
 
 ##################### Dependencies ######################
 include(FetchContent)

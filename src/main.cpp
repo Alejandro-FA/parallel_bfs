@@ -124,11 +124,16 @@ int main(int argc, char** argv) {
         return 0;
     }
 
-    if (args.call_generate)
-        std::ranges::for_each(args.directories, [args](const auto &p) {generate(p, args.num_problems, args.config); });
+    try {
+        if (args.call_generate)
+            std::ranges::for_each(args.directories, [args](const auto &p) {generate(p, args.num_problems, args.config); });
 
-    if (args.call_solve) {
-        std::ranges::for_each(args.directories, [args](const auto &p) {solve(p, args.num_problems); });
+        if (args.call_solve)
+            std::ranges::for_each(args.directories, [args](const auto &p) {solve(p, args.num_problems); });
+
+    } catch (const std::exception &e) {
+        std::cerr << e.what() << "\n";
+        return 1;
     }
 
     return 0;
