@@ -1,7 +1,11 @@
 # Parallel BFS
 
 Simple framework to test and benchmark C++ parallelization techniques applied to Best First Search problems.
-The end goal is to port the results to [BFGP++](https://github.com/jsego/bfgp-pp). 
+The end goal is to port the results to [BFGP++](https://github.com/jsego/bfgp-pp).
+
+## Dependencies
+
+TODO: `gcc >= 13.2` and `onetbb` are required to compile the project. You can install `gcc` using a package manager.
 
 ## Usage
 

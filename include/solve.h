@@ -116,8 +116,8 @@ void solve(const std::filesystem::path &input_dir, std::optional<unsigned int> n
     solver.add_algorithm(parallel_bfs::tasks_bfs<StateType, TransitionModelType>, "TasksBFS");
     solver.add_algorithm(parallel_bfs::async_start_bfs<StateType, TransitionModelType>, "AsyncStartBFS");
     // solver.add_algorithm(parallel_bfs::async_bfs<StateType, TransitionModelType>, "AsyncBFS"); // Very slow
-    solver.add_algorithm(parallel_bfs::foreach_bfs<StateType, TransitionModelType>, "ForeachBFS");
-    solver.add_algorithm(parallel_bfs::foreach_start_bfs<StateType, TransitionModelType>, "ForeachStartBFS");
+    // solver.add_algorithm(parallel_bfs::foreach_bfs<StateType, TransitionModelType>, "ForeachBFS");
+    // solver.add_algorithm(parallel_bfs::foreach_start_bfs<StateType, TransitionModelType>, "ForeachStartBFS");
 
     // Create reader
     const parallel_bfs::YAMLReader<StateType, TransitionModelType> reader;

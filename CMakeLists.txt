@@ -8,11 +8,7 @@ project(parallel_bfs_project
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-################### Compile options #####################
-set(is_clang "$<CXX_COMPILER_ID:Clang,AppleClang>")
-add_compile_options(-Wall -Wextra -Wpedantic "$<${is_clang}:-Wthread-safety>")
-# TODO: Add -fopenmp or -ltbb flags for parallelism
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 ##################### Dependencies ######################
 include(FetchContent)
@@ -39,6 +35,23 @@ add_executable(main
 target_link_libraries(main PRIVATE parallel_bfs)
 target_link_libraries(main PRIVATE indicators::indicators)
 set_target_properties(main PROPERTIES SUFFIX ".out")
+
+################### Compile options #####################
+set(is_clang "$<CXX_COMPILER_ID:Clang,AppleClang>")
+target_compile_options(main PRIVATE -Wall -Wextra -Wpedantic "$<${is_clang}:-Wthread-safety>")
+
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+find_package(Threads REQUIRED)
+target_link_libraries(main PRIVATE Threads::Threads)
+
+find_package(TBB REQUIRED)
+target_link_libraries(main PRIVATE TBB::tbb)
+
+#find_package(OpenMP REQUIRED)
+#if (OpenMP_CXX_FOUND)
+#    target_link_libraries(main PRIVATE OpenMP::OpenMP_CXX)
+#endif()
 
 ####################### Testing #########################
 enable_testing()
