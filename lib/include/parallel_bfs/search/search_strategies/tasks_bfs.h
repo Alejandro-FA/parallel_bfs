@@ -30,6 +30,7 @@ namespace parallel_bfs {
         }
 
         // Then start a parallel search from each starting point
+        std::vector<std::jthread> threads;
         std::vector<std::future<std::shared_ptr<Node<State>>>> futures;
         std::stop_source stop_source{};
 
@@ -43,7 +44,7 @@ namespace parallel_bfs {
             }};
 
             futures.push_back(task.get_future());
-            std::jthread thread{std::move(task)};
+            threads.emplace_back(std::move(task));
         }
 
         // Wait for the first solution to be found and return it
