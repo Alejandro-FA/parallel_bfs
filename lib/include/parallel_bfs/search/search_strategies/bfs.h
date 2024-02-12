@@ -46,6 +46,28 @@ namespace parallel_bfs::detail {
 
         return nullptr;
     }
+
+
+    template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM>
+    [[nodiscard]] std::shared_ptr<Node<State>> cooperative_bfs(std::shared_ptr<Node<State>> init_node, const Problem<State, TM> &problem, std::stop_source ssource) {
+        std::shared_ptr<Node<State>> solution {bfs(init_node, problem, ssource.get_token())};
+        if (solution != nullptr) ssource.request_stop();
+        return solution;
+    }
+
+
+    template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM>
+    [[nodiscard]] std::shared_ptr<Node<State>> bfs_with_limit(std::queue<std::shared_ptr<Node<State>>> &frontier, const Problem<State, TM> &problem, std::size_t limit) {
+        // Search until solution is found or frontier fills up to limit
+        while (!frontier.empty() && frontier.size() < limit) {
+            auto node = frontier.front();
+            frontier.pop();
+            if (problem.is_goal(node->state())) return node;
+            // frontier.push_range(problem.expand(node)); // TODO: Use this when available
+            for (const auto &child: problem.expand(node)) frontier.push(child);
+        }
+        return nullptr;
+    }
 }
 
 #endif //PARALLEL_BFS_PROJECT_BFS_H

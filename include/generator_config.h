@@ -21,11 +21,11 @@ struct BasicTreeGeneratorConfig {
     unsigned int max_actions{1};
 
     [[nodiscard]] static BasicTreeGeneratorConfig simple() {
-        return BasicTreeGeneratorConfig{4, 10, 1.5, 0, 3};
+        return BasicTreeGeneratorConfig{6, 10, 2, 0, 4};
     }
 
     [[nodiscard]] static BasicTreeGeneratorConfig medium() {
-        return BasicTreeGeneratorConfig{8, 20, 3.0, 0, 6};
+        return BasicTreeGeneratorConfig{8, 20, 4.0, 0, 6};
     }
 
     [[nodiscard]] static BasicTreeGeneratorConfig complex() {

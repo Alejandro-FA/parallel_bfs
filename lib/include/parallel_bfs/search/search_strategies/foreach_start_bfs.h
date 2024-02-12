@@ -21,23 +21,28 @@ namespace parallel_bfs {
         unsigned int min_starting_points = std::thread::hardware_concurrency();
 
         // First fill the frontier with enough starting points
-        while (!frontier.empty() && frontier.size() < min_starting_points) {
-            auto node = frontier.front();
-            frontier.pop_front();
-            // frontier.push_range(problem.expand(node)); // TODO: Use this when available
-            for (const auto &child: problem.expand(node)) frontier.push_back(child);
-        }
+        auto possible_solution = detail::bfs_with_limit(frontier, problem, min_starting_points);
+        if (possible_solution != nullptr) return possible_solution;
 
         // Then start a parallel search from each starting point
         std::stop_source stop_source{};
         std::atomic<std::shared_ptr<Node<State>>> solution{nullptr};
 
-        std::for_each(std::execution::par, frontier.begin(), frontier.end(), [&problem, &stop_source, &solution](auto node) {
-            auto partial_solution{detail::bfs(node, problem, stop_source.get_token())};
-            if (partial_solution != nullptr) {
-                stop_source.request_stop();
-                solution.store(partial_solution);
-            }
+        // std::for_each(std::execution::par, frontier.begin(), frontier.end(), [&problem, stop_source, &solution](auto node) {
+        //     auto partial_solution{detail::bfs(node, problem, stop_source.get_token())};
+        //     if (partial_solution != nullptr) {
+        //         stop_source.request_stop();
+        //         solution.store(partial_solution);
+        //     }
+        // });
+
+        std::for_each(std::execution::par, frontier.cbegin(), frontier.cend(), [](const std::shared_ptr<Node<State>> &node) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(10)); // Simulate a long computation
+            // auto partial_solution{detail::bfs(node, problem, stop_source.get_token())};
+            // if (partial_solution != nullptr) {
+            //     stop_source.request_stop();
+            //     solution.store(partial_solution);
+            // }
         });
 
         return solution.load();

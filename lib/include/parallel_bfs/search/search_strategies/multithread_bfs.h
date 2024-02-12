@@ -23,7 +23,7 @@ namespace parallel_bfs::detail {
     template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM>
     class WorkerThread {
     public:
-        void operator()(const Problem<State, TM> &problem, std::stop_source &stop_source) {
+        void operator()(const Problem<State, TM> &problem, std::stop_source stop_source) {
             const std::stop_token token = stop_source.get_token();
 
             while (!token.stop_requested()) {

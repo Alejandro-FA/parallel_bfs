@@ -22,22 +22,16 @@ namespace parallel_bfs {
         unsigned int min_starting_points = std::thread::hardware_concurrency();
 
         // First fill the frontier with enough starting points
-        while(!frontier.empty() && frontier.size() < min_starting_points) {
-            auto node = frontier.front();
-            frontier.pop();
-            // frontier.push_range(problem.expand(node)); // TODO: Use this when available
-            for (const auto &child: problem.expand(node)) frontier.push(child);
-        }
+        auto possible_solution = detail::bfs_with_limit(frontier, problem, min_starting_points);
+        if (possible_solution != nullptr) return possible_solution;
 
         // Then start a parallel search from each starting point
         std::vector<std::future<std::shared_ptr<Node<State>>>> futures;
         std::stop_source stop_source{};
 
         while (!frontier.empty()) {
-            auto future = std::async(std::launch::async, [&problem, &stop_source](auto init_node) { // TODO: play with std::launch::deferred as well
-                auto solution {detail::bfs(init_node, problem, stop_source.get_token())};
-                if (solution != nullptr) stop_source.request_stop();
-                return solution;
+            auto future = std::async(std::launch::async, [&problem, stop_source](std::shared_ptr<Node<State>> init_node) { // TODO: play with std::launch::deferred as well
+                return detail::cooperative_bfs(std::move(init_node), problem, stop_source);
             }, frontier.front());
             frontier.pop();
             futures.push_back(std::move(future));

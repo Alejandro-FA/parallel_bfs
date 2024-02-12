@@ -85,22 +85,22 @@ set(common_build_opts
 
 set(asan_flags "-fsanitize=address,undefined -fno-omit-frame-pointer -Og")
 add_test(asan_lsan_ubsan ${CMAKE_CTEST_COMMAND}
-        --build-and-test "${CMAKE_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}/cmake-build-tests-asan"
+        --build-and-test "${CMAKE_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}/cmake-build-asan"
         --build-generator ${CMAKE_GENERATOR}
         --build-makeprogram ${CMAKE_MAKE_PROGRAM}
         --build-project "parallel_bfs"
         --build-options -DCMAKE_CXX_FLAGS=${asan_flags} ${common_build_opts}
-        --test-command main.out --config=${CMAKE_SOURCE_DIR}/config/test_tree.yaml
+        --test-command main.out problems --config=${CMAKE_SOURCE_DIR}/config/simple_tree.yaml -n 10
 )
 
 set(tsan_flags "-fsanitize=thread -fno-omit-frame-pointer -O2")
 add_test(tsan ${CMAKE_CTEST_COMMAND}
-        --build-and-test "${CMAKE_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}/cmake-build-tests-tsan"
+        --build-and-test "${CMAKE_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}/cmake-build-tsan"
         --build-generator ${CMAKE_GENERATOR}
         --build-makeprogram ${CMAKE_MAKE_PROGRAM}
         --build-project "parallel_bfs"
         --build-options -DCMAKE_CXX_FLAGS=${tsan_flags} ${common_build_opts}
-        --test-command main.out --config=${CMAKE_SOURCE_DIR}/config/test_tree.yaml
+        --test-command main.out problems --config=${CMAKE_SOURCE_DIR}/config/simple_tree.yaml -n 10
 )
 
 set(sanitizers_env_options
