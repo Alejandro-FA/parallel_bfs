@@ -14,17 +14,17 @@
 
 namespace parallel_bfs::detail {
     template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM>
-    [[nodiscard]] std::shared_ptr<Node<State>> async_bfs_task(std::shared_ptr<Node<State>> init_node, const Problem<State, TM> &problem, std::stop_source &stop_source) {
+    [[nodiscard]] std::shared_ptr<Node<State>> async_bfs_recursive(std::shared_ptr<Node<State>> init_node, const Problem<State, TM> &problem, std::stop_source stop_source) {
         if (problem.is_goal(init_node->state())) return init_node;
         std::vector<std::future<std::shared_ptr<Node<State>>>> futures;
-        auto token = stop_source.get_token();
 
+        auto token = stop_source.get_token();
         if (token.stop_requested()) return nullptr;
 
         for (const auto &child: problem.expand(init_node)) {
             if (token.stop_requested()) break;
-            auto future = std::async([&problem, &stop_source](auto init_node) {
-                auto solution {detail::async_bfs_task(init_node, problem, stop_source)};
+            auto future = std::async([&problem, stop_source](auto init_node) {
+                auto solution {detail::async_bfs_recursive(init_node, problem, stop_source)};
                 if (solution != nullptr) stop_source.request_stop();
                 return solution;
             }, std::move(child));
@@ -44,8 +44,7 @@ namespace parallel_bfs {
     template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM>
     [[nodiscard]] std::shared_ptr<Node<State>> async_bfs(const Problem<State, TM> &problem) {
         auto init_node = std::make_shared<Node<State>>(problem.initial());
-        std::stop_source stop_source{};
-        return detail::async_bfs_task(std::move(init_node), problem, stop_source);
+        return detail::async_bfs_recursive(std::move(init_node), problem, std::stop_source{});
     }
 }
 

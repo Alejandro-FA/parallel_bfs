@@ -6,6 +6,7 @@
 #define PARALLEL_BFS_MULTITHREAD_BFS_H
 
 #include <vector>
+#include <deque>
 #include <memory>
 #include <stop_token>
 #include <thread>
@@ -32,18 +33,18 @@ namespace parallel_bfs::detail {
                 }
 
                 auto node = frontier.front();
-                frontier.pop();
+                frontier.pop_front();
                 for (const auto &child: problem.expand(node)) {
                     if (token.stop_requested()) break;
                     State child_state = child->state();
                     if (problem.is_goal(child_state)) return child;
-                    frontier.push(child);
+                    frontier.push_back(child);
                 }
             }
         }
 
     private:
-        std::queue<std::shared_ptr<Node<State>>> frontier;
+        std::deque<std::shared_ptr<Node<State>>> frontier;
     };
 }
 
@@ -52,7 +53,7 @@ namespace parallel_bfs {
     /// In order to avoid data races, ParallelBFSTasks only works with tree-like search.
     template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM>
     [[nodiscard]] std::shared_ptr<Node<State>> multithread_bfs(const Problem<State, TM> &problem) {
-        std::queue<std::shared_ptr<Node<State>>> frontier({std::make_shared<Node<State>>(problem.initial())});
+        std::deque<std::shared_ptr<Node<State>>> frontier{std::make_shared<Node<State>>(problem.initial())};
         // TODO: use ThreadDirector to manage threads
         return nullptr;
     }

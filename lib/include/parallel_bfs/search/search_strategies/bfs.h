@@ -7,6 +7,8 @@
 
 #include <memory>
 #include <queue>
+#include <deque>
+#include <unordered_set>
 #include <stop_token>
 
 
@@ -30,7 +32,7 @@ namespace parallel_bfs::detail {
             auto node = frontier.front();
             frontier.pop();
             for (const auto &child: problem.expand(node)) {
-                if (st.stop_requested()) break;
+                if (st.stop_requested()) return nullptr;
                 State child_state = child->state();
                 if (problem.is_goal(child_state)) return child;
                 if constexpr (type == SearchType::graph) {
@@ -56,15 +58,15 @@ namespace parallel_bfs::detail {
     }
 
 
+    /// Search until solution is found or frontier fills up to limit
     template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM>
-    [[nodiscard]] std::shared_ptr<Node<State>> bfs_with_limit(std::queue<std::shared_ptr<Node<State>>> &frontier, const Problem<State, TM> &problem, std::size_t limit) {
-        // Search until solution is found or frontier fills up to limit
+    [[nodiscard]] std::shared_ptr<Node<State>> bfs_with_limit(std::deque<std::shared_ptr<Node<State>>> &frontier, const Problem<State, TM> &problem, std::size_t limit) {
         while (!frontier.empty() && frontier.size() < limit) {
             auto node = frontier.front();
-            frontier.pop();
+            frontier.pop_front();
             if (problem.is_goal(node->state())) return node;
             // frontier.push_range(problem.expand(node)); // TODO: Use this when available
-            for (const auto &child: problem.expand(node)) frontier.push(child);
+            for (const auto &child: problem.expand(node)) frontier.push_back(child);
         }
         return nullptr;
     }

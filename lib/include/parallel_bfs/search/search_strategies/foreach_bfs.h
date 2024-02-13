@@ -13,19 +13,20 @@
 
 namespace parallel_bfs::detail {
     template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM>
-    [[nodiscard]] std::shared_ptr<Node<State>> foreach_bfs_task(std::shared_ptr<Node<State>> init_node, const Problem<State, TM> &problem, std::stop_source &stop_source) {
+    [[nodiscard]] std::shared_ptr<Node<State>> foreach_bfs_recursive(std::shared_ptr<Node<State>> init_node, const Problem<State, TM> &problem, std::stop_source stop_source) {
         if (problem.is_goal(init_node->state())) return init_node;
+
         auto token = stop_source.get_token();
         if (token.stop_requested()) return nullptr;
 
         auto children = problem.expand(init_node);
         std::atomic<std::shared_ptr<Node<State>>> solution{nullptr};
 
-        std::for_each(std::execution::par, children.begin(), children.end(), [&problem, &stop_source, &solution](auto node) {
-            auto partial_solution{foreach_bfs_task(node, problem, stop_source)};
-            if (partial_solution != nullptr) {
+        std::for_each(std::execution::par, children.cbegin(), children.cend(), [&problem, stop_source, &solution](const auto &node) {
+            auto possible_solution = detail::foreach_bfs_recursive(node, problem, stop_source);
+            if (possible_solution != nullptr) {
                 stop_source.request_stop();
-                solution.store(partial_solution);
+                solution.store(possible_solution);
             }
         });
 
@@ -39,8 +40,7 @@ namespace parallel_bfs {
     template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM>
     [[nodiscard]] std::shared_ptr<Node<State>> foreach_bfs(const Problem<State, TM> &problem) {
         auto init_node = std::make_shared<Node<State>>(problem.initial());
-        std::stop_source stop_source{};
-        return detail::foreach_bfs_task(std::move(init_node), problem, stop_source);
+        return detail::foreach_bfs_recursive(std::move(init_node), problem, std::stop_source{});
     }
 }
 

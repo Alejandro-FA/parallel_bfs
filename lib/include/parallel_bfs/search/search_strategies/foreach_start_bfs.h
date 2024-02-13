@@ -9,6 +9,7 @@
 #include <memory>
 #include <thread>
 #include <execution>
+#include <algorithm>
 #include <deque>
 #include "bfs.h"
 
@@ -28,21 +29,9 @@ namespace parallel_bfs {
         std::stop_source stop_source{};
         std::atomic<std::shared_ptr<Node<State>>> solution{nullptr};
 
-        // std::for_each(std::execution::par, frontier.begin(), frontier.end(), [&problem, stop_source, &solution](auto node) {
-        //     auto partial_solution{detail::bfs(node, problem, stop_source.get_token())};
-        //     if (partial_solution != nullptr) {
-        //         stop_source.request_stop();
-        //         solution.store(partial_solution);
-        //     }
-        // });
-
-        std::for_each(std::execution::par, frontier.cbegin(), frontier.cend(), [](const std::shared_ptr<Node<State>> &node) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(10)); // Simulate a long computation
-            // auto partial_solution{detail::bfs(node, problem, stop_source.get_token())};
-            // if (partial_solution != nullptr) {
-            //     stop_source.request_stop();
-            //     solution.store(partial_solution);
-            // }
+        std::for_each(std::execution::par, frontier.cbegin(), frontier.cend(), [&problem, stop_source, &solution](const auto &node) {
+            auto possible_solution = detail::cooperative_bfs(node, problem, stop_source);
+            if (possible_solution != nullptr) solution.store(possible_solution);
         });
 
         return solution.load();

@@ -18,7 +18,7 @@ namespace parallel_bfs {
     /// In order to avoid data races, ParallelBFSTasks only works with tree-like search.
     template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM>
     [[nodiscard]] std::shared_ptr<Node<State>> tasks_bfs(const Problem<State, TM> &problem) {
-        std::queue<std::shared_ptr<Node<State>>> frontier({std::make_shared<Node<State>>(problem.initial())});
+        std::deque<std::shared_ptr<Node<State>>> frontier{std::make_shared<Node<State>>(problem.initial())};
         unsigned int min_starting_points = std::thread::hardware_concurrency();
 
         // First fill the frontier with enough starting points
@@ -36,7 +36,7 @@ namespace parallel_bfs {
             }};
             futures.push_back(task.get_future());
             threads.emplace_back(std::move(task), frontier.front());
-            frontier.pop();
+            frontier.pop_front();
         }
 
         // Wait for the first solution to be found and return it

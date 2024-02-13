@@ -104,6 +104,9 @@ You can simply execute it as follows:
 
 ### Testing for bugs using Google Sanitizers
 
+> **NOTE**: Currently, the tests are broken because intel oneTBB produces data races according to the ThreadSanitizer.
+> This is a known issue, and it is being tracked in the [Intel OneTBB GitHub repository](https://github.com/oneapi-src/oneTBB/issues/1290).
+
 This project comes with some built-in tests to check for memory errors, undefined behaviour errors and data races. To
 check if the program has any bugs, you can simply run the following command:
 
