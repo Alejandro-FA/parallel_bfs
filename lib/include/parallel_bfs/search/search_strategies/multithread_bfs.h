@@ -9,42 +9,132 @@
 #include <deque>
 #include <memory>
 #include <stop_token>
-#include <thread>
+#include <mutex>
+#include <condition_variable>
 #include <iostream>
-#include "../problem.h"
 #include "bfs.h"
 
 
 namespace parallel_bfs::detail {
-    class ThreadDirector {
-        // TODO: implement
+    template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM>
+    class Worker {
+    public:
+        explicit Worker(
+                std::deque<std::shared_ptr<Node<State>>> &frontier,
+                const Problem<State, TM> &problem,
+                std::mutex &mutex,
+                std::condition_variable_any &condition,
+                std::stop_source ssource_solution_found,
+                std::stop_source ssource_search_finished
+        ) : frontier{frontier}, problem{problem}, mutex{mutex}, condition{condition},
+        ssource_solution_found{std::move(ssource_solution_found)}, ssource_search_finished{std::move(ssource_search_finished)} {}
+
+        std::shared_ptr<Node<State>> operator()() {
+            while (!ssource_search_finished.stop_requested()) {
+                std::unique_lock lock{mutex};
+                condition.wait(lock, ssource_search_finished.get_token(), [this] { return !frontier.empty(); });
+
+                while (!frontier.empty() && !ssource_solution_found.stop_requested()) {
+                    auto node = frontier.front();
+                    if (problem.is_goal(node->state())) {
+                        ssource_solution_found.request_stop();
+                        return node;
+                    }
+                    frontier.pop_front();
+                    for (const auto &child: problem.expand(node)) frontier.push_back(child);
+                }
+                // Release lock with its destructor
+            }
+
+            return nullptr;
+        }
+
+    private:
+        std::deque<std::shared_ptr<Node<State>>> &frontier;
+        const Problem<State, TM> &problem;
+        std::mutex &mutex;
+        std::condition_variable_any &condition;
+        std::stop_source ssource_solution_found{};
+        std::stop_source ssource_search_finished{};
     };
 
 
+
     template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM>
-    class WorkerThread {
+    class ThreadDirector {
     public:
-        void operator()(const Problem<State, TM> &problem, std::stop_source stop_source) {
-            const std::stop_token token = stop_source.get_token();
+        explicit ThreadDirector(unsigned int num_threads, unsigned int min_starting_points)
+                : num_threads{num_threads}, min_starting_points{min_starting_points}, mutexes(num_threads),
+                  conditions(num_threads), frontiers(num_threads) {}
 
-            while (!token.stop_requested()) {
-                if (frontier.empty()) {
-                    // TODO: ask for more work
-                }
+        [[nodiscard]] std::shared_ptr<Node<State>> search(const Problem<State, TM> &problem) {
+            // First create enough initial work
+            main_frontier.push_back(std::make_shared<Node<State>>(problem.initial()));
+            generate_work(problem, min_starting_points);
+            if (ssource_solution_found.stop_requested() || main_frontier.empty()) return solution;
 
-                auto node = frontier.front();
-                frontier.pop_front();
-                for (const auto &child: problem.expand(node)) {
-                    if (token.stop_requested()) break;
-                    State child_state = child->state();
-                    if (problem.is_goal(child_state)) return child;
-                    frontier.push_back(child);
+            // Then, initialize the workers
+            auto futures = init_workers(problem);
+
+            // While waiting for a solution, keep generating and distributing work
+            while (!ssource_solution_found.stop_requested() && !main_frontier.empty()) {
+                generate_work(problem, 1);
+                distribute_work();
+            }
+
+            // Signal that main has finished searching
+            // std::this_thread::sleep_for(std::chrono::milliseconds(2000)); // Ensure that all threads have finished (avoid
+            ssource_search_finished.request_stop();
+
+            // Ensure that all threads have finished to avoid data races
+            for (auto &future: futures)
+                if (auto result = future.get(); result != nullptr) solution = result;
+            return solution;
+        }
+
+        void generate_work(const Problem<State, TM> &problem, unsigned int new_childs_count) {
+            std::size_t limit = main_frontier.size() + new_childs_count;
+            auto possible_solution = detail::bfs_with_limit(main_frontier, problem, limit);
+            if (possible_solution != nullptr) {
+                ssource_solution_found.request_stop();
+                solution = possible_solution;
+            }
+        }
+
+        void distribute_work() {
+            for (unsigned int i = 0; i < num_threads; ++i) {
+                if (main_frontier.empty() || ssource_solution_found.stop_requested()) break;
+                std::unique_lock lock{mutexes[i], std::defer_lock};
+                if (lock.try_lock()) { // If the lock is available, it means that the worker is waiting for work
+                    frontiers[i].push_back(main_frontier.front());
+                    main_frontier.pop_front();
+                    lock.unlock();
+                    conditions[i].notify_one();
                 }
             }
         }
 
+        std::vector<std::future<std::shared_ptr<Node<State>>>> init_workers(const Problem<State, TM> &problem) {
+            distribute_work();
+            std::vector<std::future<std::shared_ptr<Node<State>>>> futures(num_threads);
+            for (unsigned int i = 0; i < num_threads; ++i) {
+                futures[i] = std::async(std::launch::async, Worker<State, TM>{
+                        frontiers[i], problem, mutexes[i], conditions[i], ssource_solution_found, ssource_search_finished
+                });
+            }
+            return futures;
+        }
+
     private:
-        std::deque<std::shared_ptr<Node<State>>> frontier;
+        const unsigned int num_threads;
+        const unsigned int min_starting_points;
+        std::vector<std::mutex> mutexes;
+        std::vector<std::condition_variable_any> conditions;
+        std::vector<std::deque<std::shared_ptr<Node<State>>>> frontiers;
+        std::deque<std::shared_ptr<Node<State>>> main_frontier{};
+        std::stop_source ssource_solution_found{};
+        std::stop_source ssource_search_finished{};
+        std::shared_ptr<Node<State>> solution{nullptr};
     };
 }
 
@@ -53,9 +143,8 @@ namespace parallel_bfs {
     /// In order to avoid data races, ParallelBFSTasks only works with tree-like search.
     template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM>
     [[nodiscard]] std::shared_ptr<Node<State>> multithread_bfs(const Problem<State, TM> &problem) {
-        std::deque<std::shared_ptr<Node<State>>> frontier{std::make_shared<Node<State>>(problem.initial())};
-        // TODO: use ThreadDirector to manage threads
-        return nullptr;
+        detail::ThreadDirector<State, TM> director{std::thread::hardware_concurrency(), std::thread::hardware_concurrency() * 4};
+        return director.search(problem);
     }
 }
 #endif //PARALLEL_BFS_MULTITHREAD_BFS_H

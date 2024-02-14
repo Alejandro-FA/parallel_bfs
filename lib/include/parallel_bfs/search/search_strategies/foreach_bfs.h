@@ -16,8 +16,7 @@ namespace parallel_bfs::detail {
     [[nodiscard]] std::shared_ptr<Node<State>> foreach_bfs_recursive(std::shared_ptr<Node<State>> init_node, const Problem<State, TM> &problem, std::stop_source stop_source) {
         if (problem.is_goal(init_node->state())) return init_node;
 
-        auto token = stop_source.get_token();
-        if (token.stop_requested()) return nullptr;
+        if (stop_source.stop_requested()) return nullptr;
 
         auto children = problem.expand(init_node);
         std::atomic<std::shared_ptr<Node<State>>> solution{nullptr};

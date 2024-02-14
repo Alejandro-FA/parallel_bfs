@@ -5,6 +5,7 @@
 #ifndef PARALLEL_BFS_SEARCH_H
 #define PARALLEL_BFS_SEARCH_H
 
+#include "search/search_strategies/any_of_bfs.h"
 #include "search/search_strategies/async_bfs.h"
 #include "search/search_strategies/async_start_bfs.h"
 #include "search/search_strategies/foreach_bfs.h"

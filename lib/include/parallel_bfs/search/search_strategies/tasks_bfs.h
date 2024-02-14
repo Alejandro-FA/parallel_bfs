@@ -31,19 +31,18 @@ namespace parallel_bfs {
         std::stop_source stop_source{};
 
         while (!frontier.empty()) {
-            std::packaged_task task{[&problem, stop_source](std::shared_ptr<Node<State>> init_node) {
-                return detail::cooperative_bfs(std::move(init_node), problem, stop_source);
+            std::packaged_task task{[&problem, stop_source](std::shared_ptr<Node<State>> node) {
+                return detail::cooperative_bfs(std::move(node), problem, stop_source);
             }};
             futures.push_back(task.get_future());
             threads.emplace_back(std::move(task), frontier.front());
             frontier.pop_front();
         }
 
-        // Wait for the first solution to be found and return it
-        for (auto &future: futures)
-            if (auto solution = future.get(); solution != nullptr) return solution;
-
-        return nullptr;
+        std::shared_ptr<Node<State>> solution{nullptr};
+        for (auto &future: futures) // Ensure that all threads have finished to avoid data races
+            if (auto result = future.get(); result != nullptr) solution = result;
+        return solution;
     }
 }
 #endif //PARALLEL_BFS_TASKS_BFS_H

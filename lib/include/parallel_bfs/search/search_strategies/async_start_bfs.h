@@ -30,18 +30,17 @@ namespace parallel_bfs {
         std::stop_source stop_source{};
 
         while (!frontier.empty()) {
-            auto future = std::async(std::launch::async, [&problem, stop_source](std::shared_ptr<Node<State>> init_node) { // TODO: play with std::launch::deferred as well
-                return detail::cooperative_bfs(std::move(init_node), problem, stop_source);
+            auto future = std::async(std::launch::async, [&problem, stop_source](std::shared_ptr<Node<State>> node) {
+                return detail::cooperative_bfs(std::move(node), problem, stop_source);
             }, frontier.front());
             frontier.pop_front();
             futures.push_back(std::move(future));
         }
 
-        // Wait for the first solution to be found and return it
-        for (auto &future: futures)
-            if (auto solution = future.get(); solution != nullptr) return solution;
-
-        return nullptr;
+        std::shared_ptr<Node<State>> solution{nullptr};
+        for (auto &future: futures) // Ensure that all threads have finished to avoid data races
+            if (auto result = future.get(); result != nullptr) solution = result;
+        return solution;
     }
 }
 

@@ -1,5 +1,5 @@
 # The maximum depth of the tree.
-max_depth: 9
+max_depth: 8
 
 # The number of goals in the tree.
 num_goals: 30

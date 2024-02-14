@@ -18,23 +18,22 @@ namespace parallel_bfs::detail {
         if (problem.is_goal(init_node->state())) return init_node;
         std::vector<std::future<std::shared_ptr<Node<State>>>> futures;
 
-        auto token = stop_source.get_token();
-        if (token.stop_requested()) return nullptr;
+        if (stop_source.stop_requested()) return nullptr;
 
         for (const auto &child: problem.expand(init_node)) {
-            if (token.stop_requested()) break;
-            auto future = std::async([&problem, stop_source](auto init_node) {
-                auto solution {detail::async_bfs_recursive(init_node, problem, stop_source)};
+            if (stop_source.stop_requested()) break;
+            auto future = std::async([&problem, stop_source](std::shared_ptr<Node<State>> node) {
+                auto solution {detail::async_bfs_recursive(std::move(node), problem, stop_source)};
                 if (solution != nullptr) stop_source.request_stop();
                 return solution;
             }, std::move(child));
             futures.push_back(std::move(future));
         }
 
-        for (auto &future: futures)
-            if (auto solution = future.get(); solution != nullptr) return solution;
-
-        return nullptr;
+        std::shared_ptr<Node<State>> solution{nullptr};
+        for (auto &future: futures) // Ensure that all threads have finished to avoid data races
+            if (auto result = future.get(); result != nullptr) solution = result;
+        return solution;
     }
 }
 
