@@ -30,8 +30,9 @@ namespace parallel_bfs::detail {
         ssource_solution_found{std::move(ssource_solution_found)}, ssource_search_finished{std::move(ssource_search_finished)} {}
 
         std::shared_ptr<Node<State>> operator()() {
-            while (!ssource_search_finished.stop_requested()) {
+            while (!ssource_solution_found.stop_requested()) {
                 std::unique_lock lock{mutex};
+                if (frontier.empty() && ssource_search_finished.stop_requested()) break;
                 condition.wait(lock, ssource_search_finished.get_token(), [this] { return !frontier.empty(); });
 
                 while (!frontier.empty() && !ssource_solution_found.stop_requested()) {
@@ -83,7 +84,6 @@ namespace parallel_bfs::detail {
             }
 
             // Signal that main has finished searching
-            // std::this_thread::sleep_for(std::chrono::milliseconds(2000)); // Ensure that all threads have finished (avoid
             ssource_search_finished.request_stop();
 
             // Ensure that all threads have finished to avoid data races
