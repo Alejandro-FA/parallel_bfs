@@ -8,6 +8,8 @@
 #include <vector>
 #include <memory>
 #include <unordered_set>
+#include <thread>
+#include <chrono>
 #include "node.h"
 #include "transition_model.h"
 
@@ -15,14 +17,15 @@ namespace parallel_bfs {
     template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM>
     class Problem {
     public:
-        explicit Problem() = default;
-
-        explicit Problem(State initial, std::unordered_set<State> &&goal_states, TM &&tm) :
-                _initial{std::move(initial)}, _goal_states{std::move(goal_states)}, _transition_model{std::move(tm)} {}
+        explicit Problem(State initial, std::unordered_set<State> &&goal_states, TM &&tm)
+            : _initial{std::move(initial)}, _goal_states{std::move(goal_states)}, _transition_model{std::move(tm)} {}
 
         [[nodiscard]] State initial() const { return _initial; }
 
-        [[nodiscard]] bool is_goal(const State &state) const { return _goal_states.contains(state); }
+        [[nodiscard]] bool is_goal(const State &state) const {
+            if (_workload_delay.count() > 0) std::this_thread::sleep_for(_workload_delay);
+            return _goal_states.contains(state);
+        }
 
         [[nodiscard]] std::unordered_set<State> goal_states() const { return _goal_states; }
 
@@ -38,10 +41,13 @@ namespace parallel_bfs {
 
         [[nodiscard]] const TM &transition_model() const { return _transition_model; }
 
+        void set_workload_delay(std::chrono::milliseconds ms) { _workload_delay = ms; }
+
     private:
         State _initial;
         std::unordered_set<State> _goal_states;
         TM _transition_model;
+        std::chrono::milliseconds _workload_delay{0};
     };
 
 

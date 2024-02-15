@@ -106,19 +106,19 @@ void log_results(const std::filesystem::path &input_dir, const Solver<State, TM>
  * @param num_problems Optional. The number of problems to solve. If not specified, all problems will be solved.
  * @note This function does NOT validate if @input_dir is a valid directory.
  */
-void solve(const std::filesystem::path &input_dir, std::optional<unsigned int> num_problems) noexcept(false) {
+void solve(const std::filesystem::path &input_dir, std::optional<unsigned int> num_problems, std::optional<std::chrono::milliseconds> workload_delay) noexcept(false) {
     using StateType = parallel_bfs::TreeState<std::uint32_t>; // FIXME: Don't hardcode types
     using TransitionModelType = parallel_bfs::BasicTree<std::uint32_t>; // FIXME: Don't hardcode types
 
     // Create solver and add algorithms
     Solver<StateType , TransitionModelType> solver;
     solver.add_algorithm(parallel_bfs::sync_bfs<StateType, TransitionModelType, parallel_bfs::SearchType::tree_like>, "SyncBFS");
-    // solver.add_algorithm(parallel_bfs::tasks_bfs<StateType, TransitionModelType>, "TasksBFS");
+    solver.add_algorithm(parallel_bfs::tasks_bfs<StateType, TransitionModelType>, "TasksBFS");
     solver.add_algorithm(parallel_bfs::async_start_bfs<StateType, TransitionModelType>, "AsyncStartBFS");
-    // solver.add_algorithm(parallel_bfs::async_bfs<StateType, TransitionModelType>, "AsyncBFS"); // Very slow
-    // solver.add_algorithm(parallel_bfs::foreach_start_bfs<StateType, TransitionModelType>, "ForeachStartBFS");
-    // solver.add_algorithm(parallel_bfs::foreach_bfs<StateType, TransitionModelType>, "ForeachBFS"); // Very slow
-    // solver.add_algorithm(parallel_bfs::any_of_bfs<StateType, TransitionModelType>, "AnyOfBFS");
+    solver.add_algorithm(parallel_bfs::async_bfs<StateType, TransitionModelType>, "AsyncBFS"); // Very slow
+    solver.add_algorithm(parallel_bfs::foreach_start_bfs<StateType, TransitionModelType>, "ForeachStartBFS");
+    solver.add_algorithm(parallel_bfs::foreach_bfs<StateType, TransitionModelType>, "ForeachBFS"); // Very slow
+    solver.add_algorithm(parallel_bfs::any_of_bfs<StateType, TransitionModelType>, "AnyOfBFS");
     solver.add_algorithm(parallel_bfs::multithread_bfs<StateType, TransitionModelType>, "MultithreadBFS");
 
     // Create reader
@@ -136,7 +136,8 @@ void solve(const std::filesystem::path &input_dir, std::optional<unsigned int> n
 
         // Read problem
         bar.set_status("Reading " + file_name);
-        const auto problem = reader.read(file_path);
+        auto problem = reader.read(file_path);
+        if (workload_delay.has_value()) problem.set_workload_delay(workload_delay.value());
         bar.tick();
 
         // Warm cache

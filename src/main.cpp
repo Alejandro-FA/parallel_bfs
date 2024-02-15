@@ -3,7 +3,6 @@
 #include <iostream>
 #include <unordered_set>
 #include <string>
-#include <thread>
 #include "../include/generator_config.h"
 #include "../include/generate.h"
 #include "../include/solve.h"
@@ -21,6 +20,7 @@ void show_help(const std::string& program_name){
     "  -g, --generate            Generate problems but do not solve them, unless --solve is also specified.\n"
     "  -s, --solve               Solve problems but do not generate them, unless --generate is also specified.\n"
     "  -n, --num-problems=NUM    Number of problems to generate/solve.\n"
+    "  -d, --workload-delay=MS   Artificial delay (in milliseconds) when checking goal to simulate workload.\n"
     "  -h, --help                Display this help and exit.\n\n"
 
     "Examples:\n"
@@ -33,6 +33,7 @@ void show_help(const std::string& program_name){
 struct Arguments {
     std::unordered_set<std::filesystem::path> directories;
     std::optional<unsigned int> num_problems;
+    std::optional<std::chrono::milliseconds> workload_delay;
     std::optional<BasicTreeGeneratorConfig> config;
     bool call_generate = false;
     bool call_solve = false;
@@ -95,11 +96,17 @@ Arguments parse_arguments(int argc, char** argv) noexcept(false) {
             args.num_problems = std::stoi(n);
         }
 
+        else if (arg_name == "--workload-delay" || arg_name == "-d") {
+            std::string delay;
+            if (arg_value.has_value()) delay = arg_value.value();
+            else if (i + 1 < argc) delay = argv[++i];
+            else throw std::runtime_error{"No delay specified for " + arg_name};
+
+            args.workload_delay = std::chrono::milliseconds{std::stoi(delay)};
+        }
+
         else throw std::runtime_error{"Unknown argument: " + full_arg};
     }
-
-    // Ensure that all directories are valid paths
-    std::ranges::for_each(args.directories, check_directory);
 
     // Set default values
     if (args.directories.empty()) args.directories.insert(std::filesystem::current_path());
@@ -109,11 +116,23 @@ Arguments parse_arguments(int argc, char** argv) noexcept(false) {
 }
 
 
+void validate_arguments(const Arguments &args) noexcept(false) {
+    std::ranges::for_each(args.directories, check_directory);
+
+    if (args.workload_delay.has_value() && !args.call_solve)
+        throw std::runtime_error{"Workload delay specified but no solving requested"};
+
+    if (args.config.has_value() && !args.call_generate)
+        throw std::runtime_error{"Config file specified but no generation requested"};
+}
+
+
 int main(int argc, char** argv) {
     Arguments args;
 
     try {
         args = parse_arguments(argc, argv);
+        validate_arguments(args);
     } catch (const std::exception &e) {
         std::cerr << e.what() << "\n";
         return 1;
@@ -129,7 +148,7 @@ int main(int argc, char** argv) {
             std::ranges::for_each(args.directories, [args](const auto &p) {generate(p, args.num_problems, args.config); });
 
         if (args.call_solve)
-            std::ranges::for_each(args.directories, [args](const auto &p) {solve(p, args.num_problems); });
+            std::ranges::for_each(args.directories, [args](const auto &p) {solve(p, args.num_problems, args.workload_delay); });
 
     } catch (const std::exception &e) {
         std::cerr << e.what() << "\n";
