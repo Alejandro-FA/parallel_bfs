@@ -16,7 +16,7 @@
 
 
 namespace parallel_bfs::detail {
-    class SearchStatus {
+    class SearchStatusController {
     public:
         void signal_solution_found() {
             ssource_solution_found.request_stop();
@@ -41,12 +41,23 @@ namespace parallel_bfs::detail {
     template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM>
     class Worker {
     public:
-        std::future<std::shared_ptr<Node<State>>> start_search(std::shared_ptr<Node<State>> init_node, const Problem<State, TM> &problem, SearchStatus status) {
+        std::future<std::shared_ptr<Node<State>>> start_search(std::shared_ptr<Node<State>> init_node, const Problem<State, TM> &problem, SearchStatusController status_controller) {
             frontier.push_back(std::move(init_node));
-            return std::async(std::launch::async, [this, &problem, status] { return search(problem, status); });
+            status = std::move(status_controller);
+            return std::async(std::launch::async, [this, &problem] { return search(problem); });
         }
 
-        bool try_add_work(std::shared_ptr<Node<State>> node) noexcept {
+        /**
+         * @brief Adds work to the worker if needed.
+         *
+         * The method attempts to acquire a lock on the worker's mutex. If successful, it adds the given `node`
+         * to the `frontier`, releases the lock, and notifies any waiting threads about the availability of work.
+         * If the lock cannot be acquired, it means that the worker is already processing work and no action is taken.
+         *
+         * @param node The node to add to the frontier.
+         * @return true if the work was added, false otherwise.
+         */
+        bool add_work_if_needed(std::shared_ptr<Node<State>> node) noexcept {
             std::unique_lock lock{mutex, std::defer_lock};
             if (lock.try_lock()) { // If the lock is available, it means that the worker is waiting for work
                 frontier.push_back(std::move(node));
@@ -58,7 +69,7 @@ namespace parallel_bfs::detail {
         }
 
     private:
-        std::shared_ptr<Node<State>> search(const Problem<State, TM> &problem, SearchStatus status) {
+        std::shared_ptr<Node<State>> search(const Problem<State, TM> &problem) {
             while (!status.solution_found()) {
                 std::unique_lock lock{mutex};
                 if (frontier.empty() && status.search_finished()) break;
@@ -71,7 +82,7 @@ namespace parallel_bfs::detail {
                         return node;
                     }
                     frontier.pop_front();
-                    for (const auto &child: problem.expand(node)) frontier.push_back(child);
+                    for (const auto &child: problem.expand(std::move(node))) frontier.push_back(child);
                 }
                 // Release lock with its destructor
             }
@@ -80,6 +91,7 @@ namespace parallel_bfs::detail {
         }
 
         std::deque<std::shared_ptr<Node<State>>> frontier{};
+        SearchStatusController status;
         mutable std::mutex mutex;
         mutable std::condition_variable_any condition;
     };
@@ -128,7 +140,7 @@ namespace parallel_bfs::detail {
         void distribute_work() {
             for (unsigned int i = 0; i < num_threads; ++i) {
                 if (main_frontier.empty() || status.solution_found()) break;
-                if (workers[i].try_add_work(main_frontier.front())) main_frontier.pop_front();
+                if (workers[i].add_work_if_needed(main_frontier.front())) main_frontier.pop_front();
             }
         }
 
@@ -147,7 +159,7 @@ namespace parallel_bfs::detail {
         const unsigned int min_starting_points;
         std::vector<Worker<State, TM>> workers;
         std::deque<std::shared_ptr<Node<State>>> main_frontier{};
-        SearchStatus status;
+        SearchStatusController status;
         std::shared_ptr<Node<State>> solution{nullptr};
     };
 }

@@ -61,7 +61,7 @@ endif()
 
 find_package(TBB QUIET)
 if (NOT TBB_FOUND)
-    message(FATAL_ERROR "TBB library not found. Please check the README.md file for more information.")
+    message(WARNING "TBB library not found. C++17 parallel algorithms will be executed sequentially. Please check the README.md file for more information.")
 else()
     message(STATUS "TBB found at ${TBB_DIR}")
     message(STATUS "TBB version: ${TBB_VERSION}")
