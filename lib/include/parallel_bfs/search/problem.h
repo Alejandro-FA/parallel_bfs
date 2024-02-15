@@ -23,7 +23,8 @@ namespace parallel_bfs {
         [[nodiscard]] State initial() const { return _initial; }
 
         [[nodiscard]] bool is_goal(const State &state) const {
-            if (_workload_delay.count() > 0) std::this_thread::sleep_for(_workload_delay);
+            auto start = std::chrono::high_resolution_clock::now();
+            while (std::chrono::high_resolution_clock::now() - start < _workload_delay); // busy wait
             return _goal_states.contains(state);
         }
 
@@ -41,13 +42,13 @@ namespace parallel_bfs {
 
         [[nodiscard]] const TM &transition_model() const { return _transition_model; }
 
-        void set_workload_delay(std::chrono::milliseconds ms) { _workload_delay = ms; }
+        void set_workload_delay(std::chrono::microseconds us) {_workload_delay = us; }
 
     private:
         State _initial;
         std::unordered_set<State> _goal_states;
         TM _transition_model;
-        std::chrono::milliseconds _workload_delay{0};
+        std::chrono::microseconds _workload_delay{0};
     };
 
 

@@ -20,7 +20,7 @@ void show_help(const std::string& program_name){
     "  -g, --generate            Generate problems but do not solve them, unless --solve is also specified.\n"
     "  -s, --solve               Solve problems but do not generate them, unless --generate is also specified.\n"
     "  -n, --num-problems=NUM    Number of problems to generate/solve.\n"
-    "  -d, --workload-delay=MS   Artificial delay (in milliseconds) when checking goal to simulate workload.\n"
+    "  -d, --workload-delay=TIME Artificial delay (in microseconds) when checking goal to simulate workload.\n"
     "  -h, --help                Display this help and exit.\n\n"
 
     "Examples:\n"
@@ -33,7 +33,7 @@ void show_help(const std::string& program_name){
 struct Arguments {
     std::unordered_set<std::filesystem::path> directories;
     std::optional<unsigned int> num_problems;
-    std::optional<std::chrono::milliseconds> workload_delay;
+    std::optional<std::chrono::microseconds> workload_delay;
     std::optional<BasicTreeGeneratorConfig> config;
     bool call_generate = false;
     bool call_solve = false;
@@ -102,7 +102,7 @@ Arguments parse_arguments(int argc, char** argv) noexcept(false) {
             else if (i + 1 < argc) delay = argv[++i];
             else throw std::runtime_error{"No delay specified for " + arg_name};
 
-            args.workload_delay = std::chrono::milliseconds{std::stoi(delay)};
+            args.workload_delay = std::chrono::microseconds{std::stoi(delay)};
         }
 
         else throw std::runtime_error{"Unknown argument: " + full_arg};
@@ -124,6 +124,9 @@ void validate_arguments(const Arguments &args) noexcept(false) {
 
     if (args.config.has_value() && !args.call_generate)
         throw std::runtime_error{"Config file specified but no generation requested"};
+
+    if (args.workload_delay.has_value() && args.workload_delay.value().count() > 100)
+        throw std::runtime_error{"Workload delay too high (max 100 microseconds)"};
 }
 
 

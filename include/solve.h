@@ -106,7 +106,7 @@ void log_results(const std::filesystem::path &input_dir, const Solver<State, TM>
  * @param num_problems Optional. The number of problems to solve. If not specified, all problems will be solved.
  * @note This function does NOT validate if @input_dir is a valid directory.
  */
-void solve(const std::filesystem::path &input_dir, std::optional<unsigned int> num_problems, std::optional<std::chrono::milliseconds> workload_delay) noexcept(false) {
+void solve(const std::filesystem::path &input_dir, std::optional<unsigned int> num_problems, std::optional<std::chrono::microseconds> workload_delay) noexcept(false) {
     using StateType = parallel_bfs::TreeState<std::uint32_t>; // FIXME: Don't hardcode types
     using TransitionModelType = parallel_bfs::BasicTree<std::uint32_t>; // FIXME: Don't hardcode types
 
