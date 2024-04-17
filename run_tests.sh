@@ -1,4 +1,6 @@
-cd cmake-build-release || echo "'cmake-build-release' not found" && exit 1
+#!/bin/bash
+
+cd cmake-build-release || (echo "'cmake-build-release' not found" && exit 1)
 for delay in 0 10 100; do
   ./main.out --solve ../problems/simple -d $delay;
   ./main.out --solve ../problems/medium -d $delay;
