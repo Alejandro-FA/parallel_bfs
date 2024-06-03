@@ -112,13 +112,13 @@ void solve(const std::filesystem::path &input_dir, std::optional<unsigned int> n
 
     // Create solver and add algorithms
     Solver<StateType , TransitionModelType> solver;
-    solver.add_algorithm(parallel_bfs::sync_bfs<StateType, TransitionModelType, parallel_bfs::SearchType::tree_like>, "SyncBFS");
+    solver.add_algorithm(parallel_bfs::sync_bfs<StateType, TransitionModelType>, "SyncBFS");
     solver.add_algorithm(parallel_bfs::tasks_bfs<StateType, TransitionModelType>, "TasksBFS");
     solver.add_algorithm(parallel_bfs::async_start_bfs<StateType, TransitionModelType>, "AsyncStartBFS");
-    solver.add_algorithm(parallel_bfs::async_bfs<StateType, TransitionModelType>, "AsyncBFS"); // Very slow
-    solver.add_algorithm(parallel_bfs::foreach_start_bfs<StateType, TransitionModelType>, "ForeachStartBFS");
-    solver.add_algorithm(parallel_bfs::foreach_bfs<StateType, TransitionModelType>, "ForeachBFS"); // Very slow
-    solver.add_algorithm(parallel_bfs::any_of_bfs<StateType, TransitionModelType>, "AnyOfBFS");
+    // solver.add_algorithm(parallel_bfs::async_bfs<StateType, TransitionModelType>, "AsyncBFS"); // Very slow
+    // solver.add_algorithm(parallel_bfs::foreach_start_bfs<StateType, TransitionModelType>, "ForeachStartBFS");
+    // solver.add_algorithm(parallel_bfs::foreach_bfs<StateType, TransitionModelType>, "ForeachBFS"); // Very slow
+    // solver.add_algorithm(parallel_bfs::any_of_bfs<StateType, TransitionModelType>, "AnyOfBFS");
     solver.add_algorithm(parallel_bfs::multithread_bfs<StateType, TransitionModelType>, "MultithreadBFS");
 
     // Create reader

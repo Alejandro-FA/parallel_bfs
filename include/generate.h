@@ -50,8 +50,8 @@ void generate(const std::filesystem::path &output_dir, std::optional<unsigned in
     const YAMLWriter writer;
     auto tree_generator =
         c.avg_actions.has_value()
-        ? BasicTreeGenerator<std::uint32_t>{c.max_depth, c.num_goals, c.avg_actions.value(), c.max_actions}
-        : BasicTreeGenerator<std::uint32_t>{c.max_depth, c.num_goals, c.min_actions.value(), c.max_actions};
+        ? BasicTreeGenerator<std::uint32_t>{c.max_depth, c.goals_depth, c.num_goals, c.avg_actions.value(), c.max_actions}
+        : BasicTreeGenerator<std::uint32_t>{c.max_depth, c.goals_depth, c.num_goals, c.min_actions.value(), c.max_actions};
 
     std::cout << "[INFO] Generating " << n << " random problems and writing them to " << output_dir << "..." << std::endl;
     auto bar = SimpleProgressBar(n * 2, true);

@@ -15,21 +15,22 @@
 struct BasicTreeGeneratorConfig {
     using state_t = std::uint32_t;
     unsigned int max_depth{1};
+    unsigned int goals_depth{1};
     unsigned int num_goals{1};
     std::optional<double> avg_actions{std::nullopt};
     std::optional<unsigned int> min_actions{std::nullopt};
     unsigned int max_actions{1};
 
     [[nodiscard]] static BasicTreeGeneratorConfig simple() {
-        return BasicTreeGeneratorConfig{6, 10, 2, 0, 4};
+        return BasicTreeGeneratorConfig{6, 6, 10, 2, 0, 4};
     }
 
     [[nodiscard]] static BasicTreeGeneratorConfig medium() {
-        return BasicTreeGeneratorConfig{8, 20, 4.0, 0, 6};
+        return BasicTreeGeneratorConfig{8, 8, 20, 4.0, 0, 6};
     }
 
     [[nodiscard]] static BasicTreeGeneratorConfig complex() {
-        return BasicTreeGeneratorConfig{9, 30, 5.0, 0, 7};
+        return BasicTreeGeneratorConfig{9, 9, 30, 5.0, 0, 7};
     }
 };
 
@@ -43,6 +44,7 @@ struct BasicTreeGeneratorConfig {
     // Parse the file
     YAML::Node node = YAML::LoadFile(file_path);
     auto max_depth = node["max_depth"].as<unsigned int>();
+    auto goals_depth = node["goals_depth"].as<unsigned int>();
     auto num_goals = node["num_goals"].as<unsigned int>();
     auto avg_actions = node["avg_actions"].as<std::optional<double>>(std::nullopt);
     auto min_actions = node["min_actions"].as<std::optional<unsigned int>>(std::nullopt);
@@ -54,7 +56,7 @@ struct BasicTreeGeneratorConfig {
     if (!avg_actions.has_value() && !min_actions.has_value())
         throw std::invalid_argument("Either avg_actions or min_actions must be specified.");
 
-    return BasicTreeGeneratorConfig{max_depth, num_goals, avg_actions, min_actions, max_actions};
+    return BasicTreeGeneratorConfig{max_depth, goals_depth, num_goals, avg_actions, min_actions, max_actions};
 }
 
 
