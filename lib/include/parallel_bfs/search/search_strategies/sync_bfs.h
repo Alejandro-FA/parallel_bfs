@@ -9,9 +9,9 @@
 
 
 namespace parallel_bfs {
-    template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM, SearchType type = SearchType::tree_like>
+    template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM>
     [[nodiscard]] std::shared_ptr<Node<State>> sync_bfs(const Problem<State, TM> &problem) {
-        return detail::bfs<State, TM, type>(std::make_shared<Node<State>>(problem.initial()), problem);
+        return detail::interruptible_bfs<State, TM>(std::make_shared<Node<State>>(problem.initial()), problem);
     }
 }
 

@@ -12,39 +12,19 @@
 #include <stop_token>
 
 
-namespace parallel_bfs {
-    enum class SearchType {
-        graph [[maybe_unused]], tree_like [[maybe_unused]],
-    };
-}
-
-
 namespace parallel_bfs::detail {
     /// TODO: Change this from Breadth First Search to Best First Search
-    template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM, SearchType type = SearchType::tree_like>
-    [[nodiscard]] std::shared_ptr<Node<State>> bfs(std::shared_ptr<Node<State>> init_node, const Problem<State, TM> &problem, std::stop_token st = std::stop_token{}) {
-        if (problem.is_goal(init_node->state())) return init_node;
-
-        std::unordered_set<State> reached;
-        if constexpr (type == SearchType::graph) reached.insert(init_node->state());
-        std::queue<std::shared_ptr<Node<State>>> frontier({std::move(init_node)});
-
-        while (!frontier.empty() && !st.stop_requested()) {
+    /// NOTE: We use tree-like search, so we don't need to check for repeated states
+    template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM>
+    [[nodiscard]] std::shared_ptr<Node<State>> interruptible_bfs(std::deque<std::shared_ptr<Node<State>>> &frontier, const Problem<State, TM> &problem, std::stop_source ssource = std::stop_source{}) {
+        while (!frontier.empty() && !ssource.stop_requested()) {
             auto node = frontier.front();
-            frontier.pop();
-            for (const auto &child: problem.expand(std::move(node))) {
-                if (st.stop_requested()) return nullptr;
-                State child_state = child->state();
-                if (problem.is_goal(child_state)) return child;
-                if constexpr (type == SearchType::graph) {
-                    if (reached.find(child_state) == reached.end()) {
-                        reached.insert(child_state);
-                        frontier.push(child);
-                    }
-                } else if constexpr (type == SearchType::tree_like) {
-                    frontier.push(child);
-                }
+            frontier.pop_front();
+            if (problem.is_goal(node->state())) {
+                ssource.request_stop();
+                return node;
             }
+            for (const auto &child: problem.expand(std::move(node))) frontier.push_back(child);
         }
 
         return nullptr;
@@ -52,10 +32,9 @@ namespace parallel_bfs::detail {
 
 
     template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM>
-    [[nodiscard]] std::shared_ptr<Node<State>> cooperative_bfs(std::shared_ptr<Node<State>> init_node, const Problem<State, TM> &problem, std::stop_source ssource) {
-        std::shared_ptr<Node<State>> solution {bfs(std::move(init_node), problem, ssource.get_token())};
-        if (solution != nullptr) ssource.request_stop();
-        return solution;
+    [[nodiscard]] std::shared_ptr<Node<State>> interruptible_bfs(std::shared_ptr<Node<State>> init_node, const Problem<State, TM> &problem, std::stop_source ssource = std::stop_source{}) {
+        std::deque<std::shared_ptr<Node<State>>> frontier({std::move(init_node)});
+        return interruptible_bfs(frontier, problem, ssource);
     }
 
 

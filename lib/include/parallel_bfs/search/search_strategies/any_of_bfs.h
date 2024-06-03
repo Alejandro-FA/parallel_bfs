@@ -29,7 +29,7 @@ namespace parallel_bfs {
         std::atomic<std::shared_ptr<Node<State>>> solution{nullptr};
 
         std::any_of(std::execution::par, frontier.cbegin(), frontier.cend(), [&problem, stop_source, &solution](const auto &node) {
-            auto possible_solution = detail::cooperative_bfs(node, problem, stop_source);
+            auto possible_solution = detail::interruptible_bfs(node, problem, stop_source);
             if (possible_solution != nullptr) {
                 solution.store(possible_solution);
                 return true;

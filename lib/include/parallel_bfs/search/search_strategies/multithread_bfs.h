@@ -74,26 +74,17 @@ namespace parallel_bfs::detail {
                 std::unique_lock lock{mutex};
                 if (frontier.empty() && status.search_finished()) break;
                 condition.wait(lock, status.get_search_token(), [this] { return !frontier.empty(); });
-
-                while (!frontier.empty() && !status.solution_found()) {
-                    auto node = frontier.front();
-                    if (problem.is_goal(node->state())) {
-                        status.signal_solution_found();
-                        return node;
-                    }
-                    frontier.pop_front();
-                    for (const auto &child: problem.expand(std::move(node))) frontier.push_back(child);
-                }
+                auto solution = interruptible_bfs(frontier, problem, status.ssource_solution_found);
+                if (solution != nullptr) return solution;
                 // Release lock with its destructor
             }
-
             return nullptr;
         }
 
         std::deque<std::shared_ptr<Node<State>>> frontier{};
         SearchStatusController status;
         mutable std::mutex mutex;
-        mutable std::condition_variable_any condition;
+        mutable std::condition_variable_any condition; // We use condition_variable_any to add a stop_token to the wait
     };
 
 
