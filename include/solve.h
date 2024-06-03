@@ -57,7 +57,7 @@ std::vector<std::filesystem::path> get_problem_files(const std::filesystem::path
  * @param input_dir The input directory path where the log file will be placed.
  * @return The path to the log file.
  */
-std::filesystem::path get_log_path(const std::filesystem::path &input_dir) {
+std::filesystem::path get_log_path(const std::filesystem::path &input_dir, std::chrono::microseconds delay) {
     // Get current time
     auto now = std::chrono::system_clock::now();
     std::time_t current_time = std::chrono::system_clock::to_time_t(now);
@@ -65,7 +65,7 @@ std::filesystem::path get_log_path(const std::filesystem::path &input_dir) {
 
     // Convert time to compact string
     std::stringstream file_name;
-    file_name << "results_";
+    file_name << "results_delay" << delay.count() << "_";
     file_name << std::put_time(time_info, "%Y-%m-%d-%H:%M:%S"); // Compact datetime format
     file_name << ".log";
 
@@ -86,8 +86,8 @@ std::filesystem::path get_log_path(const std::filesystem::path &input_dir) {
  * @param solver The Solver object.
  */
 template<parallel_bfs::Searchable State, std::derived_from<parallel_bfs::BaseTransitionModel<State>> TM>
-void log_results(const std::filesystem::path &input_dir, const Solver<State, TM> &solver) {
-    auto log_path = get_log_path(input_dir);
+void log_results(const std::filesystem::path &input_dir, const Solver<State, TM> &solver, std::chrono::microseconds delay) {
+    auto log_path = get_log_path(input_dir, delay);
     std::ofstream log_stream{log_path};
     const auto stats = solver.template statistics_summary<Average, Median, StandardDeviation>();
     log_stream << solver.results() << "\n[INFO] Results summary:\n" << stats;
@@ -110,6 +110,9 @@ void solve(const std::filesystem::path &input_dir, std::optional<unsigned int> n
     using StateType = parallel_bfs::TreeState<std::uint32_t>; // FIXME: Don't hardcode types
     using TransitionModelType = parallel_bfs::BasicTree<std::uint32_t>; // FIXME: Don't hardcode types
 
+    // Define delay for goal-checking
+    std::chrono::microseconds delay = workload_delay.value_or(std::chrono::microseconds{0});
+
     // Create solver and add algorithms
     Solver<StateType , TransitionModelType> solver;
     solver.add_algorithm(parallel_bfs::sync_bfs<StateType, TransitionModelType>, "SyncBFS");
@@ -127,7 +130,8 @@ void solve(const std::filesystem::path &input_dir, std::optional<unsigned int> n
     if (problem_files.empty()) throw std::runtime_error{"No problem files found in \"" + input_dir.string() + '"'};
 
     // Solve all problems with all algorithms
-    std::cout << "\n[INFO] Solving " << problem_files.size() << " problems from " << input_dir << "...\n";
+    std::cout << "\n[INFO] Solving " << problem_files.size() << " problems from " << input_dir << " ...\n";
+    std::cout << "[INFO] Workload (goal test) delay: " << delay << "\n";
     std::cout << "[INFO] CPU cores available: " << std::thread::hardware_concurrency() << std::endl;
     auto bar = SimpleProgressBar(problem_files.size() * 3, true);
 
@@ -137,7 +141,7 @@ void solve(const std::filesystem::path &input_dir, std::optional<unsigned int> n
         // Read problem
         bar.set_status("Reading " + file_name);
         auto problem = reader.read(file_path);
-        if (workload_delay.has_value()) problem.set_workload_delay(workload_delay.value());
+        problem.set_workload_delay(delay);
         bar.tick();
 
         // Warm cache
@@ -150,7 +154,7 @@ void solve(const std::filesystem::path &input_dir, std::optional<unsigned int> n
         bar.tick();
     }
 
-    log_results(input_dir, solver);
+    log_results(input_dir, solver, delay);
 }
 
 #endif //PARALLEL_BFS_PROJECT_SOLVE_H
