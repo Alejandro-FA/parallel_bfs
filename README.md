@@ -102,6 +102,15 @@ You can simply execute it as follows:
 ./main.out "problems" --num-problems 1 --config "../config/simple_tree.yaml"
 ```
 
+To replicate the results of my thesis (*Parallel Strategies for Best-First Generalized Planning*), you only need to
+execute the two provided scripts (it will take several hours to complete). The first script will generate the problems
+and the second script will run the experiments. You can execute the scripts as follows:
+
+```bash
+./generate_tests.sh
+./run_tests.sh
+```
+
 ### Testing for bugs using Google Sanitizers
 
 > **NOTE**: Currently, the tests are broken because intel oneTBB produces data races according to the ThreadSanitizer.
