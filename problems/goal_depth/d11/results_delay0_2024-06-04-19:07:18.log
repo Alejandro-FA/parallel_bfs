@@ -1,0 +1,318 @@
+problem_49.yaml
+TasksBFS: 88.85 ms, No solution found!
+AsyncStartBFS: 87.55 ms, No solution found!
+MultithreadBFS: 539.79 ms, No solution found!
+SyncBFS: 780.41 ms, No solution found!
+
+problem_48.yaml
+MultithreadBFS: 242.38 ms, No solution found!
+SyncBFS: 424.45 ms, No solution found!
+TasksBFS: 46.26 ms, No solution found!
+AsyncStartBFS: 47.83 ms, No solution found!
+
+problem_45.yaml
+MultithreadBFS: 225.52 ms, No solution found!
+AsyncStartBFS: 63.64 ms, No solution found!
+TasksBFS: 63.56 ms, No solution found!
+SyncBFS: 546.6 ms, No solution found!
+
+problem_43.yaml
+MultithreadBFS: 38.16 ms, No solution found!
+AsyncStartBFS: 8.66 ms, No solution found!
+TasksBFS: 8.91 ms, No solution found!
+SyncBFS: 82.1 ms, No solution found!
+
+problem_41.yaml
+AsyncStartBFS: 28.1 ms, No solution found!
+SyncBFS: 295.04 ms, No solution found!
+TasksBFS: 35.74 ms, No solution found!
+MultithreadBFS: 181.39 ms, No solution found!
+
+problem_39.yaml
+MultithreadBFS: 696.15 ms, No solution found!
+SyncBFS: 1315.91 ms, No solution found!
+TasksBFS: 211.27 ms, No solution found!
+AsyncStartBFS: 177.53 ms, No solution found!
+
+problem_38.yaml
+TasksBFS: 200.4 ms, No solution found!
+MultithreadBFS: 848.04 ms, No solution found!
+SyncBFS: 1349.95 ms, No solution found!
+AsyncStartBFS: 162.36 ms, No solution found!
+
+problem_36.yaml
+TasksBFS: 93.34 ms, No solution found!
+AsyncStartBFS: 76.63 ms, No solution found!
+SyncBFS: 652.73 ms, No solution found!
+MultithreadBFS: 397.88 ms, No solution found!
+
+problem_44.yaml
+MultithreadBFS: 320.08 ms, No solution found!
+TasksBFS: 70.01 ms, No solution found!
+SyncBFS: 606.89 ms, No solution found!
+AsyncStartBFS: 74.64 ms, No solution found!
+
+problem_35.yaml
+TasksBFS: 37.95 ms, No solution found!
+AsyncStartBFS: 34.82 ms, No solution found!
+MultithreadBFS: 224.51 ms, No solution found!
+SyncBFS: 290.16 ms, No solution found!
+
+problem_46.yaml
+SyncBFS: 1275.75 ms, No solution found!
+TasksBFS: 192.39 ms, No solution found!
+MultithreadBFS: 835.62 ms, No solution found!
+AsyncStartBFS: 138.75 ms, No solution found!
+
+problem_34.yaml
+MultithreadBFS: 4.19 ms, No solution found!
+SyncBFS: 11.27 ms, No solution found!
+AsyncStartBFS: 3.68 ms, No solution found!
+TasksBFS: 2.08 ms, No solution found!
+
+problem_32.yaml
+TasksBFS: 12.23 ms, No solution found!
+MultithreadBFS: 46.79 ms, No solution found!
+AsyncStartBFS: 11.1 ms, No solution found!
+SyncBFS: 92.69 ms, No solution found!
+
+problem_31.yaml
+SyncBFS: 61.67 ms, No solution found!
+AsyncStartBFS: 11.51 ms, No solution found!
+TasksBFS: 9.09 ms, No solution found!
+MultithreadBFS: 28.66 ms, No solution found!
+
+problem_30.yaml
+TasksBFS: 124.12 ms, No solution found!
+AsyncStartBFS: 114.63 ms, No solution found!
+MultithreadBFS: 707.46 ms, No solution found!
+SyncBFS: 1050.13 ms, No solution found!
+
+problem_10.yaml
+TasksBFS: 104.93 ms, No solution found!
+SyncBFS: 816.21 ms, No solution found!
+AsyncStartBFS: 90.82 ms, No solution found!
+MultithreadBFS: 523.45 ms, No solution found!
+
+problem_09.yaml
+TasksBFS: 80.63 ms, No solution found!
+SyncBFS: 595.02 ms, No solution found!
+AsyncStartBFS: 70.7 ms, No solution found!
+MultithreadBFS: 327.57 ms, No solution found!
+
+problem_12.yaml
+MultithreadBFS: 35.57 ms, No solution found!
+TasksBFS: 11.88 ms, No solution found!
+SyncBFS: 73.6 ms, No solution found!
+AsyncStartBFS: 8.41 ms, No solution found!
+
+problem_47.yaml
+SyncBFS: 243.7 ms, No solution found!
+TasksBFS: 38.01 ms, No solution found!
+AsyncStartBFS: 36.76 ms, No solution found!
+MultithreadBFS: 74.76 ms, No solution found!
+
+problem_11.yaml
+AsyncStartBFS: 36.96 ms, No solution found!
+TasksBFS: 41.45 ms, No solution found!
+SyncBFS: 368.13 ms, No solution found!
+MultithreadBFS: 234.69 ms, No solution found!
+
+problem_01.yaml
+TasksBFS: 53.41 ms, No solution found!
+SyncBFS: 390.6 ms, No solution found!
+AsyncStartBFS: 49.15 ms, No solution found!
+MultithreadBFS: 231.42 ms, No solution found!
+
+problem_08.yaml
+TasksBFS: 67.47 ms, No solution found!
+SyncBFS: 519.78 ms, No solution found!
+AsyncStartBFS: 60.87 ms, No solution found!
+MultithreadBFS: 250.98 ms, No solution found!
+
+problem_06.yaml
+AsyncStartBFS: 86.06 ms, No solution found!
+MultithreadBFS: 456.45 ms, No solution found!
+SyncBFS: 801.91 ms, No solution found!
+TasksBFS: 101.04 ms, No solution found!
+
+problem_19.yaml
+TasksBFS: 78.76 ms, No solution found!
+MultithreadBFS: 369.34 ms, No solution found!
+AsyncStartBFS: 63.62 ms, No solution found!
+SyncBFS: 623.82 ms, No solution found!
+
+problem_40.yaml
+SyncBFS: 110.48 ms, No solution found!
+TasksBFS: 25.24 ms, No solution found!
+MultithreadBFS: 55.63 ms, No solution found!
+AsyncStartBFS: 15.4 ms, No solution found!
+
+problem_04.yaml
+SyncBFS: 1159.34 ms, No solution found!
+TasksBFS: 165.78 ms, No solution found!
+MultithreadBFS: 837.11 ms, No solution found!
+AsyncStartBFS: 137.86 ms, No solution found!
+
+problem_33.yaml
+MultithreadBFS: 110.79 ms, No solution found!
+AsyncStartBFS: 23.79 ms, No solution found!
+SyncBFS: 203.8 ms, No solution found!
+TasksBFS: 21.66 ms, No solution found!
+
+problem_21.yaml
+MultithreadBFS: 172.37 ms, No solution found!
+TasksBFS: 38.42 ms, No solution found!
+SyncBFS: 282.24 ms, No solution found!
+AsyncStartBFS: 33.45 ms, No solution found!
+
+problem_24.yaml
+TasksBFS: 78.4 ms, No solution found!
+AsyncStartBFS: 71.2 ms, No solution found!
+SyncBFS: 623.38 ms, No solution found!
+MultithreadBFS: 345.66 ms, No solution found!
+
+problem_03.yaml
+SyncBFS: 453.47 ms, No solution found!
+AsyncStartBFS: 55.22 ms, No solution found!
+MultithreadBFS: 299.42 ms, No solution found!
+TasksBFS: 56.6 ms, No solution found!
+
+problem_07.yaml
+SyncBFS: 556.39 ms, No solution found!
+AsyncStartBFS: 71.22 ms, No solution found!
+MultithreadBFS: 251.93 ms, No solution found!
+TasksBFS: 72.42 ms, No solution found!
+
+problem_42.yaml
+SyncBFS: 568.65 ms, No solution found!
+AsyncStartBFS: 62.74 ms, No solution found!
+TasksBFS: 69.95 ms, No solution found!
+MultithreadBFS: 224.58 ms, No solution found!
+
+problem_02.yaml
+SyncBFS: 231.08 ms, No solution found!
+TasksBFS: 30.87 ms, No solution found!
+MultithreadBFS: 123.35 ms, No solution found!
+AsyncStartBFS: 24.78 ms, No solution found!
+
+problem_29.yaml
+MultithreadBFS: 153.58 ms, No solution found!
+TasksBFS: 59.55 ms, No solution found!
+SyncBFS: 482.57 ms, No solution found!
+AsyncStartBFS: 54.71 ms, No solution found!
+
+problem_00.yaml
+AsyncStartBFS: 9.11 ms, No solution found!
+TasksBFS: 8.75 ms, No solution found!
+SyncBFS: 71.65 ms, No solution found!
+MultithreadBFS: 36.46 ms, No solution found!
+
+problem_13.yaml
+SyncBFS: 881.13 ms, No solution found!
+MultithreadBFS: 689.42 ms, No solution found!
+TasksBFS: 109.65 ms, No solution found!
+AsyncStartBFS: 97.74 ms, No solution found!
+
+problem_16.yaml
+MultithreadBFS: 81.13 ms, No solution found!
+AsyncStartBFS: 23.16 ms, No solution found!
+TasksBFS: 23.25 ms, No solution found!
+SyncBFS: 180.26 ms, No solution found!
+
+problem_20.yaml
+MultithreadBFS: 267.35 ms, No solution found!
+AsyncStartBFS: 45.06 ms, No solution found!
+SyncBFS: 411.85 ms, No solution found!
+TasksBFS: 47.11 ms, No solution found!
+
+problem_18.yaml
+MultithreadBFS: 281.94 ms, No solution found!
+SyncBFS: 619.25 ms, No solution found!
+AsyncStartBFS: 62.48 ms, No solution found!
+TasksBFS: 69.54 ms, No solution found!
+
+problem_05.yaml
+TasksBFS: 103.88 ms, No solution found!
+SyncBFS: 848.29 ms, No solution found!
+AsyncStartBFS: 105.19 ms, No solution found!
+MultithreadBFS: 680.29 ms, No solution found!
+
+problem_15.yaml
+AsyncStartBFS: 59.68 ms, No solution found!
+SyncBFS: 503.94 ms, No solution found!
+MultithreadBFS: 255.23 ms, No solution found!
+TasksBFS: 63.52 ms, No solution found!
+
+problem_17.yaml
+SyncBFS: 699.09 ms, No solution found!
+MultithreadBFS: 376.82 ms, No solution found!
+AsyncStartBFS: 68.54 ms, No solution found!
+TasksBFS: 89.39 ms, No solution found!
+
+problem_37.yaml
+MultithreadBFS: 758.53 ms, No solution found!
+SyncBFS: 909.64 ms, No solution found!
+TasksBFS: 123.73 ms, No solution found!
+AsyncStartBFS: 108.83 ms, No solution found!
+
+problem_22.yaml
+MultithreadBFS: 0 ms, No solution found!
+SyncBFS: 0 ms, No solution found!
+TasksBFS: 0.63 ms, No solution found!
+AsyncStartBFS: 0 ms, No solution found!
+
+problem_23.yaml
+AsyncStartBFS: 37.44 ms, No solution found!
+MultithreadBFS: 243.57 ms, No solution found!
+TasksBFS: 44.54 ms, No solution found!
+SyncBFS: 405.06 ms, No solution found!
+
+problem_25.yaml
+TasksBFS: 67.3 ms, No solution found!
+SyncBFS: 391.59 ms, No solution found!
+MultithreadBFS: 147.83 ms, No solution found!
+AsyncStartBFS: 41.94 ms, No solution found!
+
+problem_27.yaml
+SyncBFS: 273.85 ms, No solution found!
+AsyncStartBFS: 40.8 ms, No solution found!
+MultithreadBFS: 190.61 ms, No solution found!
+TasksBFS: 35.63 ms, No solution found!
+
+problem_26.yaml
+SyncBFS: 958.08 ms, No solution found!
+TasksBFS: 124.99 ms, No solution found!
+MultithreadBFS: 720.41 ms, No solution found!
+AsyncStartBFS: 95.65 ms, No solution found!
+
+problem_14.yaml
+TasksBFS: 87.51 ms, No solution found!
+SyncBFS: 682.7 ms, No solution found!
+MultithreadBFS: 378.33 ms, No solution found!
+AsyncStartBFS: 76.59 ms, No solution found!
+
+problem_28.yaml
+AsyncStartBFS: 18.97 ms, No solution found!
+MultithreadBFS: 87.23 ms, No solution found!
+SyncBFS: 187.05 ms, No solution found!
+TasksBFS: 23.67 ms, No solution found!
+
+
+[INFO] Results summary:
+MultithreadBFS
+	Average: 312.208 ms
+	Median: 247.275 ms
+	Standard Deviation: 243.2 ms
+SyncBFS
+	Average: 519.267 ms
+	Median: 493.255 ms
+	Standard Deviation: 346.696 ms
+TasksBFS
+	Average: 68.3152 ms
+	Median: 63.54 ms
+	Standard Deviation: 49.5414 ms
+AsyncStartBFS
+	Average: 59.7266 ms
+	Median: 57.45 ms
+	Standard Deviation: 40.6066 ms
