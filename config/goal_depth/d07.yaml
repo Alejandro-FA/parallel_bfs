@@ -5,10 +5,10 @@ max_depth: 14
 goals_depth: 7
 
 # The number of goals in the tree.
-num_goals: 100
+num_goals: 1000
 
 # The maximum number of actions a node could have. Also known as the maximum branching factor.
-max_actions: 6
+max_actions: 4
 
 # The average number of actions that a node has. Also known as the average branching factor.
 # The branching factor of each node follows a binomial distribution.
