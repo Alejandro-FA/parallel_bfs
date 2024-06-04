@@ -11,6 +11,7 @@
 #include <yaml-cpp/yaml.h>
 #include <parallel_bfs/problem_utils.h>
 #include "tree_state.h"
+#include "../problems_common.h"
 
 
 namespace parallel_bfs {

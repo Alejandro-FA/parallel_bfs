@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <vector>
+#include "../problems_common.h"
 
 
 namespace parallel_bfs {

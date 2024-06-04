@@ -8,8 +8,7 @@ goals_depth: 8
 num_goals: 50
 
 # The maximum number of actions a node could have. Also known as the maximum branching factor.
-max_actions: 10
+max_actions: 12
 
-# The average number of actions that a node has. Also known as the average branching factor.
-# The branching factor of each node follows a binomial distribution.
-avg_actions: 4.0
+# The minimum number of actions a node could have. Also known as the minimum branching factor.
+min_actions: 0

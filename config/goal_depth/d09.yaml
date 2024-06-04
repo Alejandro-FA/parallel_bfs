@@ -2,7 +2,7 @@
 max_depth: 14
 
 # The depth of the tree where the goals are located.
-goals_depth: 6
+goals_depth: 9
 
 # The number of goals in the tree.
 num_goals: 100

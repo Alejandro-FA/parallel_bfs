@@ -9,6 +9,7 @@
 #include <algorithm>
 #include "tree_state.h"
 #include "basic_tree.h"
+#include "../problems_common.h"
 
 
 namespace parallel_bfs::detail {
@@ -37,7 +38,10 @@ namespace parallel_bfs {
             if (avg_bfactor > max_bfactor || avg_bfactor < 0)
                 throw std::invalid_argument(
                     "The average branching factor must be a value between 0 and max_bfactor.");
-            if (num_goals > static_cast<unsigned int>(pow(max_bfactor, max_depth)))
+            if (goals_depth > max_depth)
+                throw std::invalid_argument(
+                    "The depth of the goal states must be lower or equal to the maximum depth of the tree.");
+            if (num_goals > static_cast<unsigned int>(pow(max_bfactor, goals_depth)))
                 throw std::invalid_argument(
                     "The number of goals must be lower or equal to the maximum number of different states in the tree.");
         }
@@ -59,7 +63,10 @@ namespace parallel_bfs {
             if (min_bfactor > max_bfactor)
                 throw std::invalid_argument(
                     "The minimum branching factor must be lower or equal to the maximum branching factor.");
-            if (num_goals > static_cast<unsigned int>(pow(max_bfactor, max_depth)))
+            if (goals_depth > max_depth)
+                throw std::invalid_argument(
+                    "The depth of the goal states must be lower or equal to the maximum depth of the tree.");
+            if (num_goals > static_cast<unsigned int>(pow(max_bfactor, goals_depth)))
                 throw std::invalid_argument(
                     "The number of goals must be lower or equal to the maximum number of different states in the tree.");
         }
@@ -69,8 +76,11 @@ namespace parallel_bfs {
 
         /// Generate a bunch of goal states. Not all goal states have the same depth.
         [[nodiscard]] std::unordered_set<TreeState<T>> get_goal_states() override {
+            if (_num_goals > 0.2 * static_cast<unsigned int>(pow(_max_bfactor, _goals_depth)))
+                throw std::invalid_argument(
+                        "The number of goals is too high. It must be lower than 20% of the maximum number of possible goals.");
             std::unordered_set<TreeState<T>> goals(_num_goals);
-            while (goals.size() < _num_goals) goals.insert(get_random_goal());
+            while (goals.size() < _num_goals) goals.insert(get_random_goal()); // FIXME: Not efficient if num_goals is close to the maximum number of states
             return goals;
         }
 
