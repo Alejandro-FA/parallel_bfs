@@ -9,9 +9,9 @@
 #include <memory>
 #include <future>
 #include <thread>
-#include <iostream>
 #include <queue>
 #include "bfs.h"
+#include "../problem.h"
 #include "../node.h"
 #include "../state.h"
 #include "../transition_model.h"

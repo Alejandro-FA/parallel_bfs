@@ -8,8 +8,8 @@
 #include <memory>
 #include <queue>
 #include <deque>
-#include <unordered_set>
 #include <stop_token>
+#include "../problem.h"
 #include "../node.h"
 #include "../state.h"
 #include "../transition_model.h"

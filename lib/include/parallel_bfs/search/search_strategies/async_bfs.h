@@ -6,10 +6,10 @@
 #define PARALLEL_BFS_PROJECT_ASYNC_BFS_H
 
 #include <future>
-#include <iostream>
 #include <vector>
 #include <memory>
 #include <thread>
+#include "../problem.h"
 #include "../node.h"
 #include "../state.h"
 #include "../transition_model.h"

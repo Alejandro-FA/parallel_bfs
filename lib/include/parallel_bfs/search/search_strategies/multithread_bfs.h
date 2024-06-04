@@ -11,8 +11,9 @@
 #include <stop_token>
 #include <mutex>
 #include <condition_variable>
-#include <iostream>
+#include <future>
 #include "bfs.h"
+#include "../problem.h"
 #include "../node.h"
 #include "../state.h"
 #include "../transition_model.h"

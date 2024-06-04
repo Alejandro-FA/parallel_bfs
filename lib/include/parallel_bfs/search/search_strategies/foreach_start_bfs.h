@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <deque>
 #include "bfs.h"
+#include "../problem.h"
 #include "../node.h"
 #include "../state.h"
 #include "../transition_model.h"

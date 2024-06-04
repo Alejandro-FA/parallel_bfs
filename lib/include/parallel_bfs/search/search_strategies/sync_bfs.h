@@ -6,6 +6,8 @@
 #define PARALLEL_BFS_SYNC_BFS_H
 
 #include <queue>
+#include "bfs.h"
+#include "../problem.h"
 #include "../node.h"
 #include "../state.h"
 #include "../transition_model.h"

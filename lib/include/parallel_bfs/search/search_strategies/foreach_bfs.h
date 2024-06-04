@@ -9,6 +9,7 @@
 #include <memory>
 #include <thread>
 #include <execution>
+#include "../problem.h"
 #include "../node.h"
 #include "../state.h"
 #include "../transition_model.h"
