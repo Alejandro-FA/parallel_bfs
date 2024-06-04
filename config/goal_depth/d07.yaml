@@ -1,4 +1,4 @@
-  d08.yaml# The maximum depth of the tree.
+# The maximum depth of the tree.
 max_depth: 14
 
 # The depth of the tree where the goals are located.
