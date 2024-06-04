@@ -115,14 +115,14 @@ void solve(const std::filesystem::path &input_dir, std::optional<unsigned int> n
 
     // Create solver and add algorithms
     Solver<StateType , TransitionModelType> solver;
-    solver.add_algorithm(parallel_bfs::sync_bfs<StateType, TransitionModelType>, "SyncBFS");
+    // solver.add_algorithm(parallel_bfs::sync_bfs<StateType, TransitionModelType>, "SyncBFS");
     solver.add_algorithm(parallel_bfs::tasks_bfs<StateType, TransitionModelType>, "TasksBFS");
-    solver.add_algorithm(parallel_bfs::async_start_bfs<StateType, TransitionModelType>, "AsyncStartBFS");
+    // solver.add_algorithm(parallel_bfs::async_start_bfs<StateType, TransitionModelType>, "AsyncStartBFS");
     // solver.add_algorithm(parallel_bfs::async_bfs<StateType, TransitionModelType>, "AsyncBFS"); // Very slow
     // solver.add_algorithm(parallel_bfs::foreach_start_bfs<StateType, TransitionModelType>, "ForeachStartBFS");
     // solver.add_algorithm(parallel_bfs::foreach_bfs<StateType, TransitionModelType>, "ForeachBFS"); // Very slow
     // solver.add_algorithm(parallel_bfs::any_of_bfs<StateType, TransitionModelType>, "AnyOfBFS");
-    solver.add_algorithm(parallel_bfs::multithread_bfs<StateType, TransitionModelType>, "MultithreadBFS");
+    // solver.add_algorithm(parallel_bfs::multithread_bfs<StateType, TransitionModelType>, "MultithreadBFS");
 
     // Create reader
     const parallel_bfs::YAMLReader<StateType, TransitionModelType> reader;
@@ -141,7 +141,6 @@ void solve(const std::filesystem::path &input_dir, std::optional<unsigned int> n
         // Read problem
         bar.set_status("Reading " + file_name);
         auto problem = reader.read(file_path);
-        problem.set_workload_delay(delay);
         bar.tick();
 
         // Warm cache
@@ -150,6 +149,7 @@ void solve(const std::filesystem::path &input_dir, std::optional<unsigned int> n
         bar.tick();
 
         bar.set_status("Solving " + file_name);
+        problem.set_workload_delay(delay);
         solver.solve(problem, file_name);
         bar.tick();
     }
