@@ -22,7 +22,7 @@ namespace parallel_bfs {
     template<Searchable State, std::derived_from<BaseTransitionModel<State>> TM>
     [[nodiscard]] std::shared_ptr<Node<State>> async_start_bfs(const Problem<State, TM> &problem) {
         std::deque<std::shared_ptr<Node<State>>> frontier{std::make_shared<Node<State>>(problem.initial())};
-        unsigned int min_starting_points = std::thread::hardware_concurrency() * 2;
+        unsigned int min_starting_points = std::thread::hardware_concurrency() * 4;
 
         // First fill the frontier with enough starting points
         auto possible_solution = detail::bfs_with_limit(frontier, problem, min_starting_points);
