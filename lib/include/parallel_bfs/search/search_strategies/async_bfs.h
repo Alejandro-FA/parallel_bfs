@@ -10,6 +10,9 @@
 #include <vector>
 #include <memory>
 #include <thread>
+#include "../node.h"
+#include "../state.h"
+#include "../transition_model.h"
 
 
 namespace parallel_bfs::detail {

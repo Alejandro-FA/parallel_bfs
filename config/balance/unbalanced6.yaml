@@ -5,7 +5,7 @@ max_depth: 8
 goals_depth: 8
 
 # The number of goals in the tree.
-num_goals: 50
+num_goals: 100
 
 # The maximum number of actions a node could have. Also known as the maximum branching factor.
 max_actions: 11

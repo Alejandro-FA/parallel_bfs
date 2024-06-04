@@ -9,6 +9,9 @@
 #include <memory>
 #include <thread>
 #include <execution>
+#include "../node.h"
+#include "../state.h"
+#include "../transition_model.h"
 
 
 namespace parallel_bfs::detail {

@@ -5,6 +5,9 @@
 #ifndef PARALLEL_BFS_STATE_H
 #define PARALLEL_BFS_STATE_H
 
+#include <iostream>
+#include <concepts>
+
 namespace parallel_bfs::detail {
     template<typename T>
     concept Printable = requires(const T &a) { std::cout << a; };

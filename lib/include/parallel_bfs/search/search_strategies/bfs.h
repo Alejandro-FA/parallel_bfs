@@ -10,6 +10,9 @@
 #include <deque>
 #include <unordered_set>
 #include <stop_token>
+#include "../node.h"
+#include "../state.h"
+#include "../transition_model.h"
 
 
 namespace parallel_bfs::detail {

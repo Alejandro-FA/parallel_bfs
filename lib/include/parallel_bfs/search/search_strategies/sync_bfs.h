@@ -6,6 +6,9 @@
 #define PARALLEL_BFS_SYNC_BFS_H
 
 #include <queue>
+#include "../node.h"
+#include "../state.h"
+#include "../transition_model.h"
 
 
 namespace parallel_bfs {

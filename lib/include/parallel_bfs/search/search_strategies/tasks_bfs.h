@@ -12,6 +12,9 @@
 #include <iostream>
 #include <queue>
 #include "bfs.h"
+#include "../node.h"
+#include "../state.h"
+#include "../transition_model.h"
 
 
 namespace parallel_bfs {
