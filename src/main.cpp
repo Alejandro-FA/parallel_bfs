@@ -125,8 +125,8 @@ void validate_arguments(const Arguments &args) noexcept(false) {
     if (args.config.has_value() && !args.call_generate)
         throw std::runtime_error{"Config file specified but no generation requested"};
 
-    if (args.workload_delay.has_value() && args.workload_delay.value().count() > 100)
-        throw std::runtime_error{"Workload delay too high (max 100 microseconds)"};
+    if (args.workload_delay.has_value() && args.workload_delay.value().count() > 500)
+        throw std::runtime_error{"Workload delay too high (max 500 microseconds)"};
 }
 
 
